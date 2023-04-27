@@ -2,17 +2,21 @@
 //
 
 #include "stdafx.h"
-#include <iostream>
-#include <array>
-#include <memory>
-#include <string>
-#include <cctype>
-#include <cmath>
 
-using namespace std;
+#include <iostream>
+
+#include "fv.h"
 
 int main()
 {
+    fv::ZMM zmm;
+    zmm.setI32(3, 100000);
+
+    std::cout << zmm.getI32Representation() << std::endl;
+    std::cout << zmm.getF32Representation() << std::endl;
+    std::cout << zmm.getF64Representation() << std::endl;
+
     getchar();
     return 0;
 }
+

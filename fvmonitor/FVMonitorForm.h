@@ -1,5 +1,10 @@
 #pragma once
 
+#include <string>
+#include <iostream>
+
+#include "fv.h"
+
 using namespace System::Collections::Generic;
 
 namespace fvmonitor {
@@ -39,6 +44,8 @@ namespace fvmonitor {
 
     protected:
 
+    protected:
+
 
     protected:
 
@@ -66,13 +73,10 @@ namespace fvmonitor {
             this->ClientSize = System::Drawing::Size(284, 261);
             this->Name = L"FVMonitorForm";
             this->Text = L"MyForm";
-            this->Load += gcnew System::EventHandler(this, &FVMonitorForm::FVMonitorForm_Load);
             this->ResumeLayout(false);
 
         }
 #pragma endregion
 
-    private: System::Void FVMonitorForm_Load(System::Object^  sender, System::EventArgs^  e) {
-    }
     };
 }
