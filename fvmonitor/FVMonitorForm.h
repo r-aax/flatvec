@@ -1,5 +1,7 @@
 #pragma once
 
+using namespace System::Collections::Generic;
+
 namespace fvmonitor {
 
 	using namespace System;
@@ -12,10 +14,10 @@ namespace fvmonitor {
 	/// <summary>
 	/// Summary for MyForm
 	/// </summary>
-	public ref class MyForm : public System::Windows::Forms::Form
+	public ref class FVMonitorForm : public System::Windows::Forms::Form
 	{
 	public:
-		MyForm(void)
+		FVMonitorForm(void)
 		{
 			InitializeComponent();
 			//
@@ -27,13 +29,20 @@ namespace fvmonitor {
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		~MyForm()
+		~FVMonitorForm()
 		{
 			if (components)
 			{
 				delete components;
 			}
 		}
+
+    protected:
+
+
+    protected:
+
+    protected:
 
 	private:
 		/// <summary>
@@ -48,12 +57,22 @@ namespace fvmonitor {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			this->components = gcnew System::ComponentModel::Container();
-			this->Size = System::Drawing::Size(300,300);
-			this->Text = L"MyForm";
-			this->Padding = System::Windows::Forms::Padding(0);
-			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-		}
+            this->SuspendLayout();
+            // 
+            // FVMonitorForm
+            // 
+            this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+            this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+            this->ClientSize = System::Drawing::Size(284, 261);
+            this->Name = L"FVMonitorForm";
+            this->Text = L"MyForm";
+            this->Load += gcnew System::EventHandler(this, &FVMonitorForm::FVMonitorForm_Load);
+            this->ResumeLayout(false);
+
+        }
 #pragma endregion
-	};
+
+    private: System::Void FVMonitorForm_Load(System::Object^  sender, System::EventArgs^  e) {
+    }
+    };
 }

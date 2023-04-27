@@ -1,4 +1,4 @@
-#include "MyForm.h"
+#include "FVMonitorForm.h"
 
 using namespace System;
 using namespace System::Windows::Forms;
@@ -10,6 +10,6 @@ void Main(array<String^>^ args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 
-	fvmonitor::MyForm form;
+	fvmonitor::FVMonitorForm form;
 	Application::Run(%form);
 }
