@@ -27,12 +27,24 @@
     <ClInclude Include="fv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="zmm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="intrinsics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="fv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zmm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="intrinsics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
