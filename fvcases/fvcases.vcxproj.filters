@@ -24,16 +24,13 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fv.h">
+    <ClInclude Include="fvcases.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zmm.h">
+    <ClInclude Include="cases.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="intrinsics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mth.h">
+    <ClInclude Include="array_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,13 +38,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fv.cpp">
+    <ClCompile Include="fvcases.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="zmm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="intrinsics.cpp">
+    <ClCompile Include="cases.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A6DA0937-D593-417A-8062-1331F8B2EEE5}</ProjectGuid>
+    <ProjectGuid>{C84DBB03-1193-43AA-8A3D-C9367DB5446F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>fv</RootNamespace>
+    <RootNamespace>fvcases</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -77,6 +77,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\fv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -130,23 +131,26 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fv.h" />
-    <ClInclude Include="intrinsics.h" />
-    <ClInclude Include="mth.h" />
+    <ClInclude Include="array_manager.h" />
+    <ClInclude Include="cases.h" />
+    <ClInclude Include="fvcases.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="zmm.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="fv.cpp" />
-    <ClCompile Include="intrinsics.cpp" />
+    <ClCompile Include="cases.cpp" />
+    <ClCompile Include="fvcases.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zmm.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\fv\fv.vcxproj">
+      <Project>{a6da0937-d593-417a-8062-1331f8b2eee5}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

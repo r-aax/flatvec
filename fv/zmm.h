@@ -1,5 +1,5 @@
-#ifndef FV_ZMM_H
-#define FV_ZMM_H
+#ifndef ZMM_H
+#define ZMM_H
 
 #include "stdafx.h"
 

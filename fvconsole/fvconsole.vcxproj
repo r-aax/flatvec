@@ -88,7 +88,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\fv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\fv;..\fvcases;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -159,6 +159,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\fvcases\fvcases.vcxproj">
+      <Project>{c84dbb03-1193-43aa-8a3d-c9367db5446f}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\fv\fv.vcxproj">
       <Project>{a6da0937-d593-417a-8062-1331f8b2eee5}</Project>
     </ProjectReference>

@@ -3,24 +3,22 @@
 
 #include "stdafx.h"
 
-#include <iostream>
+#include "fvcases.h"
 
-#include "fv.h"
+using namespace fv;
 
 int main()
 {
-    __m512 a, b, r;
+    int n = 1 * ZMM::f32_count;
+    ArrayManager<float> a(n);
+    ArrayManager<float> b(n);
+    ArrayManager<float> sc(n);
+    ArrayManager<float> vc(n);
 
-    a.setF32(3, 5.0);
-    a.setF32(6, 3.0);
-    b.setF32(6, 4.0);
-    b.setF32(10, 10.0);
+    scase_add_f32(n, a.getData(), b.getData(), sc.getData());
+    vcase_add_f32(n, a.getData(), b.getData(), vc.getData());
 
-    r = _mm512_add_ps(a, b);
-
-    std::cout << a.getF32Representation() << std::endl;
-    std::cout << b.getF32Representation() << std::endl;
-    std::cout << r.getF32Representation() << std::endl;
+    std::cout << vc.maxDiff(sc);
 
     getchar();
     return 0;
