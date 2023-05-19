@@ -36,6 +36,9 @@
     <ClInclude Include="mth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mask.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -48,6 +51,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="intrinsics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

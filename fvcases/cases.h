@@ -7,6 +7,8 @@
 
 namespace fv
 {
+    // arith_f32
+
     void scase_arith_f32(int n,
                          float* a,
                          float* b,
@@ -18,6 +20,22 @@ namespace fv
                          float* c);
 
     bool case_arith_f32(int len,
+                        float random_lo = 10.0,
+                        float random_hi = 100.0);
+
+    // blend_f32
+
+    void scase_blend_f32(int n,
+                         float* a,
+                         float* b,
+                         float* c);
+
+    void vcase_blend_f32(int n,
+                         float* a,
+                         float* b,
+                         float* c);
+
+    bool case_blend_f32(int len,
                         float random_lo = 10.0,
                         float random_hi = 100.0);
 }

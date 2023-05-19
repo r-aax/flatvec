@@ -6,6 +6,8 @@
 
 namespace fv
 {
+    // arith_f32
+
     void scase_arith_f32(int n,
                          float* a,
                          float* b,
@@ -70,4 +72,53 @@ namespace fv
 
         return vc.maxDiff(sc) == 0.0;
     }
+
+    // blend_f32
+
+    void scase_blend_f32(int n,
+                         float* a,
+                         float* b,
+                         float* c)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            if (a[i] > b[i])
+            {
+                c[i] = a[i] + b[i];
+            }
+            else
+            {
+                c[i] = a[i] * b[i];
+            }
+        }
+    }
+
+    void vcase_blend_f32(int n,
+                         float* a,
+                         float* b,
+                         float* c)
+    {
+
+    }
+
+    bool case_blend_f32(int len,
+                        float random_lo,
+                        float random_hi)
+    {
+        int n = len * ZMM::count<float>();
+
+        ArrayManager<float> a(n);
+        ArrayManager<float> b(n);
+        ArrayManager<float> sc(n);
+        ArrayManager<float> vc(n);
+
+        a.generate_random(random_lo, random_hi);
+        b.generate_random(random_lo, random_hi);
+
+        scase_blend_f32(n, a.getData(), b.getData(), sc.getData());
+        vcase_blend_f32(n, a.getData(), b.getData(), vc.getData());
+
+        return vc.maxDiff(sc) == 0.0;
+    }
+
 }
