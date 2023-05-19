@@ -117,4 +117,20 @@ namespace fv
     {
         return compare<float>(a, b, [] (float x, float y) { return std::isnan(x) || std::isnan(y); });
     }
+
+    // Blend operations.
+
+    ZMM _mm512_mask_blend_ps(Mask<16> m,
+                             ZMM a,
+                             ZMM b)
+    {
+        ZMM r;
+
+        for (int i = 0; i < ZMM::count<float>(); i++)
+        {
+            r.set<float>(i, m.is_set(i) ? b.get<float>(i) : a.get<float>(i));
+        }
+
+        return r;
+    }
 }

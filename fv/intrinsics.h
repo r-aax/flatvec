@@ -90,6 +90,12 @@ namespace fv
 
     Mask<16> _mm512_cmpunord_ps_mask(ZMM a,
                                      ZMM b);
+
+    // Blend operations.
+
+    ZMM _mm512_mask_blend_ps(Mask<16> m,
+                             ZMM a,
+                             ZMM b);
 }
 
 #endif
