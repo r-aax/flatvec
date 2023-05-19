@@ -40,4 +40,69 @@ namespace fv
 
         return r;
     }
+
+    ZMM _mm512_sub_ps(ZMM a,
+                      ZMM b)
+    {
+        ZMM r;
+
+        for (int i = 0; i < ZMM::f32_count; i++)
+        {
+            r.setF32(i, a.getF32(i) - b.getF32(i));
+        }
+
+        return r;
+    }
+
+    ZMM _mm512_mul_ps(ZMM a,
+                      ZMM b)
+    {
+        ZMM r;
+
+        for (int i = 0; i < ZMM::f32_count; i++)
+        {
+            r.setF32(i, a.getF32(i) * b.getF32(i));
+        }
+
+        return r;
+    }
+
+    ZMM _mm512_div_ps(ZMM a,
+                      ZMM b)
+    {
+        ZMM r;
+
+        for (int i = 0; i < ZMM::f32_count; i++)
+        {
+            r.setF32(i, a.getF32(i) / b.getF32(i));
+        }
+
+        return r;
+    }
+
+    ZMM _mm512_min_ps(ZMM a,
+                      ZMM b)
+    {
+        ZMM r;
+
+        for (int i = 0; i < ZMM::f32_count; i++)
+        {
+            r.setF32(i, std::min(a.getF32(i), b.getF32(i)));
+        }
+
+        return r;
+    }
+
+    ZMM _mm512_max_ps(ZMM a,
+                      ZMM b)
+    {
+        ZMM r;
+
+        for (int i = 0; i < ZMM::f32_count; i++)
+        {
+            r.setF32(i, std::max(a.getF32(i), b.getF32(i)));
+        }
+
+        return r;
+    }
 }
