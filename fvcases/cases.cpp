@@ -107,11 +107,15 @@ namespace fv
 
             ZMM va = _mm512_load_ps(a + sh);
             ZMM vb = _mm512_load_ps(b + sh);
-            ZMM vadd = _mm512_add_ps(va, vb);
-            ZMM vmul = _mm512_mul_ps(va, vb);
-            Mask m = _mm512_cmpgt_ps_mask(va, vb);
+            ZMM vadd;
+            ZMM vmul;
+            Mask k = _mm512_cmpgt_ps_mask(va, vb);
+            Mask nk = _mm512_knot(k);
 
-            ZMM vc = _mm512_mask_blend_ps(m, vmul, vadd);
+            vadd = _mm512_maskz_add_ps(vadd, k, va, vb);
+            vmul = _mm512_maskz_mul_ps(vmul, nk, va, vb);
+
+            ZMM vc = _mm512_mask_blend_ps(k, vmul, vadd);
 
             _mm512_store_ps(c + sh, vc);
         }
