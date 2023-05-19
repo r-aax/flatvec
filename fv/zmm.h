@@ -3,8 +3,6 @@
 
 #include "stdafx.h"
 
-#include <string>
-
 namespace fv
 {
     // 512-bits register.
@@ -60,15 +58,23 @@ namespace fv
         }
 
         // Representation.
+        template <typename T>
+        std::string ZMM::getRepresentation() const
+        {
+            std::stringstream ss;
 
-        std::string getI32Representation() const;
+            ss << "[";
+            ss << std::setw(10) << get<T>(0);
+            for (int i = 1; i < count<T>(); i++)
+            {
+                ss << " " << std::setw(10) << get<T>(i);
+            }
+            ss << "]";
 
-        std::string getF32Representation() const;
-
-        std::string getF64Representation() const;
+            return std::string {ss.str()};
+        }
 
         // Clear.
-
         void clear();
     };
 }
