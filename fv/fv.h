@@ -5,5 +5,6 @@
 
 #include "zmm.h"
 #include "intrinsics.h"
+#include "intrinsics_ext.h"
 
 #endif

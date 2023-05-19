@@ -98,7 +98,23 @@ namespace fv
                          float* b,
                          float* c)
     {
+        assert(n % ZMM::count<float>() == 0);
+        int vn = n / ZMM::count<float>();
 
+        for (int vi = 0; vi < vn; vi++)
+        {
+            int sh = vi * ZMM::count<float>();
+
+            ZMM va = _mm512_load_ps(a + sh);
+            ZMM vb = _mm512_load_ps(b + sh);
+            ZMM vadd = _mm512_add_ps(va, vb);
+            ZMM vmul = _mm512_mul_ps(va, vb);
+            Mask<16> m = _mm512_cmpgt_ps_mask(va, vb);
+
+            ZMM vc = _mm512_mask_blend_ps(m, vmul, vadd);
+
+            _mm512_store_ps(c + sh, vc);
+        }
     }
 
     bool case_blend_f32(int len,
