@@ -64,7 +64,9 @@ namespace fv
                       float* cr,
                       float* pm);
 
-    bool case_guessp(int len);
+    bool case_guessp(int len,
+                     float random_lo = 1.0,
+                     float random_hi = 2.0);
 }
 
 #endif

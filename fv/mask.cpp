@@ -6,12 +6,12 @@ namespace fv
 {
     // Access to data.
 
-    bool Mask::get(int i)
+    bool Mask::get(int i) const
     {
         return data[i];
     }
 
-    bool Mask::is_set(int i)
+    bool Mask::is_set(int i) const
     {
         return get(i);
     }
@@ -39,5 +39,20 @@ namespace fv
         k.set_full();
 
         return k;
+    }
+
+    // Check mask.
+
+    bool Mask::is_empty() const
+    {
+        for (int i = 0; i < bits; i++)
+        {
+            if (is_set(i))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

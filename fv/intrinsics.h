@@ -15,6 +15,14 @@ namespace fv
     void _mm512_store_ps(void* mem_addr,
                          ZMM a);
 
+    // Arithmetic operations with 1 argument.
+
+    ZMM _mm512_mask_mov_ps(ZMM src,
+                           Mask k,
+                           ZMM a);
+
+    ZMM _mm512_sqrt_ps(ZMM a);
+
     // Arithmetic operations with 2 arguments.
 
     template <typename T>
@@ -157,6 +165,27 @@ namespace fv
                             ZMM a,
                             ZMM b);
 
+    //
+
+    ZMM _mm512_pow_ps(ZMM a,
+                      ZMM b);
+
+    ZMM _mm512_mask_pow_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b);
+
+    ZMM _mm512_maskz_pow_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b);
+
+    // Arithmetic operations with 3 arguments.
+
+    ZMM _mm512_fmadd_ps(ZMM a,
+                        ZMM b,
+                        ZMM c);
+
     // Compare operations.
 
     template <typename T>
@@ -174,26 +203,46 @@ namespace fv
         return m;
     }
 
+    //
+
     Mask _mm512_cmpeq_ps_mask(ZMM a,
                               ZMM b);
+
+    //
 
     Mask _mm512_cmple_ps_mask(ZMM a,
                               ZMM b);
 
+    //
+
     Mask _mm512_cmplt_ps_mask(ZMM a,
                               ZMM b);
+
+    //
 
     Mask _mm512_cmpneq_ps_mask(ZMM a,
                                ZMM b);
 
+    //
+
     Mask _mm512_cmpnle_ps_mask(ZMM a,
                                ZMM b);
+
+    //
 
     Mask _mm512_cmpnlt_ps_mask(ZMM a,
                                ZMM b);
 
+    Mask _mm512_mask_cmplt_ps_mask(Mask k,
+                                   ZMM a,
+                                   ZMM b);
+
+    //
+
     Mask _mm512_cmpord_ps_mask(ZMM a,
                                ZMM b);
+
+    //
 
     Mask _mm512_cmpunord_ps_mask(ZMM a,
                                  ZMM b);
@@ -229,6 +278,10 @@ namespace fv
 
     Mask _mm512_kxnor(Mask a,
                       Mask b);
+
+    // Init operations.
+
+    ZMM _mm512_set1_ps(float a);
 }
 
 #endif

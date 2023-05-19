@@ -24,9 +24,9 @@ namespace fv
 
         // Access to data.
 
-        bool get(int i);
+        bool get(int i) const;
 
-        bool is_set(int i);
+        bool is_set(int i) const;
 
         void set(int i,
                  bool v);
@@ -36,6 +36,10 @@ namespace fv
         void set_full();
 
         static Mask full();
+
+        // Check mask.
+
+        bool is_empty() const;
     };
 }
 
