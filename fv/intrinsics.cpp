@@ -35,26 +35,98 @@ namespace fv
     ZMM _mm512_add_ps(ZMM a,
                       ZMM b)
     {
-        return arith2<float>(a, b, [] (float x, float y) { return x + y; });
+        return arith2<float>(a, b, std::plus<float>());
     }
+
+    ZMM _mm512_mask_add_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b)
+    {
+        return mask_arith2<float>(src, k, a, b, std::plus<float>());
+    }
+
+    ZMM _mm512_maskz_add_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b)
+    {
+        return maskz_arith2<float>(src, k, a, b, std::plus<float>());
+    }
+
+    //
 
     ZMM _mm512_sub_ps(ZMM a,
                       ZMM b)
     {
-        return arith2<float>(a, b, [] (float x, float y) { return x - y; });
+        return arith2<float>(a, b, std::minus<float>());
     }
+
+    ZMM _mm512_mask_sub_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b)
+    {
+        return mask_arith2<float>(src, k, a, b, std::minus<float>());
+    }
+
+    ZMM _mm512_maskz_sub_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b)
+    {
+        return maskz_arith2<float>(src, k, a, b, std::minus<float>());
+    }
+
+    //
 
     ZMM _mm512_mul_ps(ZMM a,
                       ZMM b)
     {
-        return arith2<float>(a, b, [] (float x, float y) { return x * y; });
+        return arith2<float>(a, b, std::multiplies<float>());
     }
+
+    ZMM _mm512_mask_mul_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b)
+    {
+        return mask_arith2<float>(src, k, a, b, std::multiplies<float>());
+    }
+
+    ZMM _mm512_maskz_mul_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b)
+    {
+        return maskz_arith2<float>(src, k, a, b, std::multiplies<float>());
+    }
+
+    //
 
     ZMM _mm512_div_ps(ZMM a,
                       ZMM b)
     {
-        return arith2<float>(a, b, [] (float x, float y) { return x / y; });
+        return arith2<float>(a, b, std::divides<float>());
     }
+
+    ZMM _mm512_mask_div_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b)
+    {
+        return mask_arith2<float>(src, k, a, b, std::divides<float>());
+    }
+
+    ZMM _mm512_maskz_div_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b)
+    {
+        return maskz_arith2<float>(src, k, a, b, std::divides<float>());
+    }
+
+    //
 
     ZMM _mm512_min_ps(ZMM a,
                       ZMM b)
@@ -62,10 +134,44 @@ namespace fv
         return arith2<float>(a, b, [] (float x, float y) { return std::min(x, y); });
     }
 
+    ZMM _mm512_mask_min_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b)
+    {
+        return mask_arith2<float>(src, k, a, b, [] (float x, float y) { return std::min(x, y); });
+    }
+
+    ZMM _mm512_maskz_min_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b)
+    {
+        return maskz_arith2<float>(src, k, a, b, [] (float x, float y) { return std::min(x, y); });
+    }
+
+    //
+
     ZMM _mm512_max_ps(ZMM a,
                       ZMM b)
     {
         return arith2<float>(a, b, [] (float x, float y) { return std::max(x, y); });
+    }
+
+    ZMM _mm512_mask_max_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b)
+    {
+        return mask_arith2<float>(src, k, a, b, [] (float x, float y) { return std::max(x, y); });
+    }
+
+    ZMM _mm512_maskz_max_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b)
+    {
+        return maskz_arith2<float>(src, k, a, b, [] (float x, float y) { return std::max(x, y); });
     }
 
     // Compare operations.

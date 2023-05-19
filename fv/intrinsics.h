@@ -18,37 +18,144 @@ namespace fv
     // Arithmetic operations with 2 arguments.
 
     template <typename T>
+    ZMM mask_arith2(ZMM src,
+                    Mask k,
+                    ZMM a,
+                    ZMM b,
+                    std::function<T(T, T)> op,
+                    bool is_z = false)
+    {
+        ZMM dst;
+
+        for (int i = 0; i < ZMM::count<T>(); i++)
+        {
+            if (k.is_set(i))
+            {
+                dst.set<T>(i, op(a.get<T>(i), b.get<T>(i)));
+            }
+            else
+            {
+                if (is_z)
+                {
+                    dst.set<T>(i, static_cast<T>(0));
+                }
+                else
+                {
+                    dst.set<T>(i, src.get<T>(i));
+                }
+            }
+        }
+
+        return dst;
+    }
+
+    template <typename T>
+    ZMM maskz_arith2(ZMM src,
+                     Mask k,
+                     ZMM a,
+                     ZMM b,
+                     std::function<T(T, T)> op)
+    {
+        return mask_arith2(src, k, a, b, op, true);
+    }
+
+    template <typename T>
     ZMM arith2(ZMM a,
                ZMM b,
                std::function<T(T, T)> op)
     {
-        ZMM r;
-
-        for (int i = 0; i < ZMM::count<T>(); i++)
-        {
-            r.set<T>(i, op(a.get<T>(i), b.get<T>(i)));
-        }
-
-        return r;
+        return mask_arith2(ZMM(), Mask::full(), a, b, op);
     }
+
+    //
 
     ZMM _mm512_add_ps(ZMM a,
                       ZMM b);
 
+    ZMM _mm512_mask_add_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b);
+
+    ZMM _mm512_maskz_add_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b);
+
+    //
+
     ZMM _mm512_sub_ps(ZMM a,
                       ZMM b);
+
+    ZMM _mm512_mask_sub_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b);
+
+    ZMM _mm512_maskz_sub_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b);
+
+    //
 
     ZMM _mm512_mul_ps(ZMM a,
                       ZMM b);
 
+    ZMM _mm512_mask_mul_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b);
+
+    ZMM _mm512_maskz_mul_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b);
+
+    //
+
     ZMM _mm512_div_ps(ZMM a,
                       ZMM b);
+
+    ZMM _mm512_mask_div_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b);
+
+    ZMM _mm512_maskz_div_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b);
+
+    //
 
     ZMM _mm512_min_ps(ZMM a,
                       ZMM b);
 
+    ZMM _mm512_mask_min_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b);
+
+    ZMM _mm512_maskz_min_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b);
+
+    //
+
     ZMM _mm512_max_ps(ZMM a,
                       ZMM b);
+
+    ZMM _mm512_mask_max_ps(ZMM src,
+                           Mask k,
+                           ZMM a,
+                           ZMM b);
+
+    ZMM _mm512_maskz_max_ps(ZMM src,
+                            Mask k,
+                            ZMM a,
+                            ZMM b);
 
     // Compare operations.
 
