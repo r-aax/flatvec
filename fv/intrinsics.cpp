@@ -4,6 +4,8 @@
 
 namespace fv
 {
+    // Memory access.
+
     ZMM _mm512_load_ps(void const* mem_addr)
     {
         ZMM r;
@@ -11,7 +13,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::f32_count; i++)
         {
-            r.setF32(i, faddr[i]);
+            r.set<float>(i, faddr[i]);
         }
 
         return r;
@@ -24,9 +26,11 @@ namespace fv
 
         for (int i = 0; i < ZMM::f32_count; i++)
         {
-            faddr[i] = a.getF32(i);
+            faddr[i] = a.get<float>(i);
         }
     }
+
+    // Arithmetic operations with 2 arguments.
 
     ZMM _mm512_add_ps(ZMM a,
                       ZMM b)
@@ -35,7 +39,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::f32_count; i++)
         {
-            r.setF32(i, a.getF32(i) + b.getF32(i));
+            r.set<float>(i, a.get<float>(i) + b.get<float>(i));
         }
 
         return r;
@@ -48,7 +52,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::f32_count; i++)
         {
-            r.setF32(i, a.getF32(i) - b.getF32(i));
+            r.set<float>(i, a.get<float>(i) - b.get<float>(i));
         }
 
         return r;
@@ -61,7 +65,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::f32_count; i++)
         {
-            r.setF32(i, a.getF32(i) * b.getF32(i));
+            r.set<float>(i, a.get<float>(i) * b.get<float>(i));
         }
 
         return r;
@@ -74,7 +78,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::f32_count; i++)
         {
-            r.setF32(i, a.getF32(i) / b.getF32(i));
+            r.set<float>(i, a.get<float>(i) / b.get<float>(i));
         }
 
         return r;
@@ -87,7 +91,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::f32_count; i++)
         {
-            r.setF32(i, std::min(a.getF32(i), b.getF32(i)));
+            r.set<float>(i, std::min(a.get<float>(i), b.get<float>(i)));
         }
 
         return r;
@@ -100,7 +104,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::f32_count; i++)
         {
-            r.setF32(i, std::max(a.getF32(i), b.getF32(i)));
+            r.set<float>(i, std::max(a.get<float>(i), b.get<float>(i)));
         }
 
         return r;

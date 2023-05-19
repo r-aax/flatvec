@@ -18,12 +18,20 @@ int main()
     a.generate_random(10.0, 100.0);
     b.generate_random(10.0, 100.0);
 
+    a.print();
+    b.print();
+
     scase_arith_f32(n, a.getData(), b.getData(), sc.getData());
     vcase_arith_f32(n, a.getData(), b.getData(), vc.getData());
     sc.print();
     vc.print();
     std::cout << vc.maxDiff(sc);
     std::cout << " " << std::endl;
+
+    if (vc.maxDiff(sc) > 0.0)
+    {
+        std::cout << "ERROR!" << std::endl;
+    }
 
     getchar();
     return 0;

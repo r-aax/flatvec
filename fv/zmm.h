@@ -23,12 +23,7 @@ namespace fv
     private:
 
         // Union for data access.
-        union
-        {
-            int32_t i32[i32_count];
-            float f32[f32_count];
-            double f64[f64_count];
-        } data;
+        int8_t data[bits];
 
     public:
 
@@ -40,20 +35,24 @@ namespace fv
 
         // Access.
 
-        int32_t getI32(int i) const;
+        template <typename T>
+        T get(int i) const
+        {
+            const void* vp = static_cast<const void*>(&data[i * sizeof(T)]);
+            const T* tp = static_cast<const T*>(vp);
 
-        void setI32(int i,
-                    int32_t v);
+            return *tp;
+        }
 
-        float getF32(int i) const;
+        template <typename T>
+        void set(int i,
+                 T v)
+        {
+            void *vp = static_cast<void*>(&data[i * sizeof(T)]);
+            T* tp = static_cast<T*>(vp);
 
-        void setF32(int i,
-                    float v);
-
-        double getF64(int i) const;
-
-        void setF64(int i,
-                    double v);
+            *tp = v;
+        }
 
         // Representation.
 

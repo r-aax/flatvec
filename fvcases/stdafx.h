@@ -11,5 +11,6 @@
 
 #include <cassert>
 #include <random>
+#include <functional>
 
 // TODO: reference additional headers your program requires here
