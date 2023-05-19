@@ -138,6 +138,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="array_manager.cpp" />
     <ClCompile Include="cases.cpp" />
     <ClCompile Include="fvcases.cpp" />
     <ClCompile Include="stdafx.cpp">

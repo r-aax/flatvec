@@ -32,6 +32,21 @@ namespace fv
             return data;
         }
 
+        void print() const
+        {
+            std::cout << "Array (" << size << "):";
+
+            for (int i = 0; i < size; i++)
+            {
+                std::cout << " " << data[i];
+            }
+
+            std::cout << std::endl;
+        }
+
+        void generate_random(T lo,
+                             T hi);
+
         T maxDiff(ArrayManager<T>& am) const
         {
             T md {};

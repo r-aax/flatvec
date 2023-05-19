@@ -15,9 +15,16 @@ int main()
     ArrayManager<float> sc(n);
     ArrayManager<float> vc(n);
 
+    a.generate_random(0.0, 100.0);
+    b.generate_random(0.0, 100.0);
+    a.print();
+    b.print();
+
     scase_add_f32(n, a.getData(), b.getData(), sc.getData());
     vcase_add_f32(n, a.getData(), b.getData(), vc.getData());
 
+    sc.print();
+    vc.print();
     std::cout << vc.maxDiff(sc);
 
     getchar();

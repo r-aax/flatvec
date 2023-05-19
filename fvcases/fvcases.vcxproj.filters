@@ -44,5 +44,8 @@
     <ClCompile Include="cases.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="array_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
