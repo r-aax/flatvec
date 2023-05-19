@@ -53,11 +53,11 @@ namespace fv
     // Compare operations.
 
     template <typename T>
-    Mask<16> compare(ZMM a,
-                     ZMM b,
-                     std::function<bool(T, T)> op)
+    Mask compare(ZMM a,
+                 ZMM b,
+                 std::function<bool(T, T)> op)
     {
-        Mask<16> m;
+        Mask m;
 
         for (int i = 0; i < ZMM::count<T>(); i++)
         {
@@ -67,33 +67,33 @@ namespace fv
         return m;
     }
 
-    Mask<16> _mm512_cmpeq_ps_mask(ZMM a,
-                                  ZMM b);
+    Mask _mm512_cmpeq_ps_mask(ZMM a,
+                              ZMM b);
 
-    Mask<16> _mm512_cmple_ps_mask(ZMM a,
-                                  ZMM b);
+    Mask _mm512_cmple_ps_mask(ZMM a,
+                              ZMM b);
 
-    Mask<16> _mm512_cmplt_ps_mask(ZMM a,
-                                  ZMM b);
+    Mask _mm512_cmplt_ps_mask(ZMM a,
+                              ZMM b);
 
-    Mask<16> _mm512_cmpneq_ps_mask(ZMM a,
-                                   ZMM b);
+    Mask _mm512_cmpneq_ps_mask(ZMM a,
+                               ZMM b);
 
-    Mask<16> _mm512_cmpnle_ps_mask(ZMM a,
-                                   ZMM b);
+    Mask _mm512_cmpnle_ps_mask(ZMM a,
+                               ZMM b);
 
-    Mask<16> _mm512_cmpnlt_ps_mask(ZMM a,
-                                   ZMM b);
+    Mask _mm512_cmpnlt_ps_mask(ZMM a,
+                               ZMM b);
 
-    Mask<16> _mm512_cmpord_ps_mask(ZMM a,
-                                   ZMM b);
+    Mask _mm512_cmpord_ps_mask(ZMM a,
+                               ZMM b);
 
-    Mask<16> _mm512_cmpunord_ps_mask(ZMM a,
-                                     ZMM b);
+    Mask _mm512_cmpunord_ps_mask(ZMM a,
+                                 ZMM b);
 
     // Blend operations.
 
-    ZMM _mm512_mask_blend_ps(Mask<16> m,
+    ZMM _mm512_mask_blend_ps(Mask k,
                              ZMM a,
                              ZMM b);
 }

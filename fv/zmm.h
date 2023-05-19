@@ -59,7 +59,7 @@ namespace fv
 
         // Representation.
         template <typename T>
-        std::string ZMM::getRepresentation() const
+        std::string ZMM::get_representation() const
         {
             std::stringstream ss;
 

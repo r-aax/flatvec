@@ -27,7 +27,7 @@ namespace fv
             delete[] data;
         }
 
-        T* getData()
+        T* get_data()
         {
             return data;
         }
@@ -53,7 +53,7 @@ namespace fv
 
             for (int i = 0; i < size; i++)
             {
-                T d = abs(data[i] - am.getData()[i]);
+                T d = abs(data[i] - am.get_data()[i]);
 
                 md = std::max(md, d);
             }

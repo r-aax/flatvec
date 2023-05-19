@@ -67,8 +67,8 @@ namespace fv
         a.generate_random(random_lo, random_hi);
         b.generate_random(random_lo, random_hi);
 
-        scase_arith_f32(n, a.getData(), b.getData(), sc.getData());
-        vcase_arith_f32(n, a.getData(), b.getData(), vc.getData());
+        scase_arith_f32(n, a.get_data(), b.get_data(), sc.get_data());
+        vcase_arith_f32(n, a.get_data(), b.get_data(), vc.get_data());
 
         return vc.maxDiff(sc) == 0.0;
     }
@@ -109,7 +109,7 @@ namespace fv
             ZMM vb = _mm512_load_ps(b + sh);
             ZMM vadd = _mm512_add_ps(va, vb);
             ZMM vmul = _mm512_mul_ps(va, vb);
-            Mask<16> m = _mm512_cmpgt_ps_mask(va, vb);
+            Mask m = _mm512_cmpgt_ps_mask(va, vb);
 
             ZMM vc = _mm512_mask_blend_ps(m, vmul, vadd);
 
@@ -131,10 +131,9 @@ namespace fv
         a.generate_random(random_lo, random_hi);
         b.generate_random(random_lo, random_hi);
 
-        scase_blend_f32(n, a.getData(), b.getData(), sc.getData());
-        vcase_blend_f32(n, a.getData(), b.getData(), vc.getData());
+        scase_blend_f32(n, a.get_data(), b.get_data(), sc.get_data());
+        vcase_blend_f32(n, a.get_data(), b.get_data(), vc.get_data());
 
         return vc.maxDiff(sc) == 0.0;
     }
-
 }

@@ -70,57 +70,57 @@ namespace fv
 
     // Compare operations.
 
-    Mask<16> _mm512_cmpeq_ps_mask(ZMM a,
-                                  ZMM b)
+    Mask _mm512_cmpeq_ps_mask(ZMM a,
+                              ZMM b)
     {
         return compare<float>(a, b, [] (float x, float y) { return x == y; });
     }
 
-    Mask<16> _mm512_cmple_ps_mask(ZMM a,
-                                  ZMM b)
+    Mask _mm512_cmple_ps_mask(ZMM a,
+                              ZMM b)
     {
         return compare<float>(a, b, [] (float x, float y) { return x <= y; });
     }
 
-    Mask<16> _mm512_cmplt_ps_mask(ZMM a,
-                                  ZMM b)
+    Mask _mm512_cmplt_ps_mask(ZMM a,
+                              ZMM b)
     {
         return compare<float>(a, b, [] (float x, float y) { return x < y; });
     }
 
-    Mask<16> _mm512_cmpneq_ps_mask(ZMM a,
-                                   ZMM b)
+    Mask _mm512_cmpneq_ps_mask(ZMM a,
+                               ZMM b)
     {
         return compare<float>(a, b, [] (float x, float y) { return x != y; });
     }
 
-    Mask<16> _mm512_cmpnle_ps_mask(ZMM a,
-                                   ZMM b)
+    Mask _mm512_cmpnle_ps_mask(ZMM a,
+                               ZMM b)
     {
         return compare<float>(a, b, [] (float x, float y) { return !(x <= y); });
     }
 
-    Mask<16> _mm512_cmpnlt_ps_mask(ZMM a,
-                                   ZMM b)
+    Mask _mm512_cmpnlt_ps_mask(ZMM a,
+                               ZMM b)
     {
         return compare<float>(a, b, [] (float x, float y) { return !(x < y); });
     }
 
-    Mask<16> _mm512_cmpord_ps_mask(ZMM a,
-                                   ZMM b)
+    Mask _mm512_cmpord_ps_mask(ZMM a,
+                               ZMM b)
     {
         return compare<float>(a, b, [] (float x, float y) { return !std::isnan(x) && !std::isnan(y); });
     }
 
-    Mask<16> _mm512_cmpunord_ps_mask(ZMM a,
-                                     ZMM b)
+    Mask _mm512_cmpunord_ps_mask(ZMM a,
+                                 ZMM b)
     {
         return compare<float>(a, b, [] (float x, float y) { return std::isnan(x) || std::isnan(y); });
     }
 
     // Blend operations.
 
-    ZMM _mm512_mask_blend_ps(Mask<16> m,
+    ZMM _mm512_mask_blend_ps(Mask k,
                              ZMM a,
                              ZMM b)
     {
@@ -128,7 +128,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::count<float>(); i++)
         {
-            r.set<float>(i, m.is_set(i) ? b.get<float>(i) : a.get<float>(i));
+            r.set<float>(i, k.is_set(i) ? b.get<float>(i) : a.get<float>(i));
         }
 
         return r;

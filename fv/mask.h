@@ -6,34 +6,36 @@
 namespace fv
 {
     // Mask.
-    template <int Size>
     class Mask
     {
+
+    public:
+
+        // Bits count.
+
+        static const int bits = 64;
 
     private:
 
         // Mask data.
-        bool data[Size];
+        bool data[bits];
 
     public:
 
         // Access to data.
 
-        bool get(int i)
-        {
-            return data[i];
-        }
+        bool get(int i);
 
-        bool is_set(int i)
-        {
-            return get(i);
-        }
+        bool is_set(int i);
 
         void set(int i,
-                 bool v)
-        {
-            data[i] = v;
-        }
+                 bool v);
+
+        // Generate full mask.
+
+        void set_full();
+
+        static Mask full();
     };
 }
 
