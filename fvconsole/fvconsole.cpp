@@ -9,7 +9,7 @@ using namespace fv;
 
 int main()
 {
-    int n = 1 * ZMM::f32_count;
+    int n = 1 * ZMM::count<float>();
     ArrayManager<float> a(n);
     ArrayManager<float> b(n);
     ArrayManager<float> sc(n);

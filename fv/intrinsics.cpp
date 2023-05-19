@@ -11,7 +11,7 @@ namespace fv
         ZMM r;
         float const* faddr = static_cast<float const*>(mem_addr);
 
-        for (int i = 0; i < ZMM::f32_count; i++)
+        for (int i = 0; i < ZMM::count<float>(); i++)
         {
             r.set<float>(i, faddr[i]);
         }
@@ -24,7 +24,7 @@ namespace fv
     {
         float* faddr = static_cast<float*>(mem_addr);
 
-        for (int i = 0; i < ZMM::f32_count; i++)
+        for (int i = 0; i < ZMM::count<float>(); i++)
         {
             faddr[i] = a.get<float>(i);
         }
@@ -37,7 +37,7 @@ namespace fv
     {
         ZMM r;
 
-        for (int i = 0; i < ZMM::f32_count; i++)
+        for (int i = 0; i < ZMM::count<float>(); i++)
         {
             r.set<float>(i, a.get<float>(i) + b.get<float>(i));
         }
@@ -50,7 +50,7 @@ namespace fv
     {
         ZMM r;
 
-        for (int i = 0; i < ZMM::f32_count; i++)
+        for (int i = 0; i < ZMM::count<float>(); i++)
         {
             r.set<float>(i, a.get<float>(i) - b.get<float>(i));
         }
@@ -63,7 +63,7 @@ namespace fv
     {
         ZMM r;
 
-        for (int i = 0; i < ZMM::f32_count; i++)
+        for (int i = 0; i < ZMM::count<float>(); i++)
         {
             r.set<float>(i, a.get<float>(i) * b.get<float>(i));
         }
@@ -76,7 +76,7 @@ namespace fv
     {
         ZMM r;
 
-        for (int i = 0; i < ZMM::f32_count; i++)
+        for (int i = 0; i < ZMM::count<float>(); i++)
         {
             r.set<float>(i, a.get<float>(i) / b.get<float>(i));
         }
@@ -89,7 +89,7 @@ namespace fv
     {
         ZMM r;
 
-        for (int i = 0; i < ZMM::f32_count; i++)
+        for (int i = 0; i < ZMM::count<float>(); i++)
         {
             r.set<float>(i, std::min(a.get<float>(i), b.get<float>(i)));
         }
@@ -102,7 +102,7 @@ namespace fv
     {
         ZMM r;
 
-        for (int i = 0; i < ZMM::f32_count; i++)
+        for (int i = 0; i < ZMM::count<float>(); i++)
         {
             r.set<float>(i, std::max(a.get<float>(i), b.get<float>(i)));
         }

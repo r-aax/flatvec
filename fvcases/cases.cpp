@@ -22,12 +22,12 @@ namespace fv
                          float* b,
                          float* c)
     {
-        assert(n % ZMM::f32_count == 0);
-        int vn = n / ZMM::f32_count;
+        assert(n % ZMM::count<float>() == 0);
+        int vn = n / ZMM::count<float>();
 
         for (int vi = 0; vi < vn; vi++)
         {
-            int sh = vi * ZMM::f32_count;
+            int sh = vi * ZMM::count<float>();
 
             ZMM va = _mm512_load_ps(a + sh);
             ZMM vb = _mm512_load_ps(b + sh);

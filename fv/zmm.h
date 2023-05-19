@@ -14,11 +14,16 @@ namespace fv
     public:
 
         // Constants.
+
         static const int bits = 512;
         static const int bytes = bits / 8;
-        static const int i32_count = bytes / sizeof(int32_t);
-        static const int f32_count = bytes / sizeof(float);
-        static const int f64_count = bytes / sizeof(double);
+
+        // Count of elements.
+        template <typename T>
+        static int count()
+        {
+            return bytes / sizeof(T);
+        }
 
     private:
 
