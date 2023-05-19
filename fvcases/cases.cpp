@@ -2,6 +2,8 @@
 
 #include "cases.h"
 
+#include "array_manager.h"
+
 namespace fv
 {
     void scase_arith_f32(int n,
@@ -47,5 +49,25 @@ namespace fv
 
             _mm512_store_ps(c + sh, vc);
         }
+    }
+
+    bool case_arith_f32(int len,
+                        float random_lo,
+                        float random_hi)
+    {
+        int n = len * ZMM::count<float>();
+
+        ArrayManager<float> a(n);
+        ArrayManager<float> b(n);
+        ArrayManager<float> sc(n);
+        ArrayManager<float> vc(n);
+
+        a.generate_random(random_lo, random_hi);
+        b.generate_random(random_lo, random_hi);
+
+        scase_arith_f32(n, a.getData(), b.getData(), sc.getData());
+        vcase_arith_f32(n, a.getData(), b.getData(), vc.getData());
+
+        return vc.maxDiff(sc) == 0.0;
     }
 }
