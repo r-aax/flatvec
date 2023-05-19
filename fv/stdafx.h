@@ -14,5 +14,6 @@
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include <functional>
 
 // TODO: reference additional headers your program requires here

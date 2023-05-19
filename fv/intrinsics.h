@@ -16,6 +16,21 @@ namespace fv
 
     // Arithmetic operations with 2 arguments.
 
+    template <typename T>
+    ZMM arith2(ZMM a,
+               ZMM b,
+               std::function<T(T, T)> op2)
+    {
+        ZMM r;
+
+        for (int i = 0; i < ZMM::count<T>(); i++)
+        {
+            r.set<T>(i, op2(a.get<T>(i), b.get<T>(i)));
+        }
+
+        return r;
+    }
+
     ZMM _mm512_add_ps(ZMM a,
                       ZMM b);
 
