@@ -203,6 +203,32 @@ namespace fv
     ZMM _mm512_mask_blend_ps(Mask k,
                              ZMM a,
                              ZMM b);
+
+    // Operations with masks.
+
+    Mask koperation(int count,
+                    Mask a,
+                    Mask b,
+                    std::function<bool(bool, bool)> op);
+
+    Mask _mm512_kmov(Mask a);
+
+    Mask _mm512_knot(Mask a);
+
+    Mask _mm512_kand(Mask a,
+                     Mask b);
+
+    Mask _mm512_kandn(Mask a,
+                      Mask b);
+
+    Mask _mm512_kor(Mask a,
+                    Mask b);
+
+    Mask _mm512_kxor(Mask a,
+                     Mask b);
+
+    Mask _mm512_kxnor(Mask a,
+                      Mask b);
 }
 
 #endif

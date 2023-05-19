@@ -239,4 +239,68 @@ namespace fv
 
         return r;
     }
+
+    // Operations with masks.
+
+    Mask koperation(int count,
+                    Mask a,
+                    Mask b,
+                    std::function<bool(bool, bool)> op)
+    {
+        Mask k;
+
+        for (int i = 0; i < Mask::bits; i++)
+        {
+            if (i < count)
+            {
+                k.set(i, op(a.get(i), b.get(i)));
+            }
+            else
+            {
+                k.set(i, false);
+            }
+        }
+
+        return k;
+    }
+
+    Mask _mm512_kmov(Mask a)
+    {
+        return koperation(ZMM::count<float>(), a, a, [] (bool x, bool y) { return x; });
+    }
+
+    Mask _mm512_knot(Mask a)
+    {
+        return koperation(ZMM::count<float>(), a, a, [] (bool x, bool y) { return !x; });
+    }
+
+    Mask _mm512_kand(Mask a,
+                     Mask b)
+    {
+        return koperation(ZMM::count<float>(), a, b, std::bit_and<bool>());
+    }
+
+    Mask _mm512_kandn(Mask a,
+                      Mask b)
+    {
+        return koperation(ZMM::count<float>(), a, b, [] (bool x, bool y) { return !x & y; });
+    }
+
+    Mask _mm512_kor(Mask a,
+                    Mask b)
+    {
+        return koperation(ZMM::count<float>(), a, b, std::bit_or<bool>());
+    }
+
+    Mask _mm512_kxor(Mask a,
+                     Mask b)
+    {
+        return koperation(ZMM::count<float>(), a, b, std::bit_xor<bool>());
+    }
+
+    Mask _mm512_kxnor(Mask a,
+                      Mask b)
+    {
+        return koperation(ZMM::count<float>(), a, b, [] (bool x, bool y) { return !(x ^ y); });
+    }
 }
