@@ -67,4 +67,54 @@ namespace fv
     {
         return arith2<float>(a, b, [] (float x, float y) { return std::max(x, y); });
     }
+
+    // Compare operations.
+
+    Mask<16> _mm512_cmpeq_ps_mask(ZMM a,
+                                  ZMM b)
+    {
+        return compare<float>(a, b, [] (float x, float y) { return x == y; });
+    }
+
+    Mask<16> _mm512_cmple_ps_mask(ZMM a,
+                                  ZMM b)
+    {
+        return compare<float>(a, b, [] (float x, float y) { return x <= y; });
+    }
+
+    Mask<16> _mm512_cmplt_ps_mask(ZMM a,
+                                  ZMM b)
+    {
+        return compare<float>(a, b, [] (float x, float y) { return x < y; });
+    }
+
+    Mask<16> _mm512_cmpneq_ps_mask(ZMM a,
+                                   ZMM b)
+    {
+        return compare<float>(a, b, [] (float x, float y) { return x != y; });
+    }
+
+    Mask<16> _mm512_cmpnle_ps_mask(ZMM a,
+                                   ZMM b)
+    {
+        return compare<float>(a, b, [] (float x, float y) { return !(x <= y); });
+    }
+
+    Mask<16> _mm512_cmpnlt_ps_mask(ZMM a,
+                                   ZMM b)
+    {
+        return compare<float>(a, b, [] (float x, float y) { return !(x < y); });
+    }
+
+    Mask<16> _mm512_cmpord_ps_mask(ZMM a,
+                                   ZMM b)
+    {
+        return compare<float>(a, b, [] (float x, float y) { return !std::isnan(x) && !std::isnan(y); });
+    }
+
+    Mask<16> _mm512_cmpunord_ps_mask(ZMM a,
+                                     ZMM b)
+    {
+        return compare<float>(a, b, [] (float x, float y) { return std::isnan(x) || std::isnan(y); });
+    }
 }
