@@ -1,7 +1,7 @@
+#include "stdafx.h"
+
 #ifndef ARRAY_MANAGER_H
 #define ARRAY_MANAGER_H
-
-#include "stdafx.h"
 
 namespace fv
 {

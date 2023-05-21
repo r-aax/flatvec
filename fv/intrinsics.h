@@ -1,7 +1,7 @@
+#include "stdafx.h"
+
 #ifndef INTRINSICS_H
 #define INTRINSICS_H
-
-#include "stdafx.h"
 
 #include "zmm.h"
 #include "mask.h"

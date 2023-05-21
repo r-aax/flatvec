@@ -1,7 +1,7 @@
+#include "stdafx.h"
+
 #ifndef MASK_H
 #define MASK_H
-
-#include "stdafx.h"
 
 namespace fv
 {

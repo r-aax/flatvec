@@ -1,7 +1,7 @@
+#include "stdafx.h"
+
 #ifndef ZMM_H
 #define ZMM_H
-
-#include "stdafx.h"
 
 namespace fv
 {
@@ -59,7 +59,7 @@ namespace fv
 
         // Representation.
         template <typename T>
-        std::string ZMM::get_representation() const
+        std::string get_representation() const
         {
             std::stringstream ss;
 

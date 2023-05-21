@@ -1,7 +1,7 @@
+#include "stdafx.h"
+
 #ifndef CASES_H
 #define CASES_H
-
-#include "stdafx.h"
 
 #include "fv.h"
 
