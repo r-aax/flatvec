@@ -6,6 +6,13 @@
 
 namespace fv
 {
+    // Some constants.
+
+    ZMM zero = _mm512_set1_ps(0.0f);
+    ZMM one = _mm512_set1_ps(1.0f);
+    ZMM two = _mm512_set1_ps(2.0f);
+    ZMM half = _mm512_set1_ps(0.5f);
+
     // arith_f32
 
     /// <summary>
@@ -362,10 +369,6 @@ namespace fv
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
 
-        ZMM z = _mm512_set1_ps(0.0f);
-        ZMM one = _mm512_set1_ps(1.0f);
-        ZMM two = _mm512_set1_ps(2.0f);
-        ZMM half = _mm512_set1_ps(0.5f);
         ZMM g1 = _mm512_set1_ps(sg1);
         ZMM g3 = _mm512_set1_ps(sg3);
         ZMM g4 = _mm512_set1_ps(sg4);
@@ -394,7 +397,7 @@ namespace fv
 
             cup = _mm512_mul_ps(_mm512_set1_ps(0.25), _mm512_mul_ps(_mm512_add_ps(dl, dr), _mm512_add_ps(cl, cr)));
             ppv = _mm512_mul_ps(half, _mm512_fmadd_ps(_mm512_sub_ps(ul, ur), cup, _mm512_add_ps(pl, pr)));
-            ppv = _mm512_max_ps(ppv, z);
+            ppv = _mm512_max_ps(ppv, zero);
             pmin = _mm512_min_ps(pl, pr);
             pmax = _mm512_max_ps(pl, pr);
             qmax = _mm512_div_ps(pmax, pmin);
@@ -412,23 +415,23 @@ namespace fv
             // The second branch.
             if (!cond_ppv.is_empty())
             {
-                pq = _mm512_mask_pow_ps(z, cond_ppv, _mm512_mask_div_ps(z, cond_ppv, pl, pr), g1);
+                pq = _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mask_div_ps(zero, cond_ppv, pl, pr), g1);
                 pqcr = _mm512_mul_ps(pq, cr);
-                um = _mm512_mask_div_ps(z, cond_ppv,
+                um = _mm512_mask_div_ps(zero, cond_ppv,
                                         _mm512_fmadd_ps(_mm512_fmadd_ps(_mm512_sub_ps(pqcr, cr), g4, ur), cl, _mm512_mul_ps(pqcr, ul)),
                                         _mm512_add_ps(pqcr, cl));
-                ptl = _mm512_fmadd_ps(_mm512_mask_div_ps(z, cond_ppv, _mm512_sub_ps(ul, um), cl), g7, one);
-                ptr = _mm512_fmadd_ps(_mm512_mask_div_ps(z, cond_ppv, _mm512_sub_ps(um, ur), cr), g7, one);
+                ptl = _mm512_fmadd_ps(_mm512_mask_div_ps(zero, cond_ppv, _mm512_sub_ps(ul, um), cl), g7, one);
+                ptr = _mm512_fmadd_ps(_mm512_mask_div_ps(zero, cond_ppv, _mm512_sub_ps(um, ur), cr), g7, one);
                 pm = _mm512_mask_mul_ps(pm, cond_ppv, half,
-                                        _mm512_add_ps(_mm512_mask_pow_ps(z, cond_ppv, _mm512_mul_ps(pl, ptl), g3),
-                                        _mm512_mask_pow_ps(z, cond_ppv, _mm512_mul_ps(pr, ptr), g3)));
+                                        _mm512_add_ps(_mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pl, ptl), g3),
+                                        _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pr, ptr), g3)));
             }
 
             // The third branch.
             if (!ncond_ppv.is_empty())
             {
-                gel = _mm512_sqrt_ps(_mm512_mask_div_ps(z, ncond_ppv, g5, _mm512_mul_ps(_mm512_fmadd_ps(g6, pl, ppv), dl)));
-                ger = _mm512_sqrt_ps(_mm512_mask_div_ps(z, ncond_ppv, g5, _mm512_mul_ps(_mm512_fmadd_ps(g6, pr, ppv), dr)));
+                gel = _mm512_sqrt_ps(_mm512_mask_div_ps(zero, ncond_ppv, g5, _mm512_mul_ps(_mm512_fmadd_ps(g6, pl, ppv), dl)));
+                ger = _mm512_sqrt_ps(_mm512_mask_div_ps(zero, ncond_ppv, g5, _mm512_mul_ps(_mm512_fmadd_ps(g6, pr, ppv), dr)));
                 pm = _mm512_mask_div_ps(pm, ncond_ppv,
                                         _mm512_fmadd_ps(gel, pl, _mm512_fmadd_ps(ger, pr, _mm512_sub_ps(ul, ur))),
                                         _mm512_add_ps(gel, ger));
@@ -595,9 +598,6 @@ namespace fv
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
 
-        ZMM z = _mm512_set1_ps(0.0f);
-        ZMM one = _mm512_set1_ps(1.0f);
-        ZMM half = _mm512_set1_ps(0.5f);
         ZMM g1 = _mm512_set1_ps(sg1);
         ZMM g2 = _mm512_set1_ps(sg2);
         ZMM g4 = _mm512_set1_ps(sg4);
@@ -624,26 +624,26 @@ namespace fv
             // The first branch.
             if (!cond.is_empty())
             {
-                pratio = _mm512_mask_div_ps(z, cond, p, pk);
+                pratio = _mm512_mask_div_ps(zero, cond, p, pk);
                 f = _mm512_mask_mul_ps(f, cond,
                                        _mm512_mul_ps(g4, ck),
-                                       _mm512_sub_ps(_mm512_mask_pow_ps(z, cond, pratio, g1), one));
+                                       _mm512_sub_ps(_mm512_mask_pow_ps(zero, cond, pratio, g1), one));
                 fd = _mm512_mask_div_ps(fd, cond,
-                                        _mm512_mask_pow_ps(z, cond, pratio, _mm512_sub_ps(z, g2)),
+                                        _mm512_mask_pow_ps(zero, cond, pratio, _mm512_sub_ps(zero, g2)),
                                         _mm512_mul_ps(dk, ck));
             }
 
             // The second branch.
             if (!ncond.is_empty())
             {
-                ak = _mm512_mask_div_ps(z, ncond, g5, dk);
+                ak = _mm512_mask_div_ps(zero, ncond, g5, dk);
                 bkp = _mm512_fmadd_ps(g6, pk, p);
                 ppk = _mm512_sub_ps(p, pk);
-                qrt = _mm512_mask_sqrt_ps(z, ncond,
-                                          _mm512_mask_div_ps(z, ncond, ak, bkp));
+                qrt = _mm512_mask_sqrt_ps(zero, ncond,
+                                          _mm512_mask_div_ps(zero, ncond, ak, bkp));
                 f = _mm512_mask_mul_ps(f, ncond, ppk, qrt);
                 fd = _mm512_mask_mul_ps(fd, ncond, qrt,
-                                        _mm512_fnmadd_ps(_mm512_mask_div_ps(z, ncond, ppk, bkp),
+                                        _mm512_fnmadd_ps(_mm512_mask_div_ps(zero, ncond, ppk, bkp),
                                         _mm512_set1_ps(0.5), one));
             }
 
@@ -992,9 +992,6 @@ namespace fv
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
 
-        ZMM z = _mm512_set1_ps(0.0f);
-        ZMM one = _mm512_set1_ps(1.0f);
-        ZMM half = _mm512_set1_ps(0.5f);
         ZMM g1 = _mm512_set1_ps(sg1);
         ZMM g2 = _mm512_set1_ps(sg2);
         ZMM g3 = _mm512_set1_ps(sg3);
@@ -1028,7 +1025,7 @@ namespace fv
             Mask cond_um, cond_pm, cond_sh, cond_st, cond_s, cond_sh_st;
 
             // d/u/p/c/ums
-            cond_um = _mm512_cmplt_ps_mask(um, z);
+            cond_um = _mm512_cmplt_ps_mask(um, zero);
             d = _mm512_mask_blend_ps(cond_um, dl, dr);
             u = _mm512_mask_blend_ps(cond_um, ul, ur);
             v = _mm512_mask_blend_ps(cond_um, vl, vr);
@@ -1036,8 +1033,8 @@ namespace fv
             p = _mm512_mask_blend_ps(cond_um, pl, pr);
             c = _mm512_mask_blend_ps(cond_um, cl, cr);
             ums = um;
-            u = _mm512_mask_sub_ps(u, cond_um, z, u);
-            ums = _mm512_mask_sub_ps(ums, cond_um, z, ums);
+            u = _mm512_mask_sub_ps(u, cond_um, zero, u);
+            ums = _mm512_mask_sub_ps(ums, cond_um, zero, ums);
 
             // Calculate main values.
             pms = _mm512_div_ps(pm, p);
@@ -1047,9 +1044,9 @@ namespace fv
 
             // Conditions.
             cond_pm = _mm512_cmple_ps_mask(pm, p);
-            cond_sh = _mm512_mask_cmplt_ps_mask(cond_pm, sh, z);
-            cond_st = _mm512_mask_cmplt_ps_mask(cond_sh, st, z);
-            cond_s = _mm512_mask_cmplt_ps_mask(_mm512_knot(cond_pm), s, z);
+            cond_sh = _mm512_mask_cmplt_ps_mask(cond_pm, sh, zero);
+            cond_st = _mm512_mask_cmplt_ps_mask(cond_sh, st, zero);
+            cond_s = _mm512_mask_cmplt_ps_mask(_mm512_knot(cond_pm), s, zero);
 
             // Store.
             d = _mm512_mask_mov_ps(d, cond_st, _mm512_mul_ps(d, _mm512_pow_ps(pms, _mm512_set1_ps(1.0f / sg))));
@@ -1068,7 +1065,7 @@ namespace fv
             }
 
             // Final store.
-            u = _mm512_mask_sub_ps(u, cond_um, z, u);
+            u = _mm512_mask_sub_ps(u, cond_um, zero, u);
 
             _mm512_store_ps(d_p + shift, d);
             _mm512_store_ps(u_p + shift, u);
