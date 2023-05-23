@@ -70,7 +70,7 @@ namespace fv
         scase_arith_f32(n, a.get_data(), b.get_data(), sc.get_data());
         vcase_arith_f32(n, a.get_data(), b.get_data(), vc.get_data());
 
-        return vc.maxDiff(sc) == 0.0;
+        return vc.max_diff(sc) == 0.0;
     }
 
     // blend_f32
@@ -135,7 +135,7 @@ namespace fv
         scase_blend_f32(n, a.get_data(), b.get_data(), sc.get_data());
         vcase_blend_f32(n, a.get_data(), b.get_data(), vc.get_data());
 
-        return vc.maxDiff(sc) == 0.0;
+        return vc.max_diff(sc) == 0.0;
     }
 
     // Riemann solver
@@ -297,13 +297,14 @@ namespace fv
 
             // End of calculation part.
 
-            _mm512_load_ps(pm_p + sh);
+            _mm512_store_ps(pm_p + sh, pm);
         }
     }
 
     bool case_guessp(int len,
                      float random_lo,
-                     float random_hi)
+                     float random_hi,
+                     float eps)
     {
         int n = len * ZMM::count<float>();
 
@@ -336,6 +337,6 @@ namespace fv
                      dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
                      vpm.get_data());
 
-        return vpm.maxDiff(spm) == 0.0;
+        return vpm.max_diff(spm) < eps;
     }
 }

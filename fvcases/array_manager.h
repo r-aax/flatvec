@@ -47,7 +47,7 @@ namespace fv
         void generate_random(T lo,
                              T hi);
 
-        T maxDiff(ArrayManager<T>& am) const
+        T max_diff(ArrayManager<T>& am) const
         {
             T md {};
 

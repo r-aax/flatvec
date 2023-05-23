@@ -66,7 +66,8 @@ namespace fv
 
     bool case_guessp(int len,
                      float random_lo = 1.0,
-                     float random_hi = 2.0);
+                     float random_hi = 2.0,
+                     float eps = 1.0e-4);
 }
 
 #endif
