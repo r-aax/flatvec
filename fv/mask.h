@@ -22,6 +22,10 @@ namespace fv
 
     public:
 
+        // Constructor.
+
+        Mask();
+
         // Access to data.
 
         bool get(int i) const;
@@ -32,6 +36,8 @@ namespace fv
                  bool v);
 
         // Generate full mask.
+
+        void clear();
 
         void set_full();
 

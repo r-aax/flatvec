@@ -4,6 +4,20 @@
 
 namespace fv
 {
+    // Init operations.
+
+    ZMM _mm512_set1_ps(float a)
+    {
+        ZMM dst;
+
+        for (int i = 0; i < ZMM::count<float>(); i++)
+        {
+            dst.set<float>(i, a);
+        }
+
+        return dst;
+    }
+
     // Memory access.
 
     ZMM _mm512_load_ps(void const* mem_addr)
@@ -36,16 +50,12 @@ namespace fv
                            Mask k,
                            ZMM a)
     {
-        std::cout << "_mm512_mask_mov_ps is not implemented" << std::endl;
-
-        return ZMM();
+        return mask_arith1<float>(src, k, a, [] (float x) { return x; });
     }
 
     ZMM _mm512_sqrt_ps(ZMM a)
     {
-        std::cout << "_mm512_sqrt_ps is not implemented" << std::endl;
-
-        return ZMM();
+        return arith1<float>(a, [] (float x) { return sqrt(x); });
     }
 
     // Arithmetic operations with 2 arguments.
@@ -197,9 +207,7 @@ namespace fv
     ZMM _mm512_pow_ps(ZMM a,
                       ZMM b)
     {
-        std::cout << "_mm512_pow_ps is not implemented" << std::endl;
-
-        return ZMM();
+        return arith2<float>(a, b, [] (float x, float y) { return pow(x, y); });
     }
 
     ZMM _mm512_mask_pow_ps(ZMM src,
@@ -207,9 +215,7 @@ namespace fv
                            ZMM a,
                            ZMM b)
     {
-        std::cout << "_mm512_mask_pow_ps is not implemented" << std::endl;
-
-        return ZMM();
+        return mask_arith2<float>(src, k, a, b, [] (float x, float y) { return pow(x, y); });
     }
 
     ZMM _mm512_maskz_pow_ps(ZMM src,
@@ -217,9 +223,7 @@ namespace fv
                             ZMM a,
                             ZMM b)
     {
-        std::cout << "_mm512_maskz_pow_ps is not implemented" << std::endl;
-
-        return ZMM();
+        return maskz_arith2<float>(src, k, a, b, [] (float x, float y) { return pow(x, y); });
     }
 
     // Arithmetic operations with 3 arguments.
@@ -228,9 +232,14 @@ namespace fv
                         ZMM b,
                         ZMM c)
     {
-        std::cout << "_mm512_fmadd_ps is not implemented" << std::endl;
+        ZMM dst;
 
-        return ZMM();
+        for (int i = 0; i < ZMM::count<float>(); i++)
+        {
+            dst.set<float>(i, a.get<float>(i) * b.get<float>(i) + c.get<float>(i));
+        }
+
+        return dst;
     }
 
     // Compare operations.
@@ -261,9 +270,7 @@ namespace fv
                                    ZMM a,
                                    ZMM b)
     {
-        std::cout << "_mm512_mask_cmplt_ps_mask is not implemented" << std::endl;
-    
-        return Mask();
+        return mask_compare<float>(k, a, b, [] (float x, float y) { return x < y; });
     }
 
     //
@@ -384,14 +391,5 @@ namespace fv
                       Mask b)
     {
         return koperation(ZMM::count<float>(), a, b, [] (bool x, bool y) { return !(x ^ y); });
-    }
-
-    // Init operations.
-
-    ZMM _mm512_set1_ps(float a)
-    {
-        std::cout << "_mm512_set1_ps is not implemented" << std::endl;
-
-        return ZMM();
     }
 }

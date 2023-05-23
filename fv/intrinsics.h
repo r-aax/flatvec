@@ -8,6 +8,10 @@
 
 namespace fv
 {
+    // Init operations.
+
+    ZMM _mm512_set1_ps(float a);
+
     // Memory access.
 
     ZMM _mm512_load_ps(void const* mem_addr);
@@ -15,7 +19,37 @@ namespace fv
     void _mm512_store_ps(void* mem_addr,
                          ZMM a);
 
-    // Arithmetic operations with 1 argument.
+    // Arithmetic operations with 1 argument. 
+
+    template <typename T>
+    ZMM mask_arith1(ZMM src,
+                    Mask k,
+                    ZMM a,
+                    std::function<T(T)> op)
+    {
+        ZMM dst;
+
+        for (int i = 0; i < ZMM::count<T>(); i++)
+        {
+            if (k.is_set(i))
+            {
+                dst.set<T>(i, op(a.get<T>(i)));
+            }
+            else
+            {
+                dst.set<T>(i, src.get<T>(i));
+            }
+        }
+
+        return dst;
+    }
+
+    template <typename T>
+    ZMM arith1(ZMM a,
+               std::function<T(T)> op)
+    {
+        return mask_arith1<T>(ZMM(), Mask::full(), a, op);
+    }
 
     ZMM _mm512_mask_mov_ps(ZMM src,
                            Mask k,
@@ -64,7 +98,7 @@ namespace fv
                      ZMM b,
                      std::function<T(T, T)> op)
     {
-        return mask_arith2(src, k, a, b, op, true);
+        return mask_arith2<T>(src, k, a, b, op, true);
     }
 
     template <typename T>
@@ -72,7 +106,7 @@ namespace fv
                ZMM b,
                std::function<T(T, T)> op)
     {
-        return mask_arith2(ZMM(), Mask::full(), a, b, op);
+        return mask_arith2<T>(ZMM(), Mask::full(), a, b, op);
     }
 
     //
@@ -189,18 +223,34 @@ namespace fv
     // Compare operations.
 
     template <typename T>
+    Mask mask_compare(Mask k1,
+                      ZMM a,
+                      ZMM b,
+                      std::function<bool(T, T)> op)
+    {
+        Mask k;
+
+        for (int i = 0; i < ZMM::count<T>(); i++)
+        {
+            if (k1.is_set(i))
+            {
+                k.set(i, op(a.get<float>(i), b.get<float>(i)));
+            }
+            else
+            {
+                k.set(i, false);
+            }
+        }
+
+        return k;
+    }
+
+    template <typename T>
     Mask compare(ZMM a,
                  ZMM b,
                  std::function<bool(T, T)> op)
     {
-        Mask m;
-
-        for (int i = 0; i < ZMM::count<T>(); i++)
-        {
-            m.set(i, op(a.get<T>(i), b.get<T>(i)));
-        }
-
-        return m;
+        return mask_compare<T>(Mask::full(), a, b, op);
     }
 
     //
@@ -278,10 +328,6 @@ namespace fv
 
     Mask _mm512_kxnor(Mask a,
                       Mask b);
-
-    // Init operations.
-
-    ZMM _mm512_set1_ps(float a);
 }
 
 #endif

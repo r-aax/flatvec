@@ -4,6 +4,16 @@
 
 namespace fv
 {
+    // Constructor.
+
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    Mask::Mask()
+    {
+        clear();
+    }
+
     // Access to data.
 
     bool Mask::get(int i) const
@@ -23,6 +33,17 @@ namespace fv
     }
 
     // Generate full mask.
+
+    /// <summary>
+    /// Clear mask.
+    /// </summary>
+    void Mask::clear()
+    {
+        for (int i = 0; i < bits; i++)
+        {
+            data[i] = false;
+        }
+    }
 
     void Mask::set_full()
     {
