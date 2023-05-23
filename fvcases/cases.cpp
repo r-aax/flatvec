@@ -1032,4 +1032,88 @@ namespace fv
         return res;
     }
 
+    // Riemann solver
+    // starpu function
+
+    void scase_starpu(int n,
+                      float* dl,
+                      float* ul,
+                      float* pl,
+                      float* cl,
+                      float* dr,
+                      float* ur,
+                      float* pr,
+                      float* cr,
+                      float* p,
+                      float* u)
+    {
+    }
+
+    void vcase_starpu(int n,
+                      float* dl,
+                      float* ul,
+                      float* pl,
+                      float* cl,
+                      float* dr,
+                      float* ur,
+                      float* pr,
+                      float* cr,
+                      float* p,
+                      float* u)
+    {
+
+    }
+
+    bool case_starpu(int len,
+                     float random_lo,
+                     float random_hi,
+                     float eps)
+    {
+        int n = len * ZMM::count<float>();
+
+        ArrayManager<float> dl(n);
+        ArrayManager<float> ul(n);
+        ArrayManager<float> pl(n);
+        ArrayManager<float> cl(n);
+        ArrayManager<float> dr(n);
+        ArrayManager<float> ur(n);
+        ArrayManager<float> pr(n);
+        ArrayManager<float> cr(n);
+        ArrayManager<float> sp(n);
+        ArrayManager<float> vp(n);
+        ArrayManager<float> su(n);
+        ArrayManager<float> vu(n);
+
+        dl.generate_random(random_lo, random_hi);
+        ul.generate_random(random_lo, random_hi);
+        pl.generate_random(random_lo, random_hi);
+        cl.generate_random(random_lo, random_hi);
+        dr.generate_random(random_lo, random_hi);
+        ur.generate_random(random_lo, random_hi);
+        pr.generate_random(random_lo, random_hi);
+        cr.generate_random(random_lo, random_hi);
+        sp.generate_random(random_lo, random_hi);
+        vp.generate_random(random_lo, random_hi);
+        su.generate_random(random_lo, random_hi);
+        vu.generate_random(random_lo, random_hi);
+
+        scase_starpu(n,
+                     dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
+                     dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
+                     sp.get_data(), su.get_data());
+
+        vcase_starpu(n,
+                     dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
+                     dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
+                     vp.get_data(), vu.get_data());
+
+        bool res = (vp.max_diff(sp) + vu.max_diff(su) < eps);
+
+        if (!res)
+        {
+            std::cout << "max_diff : " << vp.max_diff(sp) << ", " << vu.max_diff(su) << std::endl;
+        }
+
+        return res;
+    }
 }
