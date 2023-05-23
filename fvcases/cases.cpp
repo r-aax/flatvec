@@ -8,6 +8,13 @@ namespace fv
 {
     // arith_f32
 
+    /// <summary>
+    /// Case arithmetic scalar.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="a">Input array.</param>
+    /// <param name="b">Input array.</param>
+    /// <param name="c">Output array.</param>
     void scase_arith_f32(int n,
                          float* a,
                          float* b,
@@ -21,6 +28,13 @@ namespace fv
         }
     }
 
+    /// <summary>
+    /// Case arithmetic vector.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="a_p">Input array.</param>
+    /// <param name="b_p">Input array.</param>
+    /// <param name="c_p">Output array.</param>
     void vcase_arith_f32(int n,
                          float* a_p,
                          float* b_p,
@@ -53,6 +67,16 @@ namespace fv
         }
     }
 
+    /// <summary>
+    /// Case arithmetic.
+    /// </summary>
+    /// <param name="len">Vectors count.</param>
+    /// <param name="random_lo">Lo value for random generation.</param>
+    /// <param name="random_hi">Hi value for random generation.</param>
+    /// <returns>
+    /// true - OK result,
+    /// false - ERROR result.
+    /// </returns>
     bool case_arith_f32(int len,
                         float random_lo,
                         float random_hi)
@@ -75,6 +99,13 @@ namespace fv
 
     // blend_f32
 
+    /// <summary>
+    /// Case blend scalar.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="a">Input array.</param>
+    /// <param name="b">Input array.</param>
+    /// <param name="c">Output array.</param>
     void scase_blend_f32(int n,
                          float* a,
                          float* b,
@@ -93,6 +124,13 @@ namespace fv
         }
     }
 
+    /// <summary>
+    /// Case blend vector.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="a_p">Input array.</param>
+    /// <param name="b_p">Input array.</param>
+    /// <param name="c_p">Output array.</param>
     void vcase_blend_f32(int n,
                          float* a_p,
                          float* b_p,
@@ -118,6 +156,16 @@ namespace fv
         }
     }
 
+    /// <summary>
+    /// Case blend.
+    /// </summary>
+    /// <param name="len">Vectors count.</param>
+    /// <param name="random_lo">Lo value for random generation.</param>
+    /// <param name="random_hi">Hi value for random generation.</param>
+    /// <returns>
+    /// true - OK result,
+    /// false - ERROR result.
+    /// </returns>
     bool case_blend_f32(int len,
                         float random_lo,
                         float random_hi)
@@ -141,6 +189,19 @@ namespace fv
     // Riemann solver
     // guessp function
     
+    /// <summary>
+    /// Case guessp scalar.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="dl">Input array.</param>
+    /// <param name="ul">Input array.</param>
+    /// <param name="pl">Input array.</param>
+    /// <param name="cl">Input array.</param>
+    /// <param name="dr">Input array.</param>
+    /// <param name="ur">Input array.</param>
+    /// <param name="pr">Input array.</param>
+    /// <param name="cr">Input array.</param>
+    /// <param name="pm">Output array.</param>
     void scase_guessp(int n,
                       float* dl,
                       float* ul,
@@ -201,6 +262,19 @@ namespace fv
         }
     }
 
+    /// <summary>
+    /// Case guessp vector.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="dl_p">Input array.</param>
+    /// <param name="ul_p">Input array.</param>
+    /// <param name="pl_p">Input array.</param>
+    /// <param name="cl_p">Input array.</param>
+    /// <param name="dr_p">Input array.</param>
+    /// <param name="ur_p">Input array.</param>
+    /// <param name="pr_p">Input array.</param>
+    /// <param name="cr_p">Input array.</param>
+    /// <param name="pm_p">Output array.</param>
     void vcase_guessp(int n,
                       float* dl_p,
                       float* ul_p,
@@ -301,6 +375,17 @@ namespace fv
         }
     }
 
+    /// <summary>
+    /// Case guessp.
+    /// </summary>
+    /// <param name="len">Vectors count.</param>
+    /// <param name="random_lo">Lo value for random generation.</param>
+    /// <param name="random_hi">Hi value for random generation.</param>
+    /// <param name="eps"></param>
+    /// <returns>
+    /// true - OK result,
+    /// false - ERROR result.
+    /// </returns>
     bool case_guessp(int len,
                      float random_lo,
                      float random_hi,

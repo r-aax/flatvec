@@ -5,7 +5,9 @@
 
 namespace fv
 {
-    // Mask.
+    /// <summary>
+    /// Mask.
+    /// </summary>
     class Mask
     {
 
@@ -13,11 +15,16 @@ namespace fv
 
         // Bits count.
 
+        /// <summary>
+        /// Bits count.
+        /// </summary>
         static const int bits = 64;
 
     private:
 
-        // Mask data.
+        /// <summary>
+        /// Data.
+        /// </summary>
         bool data[bits];
 
     public:

@@ -5,7 +5,9 @@
 
 namespace fv
 {
-    // 512-bits register.
+    /// <summary>
+    /// ZMM register.
+    /// </summary>
     class ZMM
     {
 
@@ -13,10 +15,21 @@ namespace fv
 
         // Constants.
 
+        /// <summary>
+        /// Bits count.
+        /// </summary>
         static const int bits = 512;
+
+        /// <summary>
+        /// Bytes count.
+        /// </summary>
         static const int bytes = bits / 8;
 
-        // Count of elements.
+        /// <summary>
+        /// Get elements count.
+        /// </summary>
+        /// <typeparam name="T">Type.</typeparam>
+        /// <returns>Elements count.</returns>
         template <typename T>
         static int count()
         {
@@ -25,19 +38,27 @@ namespace fv
 
     private:
 
-        // Union for data access.
+        /// <summary>
+        /// Data.
+        /// </summary>
         int8_t data[bits];
 
     public:
 
         // Constructors.
-
+        
         ZMM();
 
         ZMM(const ZMM& z);
 
         // Access.
 
+        /// <summary>
+        /// Get element of data.
+        /// </summary>
+        /// <typeparam name="T">Type.</typeparam>
+        /// <param name="i">Index.</param>
+        /// <returns>Data element.</returns>
         template <typename T>
         T get(int i) const
         {
@@ -47,6 +68,12 @@ namespace fv
             return *tp;
         }
 
+        /// <summary>
+        /// Set element of data.
+        /// </summary>
+        /// <typeparam name="T">Type.</typeparam>
+        /// <param name="i">Index.</param>
+        /// <param name="v">Value.</param>
         template <typename T>
         void set(int i,
                  T v)
@@ -57,7 +84,11 @@ namespace fv
             *tp = v;
         }
 
-        // Representation.
+        /// <summary>
+        /// Representation.
+        /// </summary>
+        /// <typeparam name="T">Type.</typeparam>
+        /// <returns>Representation.</returns>
         template <typename T>
         std::string get_representation() const
         {
@@ -74,7 +105,9 @@ namespace fv
             return std::string {ss.str()};
         }
 
-        // Clear.
+        /// <summary>
+        /// Clear.
+        /// </summary>
         void clear();
     };
 }

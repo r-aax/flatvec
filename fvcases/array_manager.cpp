@@ -4,6 +4,11 @@
 
 namespace fv
 {
+    /// <summary>
+    /// Set elements with random numbers.
+    /// </summary>
+    /// <param name="lo">Lo value.</param>
+    /// <param name="hi">Hi value.</param>
     void ArrayManager<float>::generate_random(float lo,
                                               float hi)
     {

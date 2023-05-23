@@ -21,6 +21,15 @@ namespace fv
 
     // Arithmetic operations with 1 argument. 
 
+    /// <summary>
+    /// Mask arithmetic operation with 1 argument.
+    /// </summary>
+    /// <typeparam name="T">Type.</typeparam>
+    /// <param name="src">Source.</param>
+    /// <param name="k">Mask.</param>
+    /// <param name="a">Argument.</param>
+    /// <param name="op">Operation.</param>
+    /// <returns>Result.</returns>
     template <typename T>
     ZMM mask_arith1(ZMM src,
                     Mask k,
@@ -44,6 +53,13 @@ namespace fv
         return dst;
     }
 
+    /// <summary>
+    /// Arithmetic operation with 1 argument.
+    /// </summary>
+    /// <typeparam name="T">Type.</typeparam>
+    /// <param name="a">Argument.</param>
+    /// <param name="op">Operation.</param>
+    /// <returns>Result.</returns>
     template <typename T>
     ZMM arith1(ZMM a,
                std::function<T(T)> op)
@@ -59,6 +75,17 @@ namespace fv
 
     // Arithmetic operations with 2 arguments.
 
+    /// <summary>
+    /// Mask arithmetic operation with 2 arguments.
+    /// </summary>
+    /// <typeparam name="T">Type.</typeparam>
+    /// <param name="src">Source.</param>
+    /// <param name="k">Mask.</param>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <param name="op">Operation.</param>
+    /// <param name="is_z">Zero flag.</param>
+    /// <returns>Result.</returns>
     template <typename T>
     ZMM mask_arith2(ZMM src,
                     Mask k,
@@ -91,6 +118,16 @@ namespace fv
         return dst;
     }
 
+    /// <summary>
+    /// Mask operation with 2 arguments.
+    /// </summary>
+    /// <typeparam name="T">Type.</typeparam>
+    /// <param name="src">Source.</param>
+    /// <param name="k">Mask.</param>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <param name="op">Operation.</param>
+    /// <returns>Result.</returns>
     template <typename T>
     ZMM maskz_arith2(ZMM src,
                      Mask k,
@@ -101,6 +138,14 @@ namespace fv
         return mask_arith2<T>(src, k, a, b, op, true);
     }
 
+    /// <summary>
+    /// Arithmetic operation with 2 argument.
+    /// </summary>
+    /// <typeparam name="T">Type.</typeparam>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <param name="op">Operation.</param>
+    /// <returns>Result.</returns>
     template <typename T>
     ZMM arith2(ZMM a,
                ZMM b,
@@ -222,6 +267,15 @@ namespace fv
 
     // Compare operations.
 
+    /// <summary>
+    /// Mask compare operation.
+    /// </summary>
+    /// <typeparam name="T">Type.</typeparam>
+    /// <param name="k1">Mask.</param>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <param name="op">Operation.</param>
+    /// <returns>Result mask.</returns>
     template <typename T>
     Mask mask_compare(Mask k1,
                       ZMM a,
@@ -245,6 +299,14 @@ namespace fv
         return k;
     }
 
+    /// <summary>
+    /// Compare operation.
+    /// </summary>
+    /// <typeparam name="T">Type.</typeparam>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <param name="op">Operation.</param>
+    /// <returns>Result mask.</returns>
     template <typename T>
     Mask compare(ZMM a,
                  ZMM b,

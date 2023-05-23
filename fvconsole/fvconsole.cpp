@@ -7,6 +7,10 @@
 
 using namespace fv;
 
+/// <summary>
+/// Main function.
+/// </summary>
+/// <returns>Return code.</returns>
 int main()
 {
     std::cout << (case_arith_f32(10) ? "arith_f32 : OK" : "arith_f32 : ERROR") << std::endl;
