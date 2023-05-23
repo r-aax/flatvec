@@ -75,6 +75,8 @@ namespace fv
         return mask_arith1<float>(src, k, a, [] (float x) { return x; });
     }
     
+    //
+
     /// <summary>
     /// Semantic for sqrt.
     /// </summary>
@@ -83,6 +85,20 @@ namespace fv
     ZMM _mm512_sqrt_ps(ZMM a)
     {
         return arith1<float>(a, [] (float x) { return sqrt(x); });
+    }
+
+    /// <summary>
+    /// Semantic for sqrt.
+    /// </summary>
+    /// <param name="src">Source.</param>
+    /// <param name="k">Mask.</param>
+    /// <param name="a">Argument.</param>
+    /// <returns>Result ZMM register.</returns>
+    ZMM _mm512_mask_sqrt_ps(ZMM src,
+                            Mask k,
+                            ZMM a)
+    {
+        return mask_arith1<float>(src, k, a, [] (float x) { return sqrt(x); });
     }
 
     // Arithmetic operations with 2 arguments.
@@ -420,14 +436,21 @@ namespace fv
                         ZMM b,
                         ZMM c)
     {
-        ZMM dst;
+        return arith3<float>(a, b, c, [] (float x, float y, float z) { return x * y + z; });
+    }
 
-        for (int i = 0; i < ZMM::count<float>(); i++)
-        {
-            dst.set<float>(i, a.get<float>(i) * b.get<float>(i) + c.get<float>(i));
-        }
-
-        return dst;
+    /// <summary>
+    /// Semantic for fnmadd.
+    /// </summary>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <param name="c">Third argument.</param>
+    /// <returns>Result ZMM register.</returns>
+    ZMM _mm512_fnmadd_ps(ZMM a,
+                         ZMM b,
+                         ZMM c)
+    {
+        return arith3<float>(a, b, c, [] (float x, float y, float z) { return -(x * y) + z; });
     }
 
     // Compare operations.

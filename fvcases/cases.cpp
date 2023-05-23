@@ -94,7 +94,14 @@ namespace fv
         scase_arith_f32(n, a.get_data(), b.get_data(), sc.get_data());
         vcase_arith_f32(n, a.get_data(), b.get_data(), vc.get_data());
 
-        return vc.max_diff(sc) == 0.0;
+        bool res = (vc.max_diff(sc) == 0.0);
+
+        if (!res)
+        {
+            std::cout << "max_diff : " << vc.max_diff(sc) << std::endl;
+        }
+
+        return res;
     }
 
     // blend_f32
@@ -183,7 +190,14 @@ namespace fv
         scase_blend_f32(n, a.get_data(), b.get_data(), sc.get_data());
         vcase_blend_f32(n, a.get_data(), b.get_data(), vc.get_data());
 
-        return vc.max_diff(sc) == 0.0;
+        bool res = (vc.max_diff(sc) == 0.0);
+
+        if (!res)
+        {
+            std::cout << "max_diff : " << vc.max_diff(sc) << std::endl;
+        }
+
+        return res;
     }
 
     // Riemann solver
@@ -297,10 +311,10 @@ namespace fv
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
 
-        ZMM z = _mm512_set1_ps(0.0);
-        ZMM one = _mm512_set1_ps(1.0);
-        ZMM two = _mm512_set1_ps(2.0);
-        ZMM half = _mm512_set1_ps(0.5);
+        ZMM z = _mm512_set1_ps(0.0f);
+        ZMM one = _mm512_set1_ps(1.0f);
+        ZMM two = _mm512_set1_ps(2.0f);
+        ZMM half = _mm512_set1_ps(0.5f);
         ZMM g1 = _mm512_set1_ps(sg1);
         ZMM g3 = _mm512_set1_ps(sg3);
         ZMM g4 = _mm512_set1_ps(sg4);
@@ -422,6 +436,198 @@ namespace fv
                      dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
                      vpm.get_data());
 
-        return vpm.max_diff(spm) < eps;
+        bool res = (vpm.max_diff(spm) < eps);
+
+        if (!res)
+        {
+            std::cout << "max_diff : " << vpm.max_diff(spm) << std::endl;
+        }
+
+        return res;
+    }
+
+    // Riemann solver
+    // prefun function.
+
+    /// <summary>
+    /// Case prefun scalar.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="f">Output array.</param>
+    /// <param name="fd">Output array.</param>
+    /// <param name="p">Input array.</param>
+    /// <param name="dk">Input array.</param>
+    /// <param name="pk">Input array.</param>
+    /// <param name="ck">Input array.</param>
+    void scase_prefun(int n,
+                      float* f,
+                      float* fd,
+                      float* p,
+                      float* dk,
+                      float* pk,
+                      float* ck)
+    {
+        float g {1.4f};
+        float g1 = (g - 1.0f) / (2.0f * g);
+        float g2 = (g + 1.0f) / (2.0f * g);
+        float g4 = 2.0f / (g - 1.0f);
+        float g5 = 2.0f / (g + 1.0f);
+        float g6 = (g - 1.0f) / (g + 1.0f);
+
+        for (int i = 0; i < n; i++)
+        {
+            float ak, bk, pratio, qrt;
+
+            if (p[i] <= pk[i])
+            {
+                // Rarefaction wave.
+                pratio = p[i] / pk[i];
+                f[i] = g4 * ck[i] * (pow(pratio, g1) - 1.0f);
+                fd[i] = (1.0f / (dk[i] * ck[i])) * pow(pratio, -g2);
+            }
+            else
+            {
+                // Shock wave.
+                ak = g5 / dk[i];
+                bk = g6 * pk[i];
+                qrt = sqrt(ak / (bk + p[i]));
+                f[i] = (p[i] - pk[i]) * qrt;
+                fd[i] = (1.0f - 0.5f * (p[i] - pk[i]) / (bk + p[i])) * qrt;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Case prefun vector.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="f_p">Output array.</param>
+    /// <param name="fd_p">Output array.</param>
+    /// <param name="p_p">Input array.</param>
+    /// <param name="dk_p">Input array.</param>
+    /// <param name="pk_p">Input array.</param>
+    /// <param name="ck_p">Input array.</param>
+    void vcase_prefun(int n,
+                      float* f_p,
+                      float* fd_p,
+                      float* p_p,
+                      float* dk_p,
+                      float* pk_p,
+                      float* ck_p)
+    {
+        float sg {1.4f};
+        float sg1 = (sg - 1.0f) / (2.0f * sg);
+        float sg2 = (sg + 1.0f) / (2.0f * sg);
+        float sg4 = 2.0f / (sg - 1.0f);
+        float sg5 = 2.0f / (sg + 1.0f);
+        float sg6 = (sg - 1.0f) / (sg + 1.0f);
+
+        assert(n % ZMM::count<float>() == 0);
+        int vn = n / ZMM::count<float>();
+
+        ZMM z = _mm512_set1_ps(0.0f);
+        ZMM one = _mm512_set1_ps(1.0f);
+        ZMM half = _mm512_set1_ps(0.5f);
+        ZMM g1 = _mm512_set1_ps(sg1);
+        ZMM g2 = _mm512_set1_ps(sg2);
+        ZMM g4 = _mm512_set1_ps(sg4);
+        ZMM g5 = _mm512_set1_ps(sg5);
+        ZMM g6 = _mm512_set1_ps(sg6);
+
+        for (int vi = 0; vi < vn; vi++)
+        {
+            int sh = vi * ZMM::count<float>();
+
+            ZMM p = _mm512_load_ps(p_p + sh);
+            ZMM dk = _mm512_load_ps(dk_p + sh);
+            ZMM pk = _mm512_load_ps(pk_p + sh);
+            ZMM ck = _mm512_load_ps(ck_p + sh);
+            ZMM f, fd;
+
+            ZMM pratio, ak, bkp, ppk, qrt;
+            Mask cond, ncond;
+
+            // Conditions.
+            cond = _mm512_cmple_ps_mask(p, pk);
+            ncond = _mm512_knot(cond);
+
+            // The first branch.
+            if (!cond.is_empty())
+            {
+                pratio = _mm512_mask_div_ps(z, cond, p, pk);
+                f = _mm512_mask_mul_ps(f, cond,
+                                       _mm512_mul_ps(g4, ck),
+                                       _mm512_sub_ps(_mm512_mask_pow_ps(z, cond, pratio, g1), one));
+                fd = _mm512_mask_div_ps(fd, cond,
+                                        _mm512_mask_pow_ps(z, cond, pratio, _mm512_sub_ps(z, g2)),
+                                        _mm512_mul_ps(dk, ck));
+            }
+
+            // The second branch.
+            if (!ncond.is_empty())
+            {
+                ak = _mm512_mask_div_ps(z, ncond, g5, dk);
+                bkp = _mm512_fmadd_ps(g6, pk, p);
+                ppk = _mm512_sub_ps(p, pk);
+                qrt = _mm512_mask_sqrt_ps(z, ncond,
+                                          _mm512_mask_div_ps(z, ncond, ak, bkp));
+                f = _mm512_mask_mul_ps(f, ncond, ppk, qrt);
+                fd = _mm512_mask_mul_ps(fd, ncond, qrt,
+                                        _mm512_fnmadd_ps(_mm512_mask_div_ps(z, ncond, ppk, bkp),
+                                        _mm512_set1_ps(0.5), one));
+            }
+
+            _mm512_store_ps(f_p + sh, f);
+            _mm512_store_ps(fd_p + sh, fd);
+        }
+    }
+
+    /// <summary>
+    /// Case prefun.
+    /// </summary>
+    /// <param name="len">Vectors count.</param>
+    /// <param name="random_lo">Lo value for random generation.</param>
+    /// <param name="random_hi">Hi value for random generation.</param>
+    /// <param name="eps"></param>
+    /// <returns>
+    /// true - OK result,
+    /// false - ERROR result.
+    /// </returns>
+    bool case_prefun(int len,
+                     float random_lo,
+                     float random_hi,
+                     float eps)
+    {
+        int n = len * ZMM::count<float>();
+
+        ArrayManager<float> sf(n);
+        ArrayManager<float> vf(n);
+        ArrayManager<float> sfd(n);
+        ArrayManager<float> vfd(n);
+        ArrayManager<float> p(n);
+        ArrayManager<float> dk(n);
+        ArrayManager<float> pk(n);
+        ArrayManager<float> ck(n);
+
+        p.generate_random(random_lo, random_hi);
+        dk.generate_random(random_lo, random_hi);
+        pk.generate_random(random_lo, random_hi);
+        ck.generate_random(random_lo, random_hi);
+
+        scase_prefun(n,
+                     sf.get_data(), sfd.get_data(), p.get_data(),
+                     dk.get_data(), pk.get_data(), ck.get_data());
+        vcase_prefun(n,
+                     vf.get_data(), vfd.get_data(), p.get_data(),
+                     dk.get_data(), pk.get_data(), ck.get_data());
+
+        bool res = (vf.max_diff(sf) + vfd.max_diff(sfd) < eps);
+
+        if (!res)
+        {
+            std::cout << "max_diff : " << vf.max_diff(sf) << ", " << vfd.max_diff(sfd) << std::endl;
+        }
+
+        return res;
     }
 }

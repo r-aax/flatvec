@@ -29,7 +29,7 @@ namespace fv
     /// <param name="k">Mask.</param>
     /// <param name="a">Argument.</param>
     /// <param name="op">Operation.</param>
-    /// <returns>Result.</returns>
+    /// <returns>Result ZMM register.</returns>
     template <typename T>
     ZMM mask_arith1(ZMM src,
                     Mask k,
@@ -59,7 +59,7 @@ namespace fv
     /// <typeparam name="T">Type.</typeparam>
     /// <param name="a">Argument.</param>
     /// <param name="op">Operation.</param>
-    /// <returns>Result.</returns>
+    /// <returns>Result ZMM register.</returns>
     template <typename T>
     ZMM arith1(ZMM a,
                std::function<T(T)> op)
@@ -67,11 +67,19 @@ namespace fv
         return mask_arith1<T>(ZMM(), Mask::full(), a, op);
     }
 
+    //
+
     ZMM _mm512_mask_mov_ps(ZMM src,
                            Mask k,
                            ZMM a);
 
+    //
+
     ZMM _mm512_sqrt_ps(ZMM a);
+
+    ZMM _mm512_mask_sqrt_ps(ZMM src,
+                            Mask k,
+                            ZMM a);
 
     // Arithmetic operations with 2 arguments.
 
@@ -85,7 +93,7 @@ namespace fv
     /// <param name="b">Second argument.</param>
     /// <param name="op">Operation.</param>
     /// <param name="is_z">Zero flag.</param>
-    /// <returns>Result.</returns>
+    /// <returns>Result ZMM register.</returns>
     template <typename T>
     ZMM mask_arith2(ZMM src,
                     Mask k,
@@ -127,7 +135,7 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <param name="op">Operation.</param>
-    /// <returns>Result.</returns>
+    /// <returns>Result ZMM register.</returns>
     template <typename T>
     ZMM maskz_arith2(ZMM src,
                      Mask k,
@@ -145,7 +153,7 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <param name="op">Operation.</param>
-    /// <returns>Result.</returns>
+    /// <returns>Result ZMM register.</returns>
     template <typename T>
     ZMM arith2(ZMM a,
                ZMM b,
@@ -261,9 +269,40 @@ namespace fv
 
     // Arithmetic operations with 3 arguments.
 
+    /// <summary>
+    /// Arithmetic operation with 3 arguments.
+    /// </summary>
+    /// <typeparam name="T">Type.</typeparam>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <param name="c">Second argument.</param>
+    /// <param name="op">Operation.</param>
+    /// <returns>Result ZMM register.</returns>
+    template <typename T>
+    ZMM arith3(ZMM a,
+               ZMM b,
+               ZMM c,
+               std::function<T(T, T, T)> op)
+    {
+        ZMM dst;
+
+        for (int i = 0; i < ZMM::count<T>(); i++)
+        {
+            dst.set<T>(i, op(a.get<T>(i), b.get<T>(i), c.get<T>(i)));
+        }
+
+        return dst;
+    }
+
+    //
+
     ZMM _mm512_fmadd_ps(ZMM a,
                         ZMM b,
                         ZMM c);
+
+    ZMM _mm512_fnmadd_ps(ZMM a,
+                         ZMM b,
+                         ZMM c);
 
     // Compare operations.
 

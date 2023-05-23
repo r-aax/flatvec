@@ -68,6 +68,30 @@ namespace fv
                      float random_lo = 1.0,
                      float random_hi = 2.0,
                      float eps = 1.0e-4);
+
+    // Riemann solver
+    // prefun function.
+
+    void scase_prefun(int n,
+                      float* f,
+                      float* fd,
+                      float* p,
+                      float* dk,
+                      float* pk,
+                      float* ck);
+
+    void vcase_prefun(int n,
+                      float* f,
+                      float* fd,
+                      float* p,
+                      float* dk,
+                      float* pk,
+                      float* ck);
+
+    bool case_prefun(int len,
+                     float random_lo = 1.0,
+                     float random_hi = 2.0,
+                     float eps = 1.0e-6);
 }
 
 #endif
