@@ -70,7 +70,7 @@ namespace fv
                      float eps = 1.0e-4);
 
     // Riemann solver
-    // prefun function.
+    // prefun function
 
     void scase_prefun(int n,
                       float* f,
@@ -89,6 +89,56 @@ namespace fv
                       float* ck);
 
     bool case_prefun(int len,
+                     float random_lo = 1.0,
+                     float random_hi = 2.0,
+                     float eps = 1.0e-6);
+
+    // Riemann solver
+    // sample function
+
+    void scase_sample(int n,
+                      float* dl,
+                      float* ul,
+                      float* vl,
+                      float* wl,
+                      float* pl,
+                      float* cl,
+                      float* dr,
+                      float* ur,
+                      float* vr,
+                      float* wr,
+                      float* pr,
+                      float* cr,
+                      float* pm,
+                      float* um,
+                      float* d,
+                      float* u,
+                      float* v,
+                      float* w,
+                      float* p);
+
+    void vcase_sample(int n,
+                      float* dl,
+                      float* ul,
+                      float* vl,
+                      float* wl,
+                      float* pl,
+                      float* cl,
+                      float* dr,
+                      float* ur,
+                      float* vr,
+                      float* wr,
+                      float* pr,
+                      float* cr,
+                      float* pm,
+                      float* um,
+                      float* d,
+                      float* u,
+                      float* v,
+                      float* w,
+                      float* p);
+
+    bool case_sample(int len,
                      float random_lo = 1.0,
                      float random_hi = 2.0,
                      float eps = 1.0e-6);

@@ -630,4 +630,406 @@ namespace fv
 
         return res;
     }
+
+    // Riemann solver
+    // sample function
+
+    /// <summary>
+    /// Case sample scalar.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="dl">Input array.</param>
+    /// <param name="ul">Input array.</param>
+    /// <param name="vl">Input array.</param>
+    /// <param name="wl">Input array.</param>
+    /// <param name="pl">Input array.</param>
+    /// <param name="cl">Input array.</param>
+    /// <param name="dr">Input array.</param>
+    /// <param name="ur">Input array.</param>
+    /// <param name="vr">Input array.</param>
+    /// <param name="wr">Input array.</param>
+    /// <param name="pr">Input array.</param>
+    /// <param name="cr">Input array.</param>
+    /// <param name="pm">Input array.</param>
+    /// <param name="um">Input array.</param>
+    /// <param name="d">Output array.</param>
+    /// <param name="u">Output array.</param>
+    /// <param name="v">Output array.</param>
+    /// <param name="w">Output array.</param>
+    /// <param name="p">Output array.</param>
+    void scase_sample(int n,
+                      float* dl,
+                      float* ul,
+                      float* vl,
+                      float* wl,
+                      float* pl,
+                      float* cl,
+                      float* dr,
+                      float* ur,
+                      float* vr,
+                      float* wr,
+                      float* pr,
+                      float* cr,
+                      float* pm,
+                      float* um,
+                      float* d,
+                      float* u,
+                      float* v,
+                      float* w,
+                      float* p)
+    {
+        float g {1.4f};
+        float g1 = (g - 1.0f) / (2.0f * g);
+        float g2 = (g + 1.0f) / (2.0f * g);
+        float g3 = 2.0f * g / (g - 1.0f);
+        float g4 = 2.0f / (g - 1.0f);
+        float g5 = 2.0f / (g + 1.0f);
+        float g6 = (g - 1.0f) / (g + 1.0f);
+        float g7 = (g - 1.0f) / 2.0f;
+        float g8 = (g - 1.0f);
+
+        for (int i = 0; i < n; i++)
+        {
+            float c, cml, cmr, pml, pmr, shl, shr, sl, sr, stl, str;
+
+            if (0.0f <= um[i])
+            {
+                // Sampling point lies to the left of the contact discontinuity.
+                v[i] = vl[i];
+                w[i] = wl[i];
+
+                if (pm[i] <= pl[i])
+                {
+                    // Left rarefaction.
+                    shl = ul[i] - cl[i];
+
+                    if (0.0f <= shl)
+                    {
+                        // Sampled point is left data state.
+                        d[i] = dl[i];
+                        u[i] = ul[i];
+                        p[i] = pl[i];
+                    }
+                    else
+                    {
+                        cml = cl[i] * pow(pm[i] / pl[i], g1);
+                        stl = um[i] - cml;
+
+                        if (0.0f > stl)
+                        {
+                            // Sampled point is star left state.
+                            d[i] = dl[i] * pow(pm[i] / pl[i], 1.0f / g);
+                            u[i] = um[i];
+                            p[i] = pm[i];
+                        }
+                        else
+                        {
+                            // Sampled point is inside left fan.
+                            u[i] = g5 * (cl[i] + g7 * ul[i]);
+                            c = g5 * (cl[i] + g7 * ul[i]);
+                            d[i] = dl[i] * pow(c / cl[i], g4);
+                            p[i] = pl[i] * pow(c / cl[i], g3);
+                        }
+                    }
+                }
+                else
+                {
+                    // Left shock.
+                    pml = pm[i] / pl[i];
+                    sl = ul[i] - cl[i] * sqrt(g2 * pml + g1);
+
+                    if (0.0 <= sl)
+                    {
+                        // Sampled point is left data state.
+                        d[i] = dl[i];
+                        u[i] = ul[i];
+                        p[i] = pl[i];
+                    }
+                    else
+                    {
+                        // Sampled point is star left state.
+                        d[i] = dl[i] * (pml + g6) / (pml * g6 + 1.0f);
+                        u[i] = um[i];
+                        p[i] = pm[i];
+                    }
+                }
+            }
+            else
+            {
+                // Sampling point lies to the right of the contact discontinuity.
+                v[i] = vr[i];
+                w[i] = wr[i];
+
+                if (pm[i] > pr[i])
+                {
+                    // Right shock.
+                    pmr = pm[i] / pr[i];
+                    sr = ur[i] + cr[i] * sqrt(g2 * pmr + g1);
+
+                    if (0.0f >= sr)
+                    {
+                        // Sampled point is right data state.
+                        d[i] = dr[i];
+                        u[i] = ur[i];
+                        p[i] = pr[i];
+                    }
+                    else
+                    {
+                        // Sampled point is star right state.
+                        d[i] = dr[i] * (pmr + g6) / (pmr * g6 + 1.0f);
+                        u[i] = um[i];
+                        p[i] = pm[i];
+                    }
+                }
+                else
+                {
+                    // Right rarefaction.
+                    shr = ur[i] + cr[i];
+                    if (0.0f >= shr)
+                    {
+                        // Sampled point is right data state.
+                        d[i] = dr[i];
+                        u[i] = ur[i];
+                        p[i] = pr[i];
+                    }
+                    else
+                    {
+                        cmr = cr[i] * pow(pm[i] / pr[i], g1);
+                        str = um[i] + cmr;
+
+                        if (0.0f <= str)
+                        {
+                            // Sampled point is star right state.
+                            d[i] = dr[i] * pow(pm[i] / pr[i], 1.0f / g);
+                            u[i] = um[i];
+                            p[i] = pm[i];
+                        }
+                        else
+                        {
+                            // Sampled point is inside left fan.
+                            u[i] = g5 * (-cr[i] + g7 * ur[i]);
+                            c = g5 * (cr[i] - g7 * ur[i]);
+                            d[i] = dr[i] * pow(c / cr[i], g4);
+                            p[i] = pr[i] * pow(c / cr[i], g3);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Case sample vector.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="dl_p">Input array.</param>
+    /// <param name="ul_p">Input array.</param>
+    /// <param name="vl_p">Input array.</param>
+    /// <param name="wl_p">Input array.</param>
+    /// <param name="pl_p">Input array.</param>
+    /// <param name="cl_p">Input array.</param>
+    /// <param name="dr_p">Input array.</param>
+    /// <param name="ur_p">Input array.</param>
+    /// <param name="vr_p">Input array.</param>
+    /// <param name="wr_p">Input array.</param>
+    /// <param name="pr_p">Input array.</param>
+    /// <param name="cr_p">Input array.</param>
+    /// <param name="pm_p">Input array.</param>
+    /// <param name="um_p">Input array.</param>
+    /// <param name="d_p">Output array.</param>
+    /// <param name="u_p">Output array.</param>
+    /// <param name="v_p">Output array.</param>
+    /// <param name="w_p">Output array.</param>
+    /// <param name="p_p">Output array.</param>
+    void vcase_sample(int n,
+                      float* dl_p,
+                      float* ul_p,
+                      float* vl_p,
+                      float* wl_p,
+                      float* pl_p,
+                      float* cl_p,
+                      float* dr_p,
+                      float* ur_p,
+                      float* vr_p,
+                      float* wr_p,
+                      float* pr_p,
+                      float* cr_p,
+                      float* pm_p,
+                      float* um_p,
+                      float* d_p,
+                      float* u_p,
+                      float* v_p,
+                      float* w_p,
+                      float* p_p)
+    {
+        float sg {1.4f};
+        float sg1 = (sg - 1.0f) / (2.0f * sg);
+        float sg2 = (sg + 1.0f) / (2.0f * sg);
+        float sg3 = 2.0f * sg / (sg - 1.0f);
+        float sg4 = 2.0f / (sg - 1.0f);
+        float sg5 = 2.0f / (sg + 1.0f);
+        float sg6 = (sg - 1.0f) / (sg + 1.0f);
+        float sg7 = (sg - 1.0f) / 2.0f;
+        float sg8 = (sg - 1.0f);
+
+        assert(n % ZMM::count<float>() == 0);
+        int vn = n / ZMM::count<float>();
+
+        ZMM z = _mm512_set1_ps(0.0f);
+        ZMM one = _mm512_set1_ps(1.0f);
+        ZMM half = _mm512_set1_ps(0.5f);
+        ZMM g1 = _mm512_set1_ps(sg1);
+        ZMM g2 = _mm512_set1_ps(sg2);
+        ZMM g3 = _mm512_set1_ps(sg3);
+        ZMM g4 = _mm512_set1_ps(sg4);
+        ZMM g5 = _mm512_set1_ps(sg5);
+        ZMM g6 = _mm512_set1_ps(sg6);
+        ZMM g7 = _mm512_set1_ps(sg7);
+        ZMM g8 = _mm512_set1_ps(sg8);
+
+        for (int vi = 0; vi < vn; vi++)
+        {
+            int shift = vi * ZMM::count<float>();
+
+            ZMM dl = _mm512_load_ps(dl_p + shift);
+            ZMM ul = _mm512_load_ps(ul_p + shift);
+            ZMM vl = _mm512_load_ps(vl_p + shift);
+            ZMM wl = _mm512_load_ps(wl_p + shift);
+            ZMM pl = _mm512_load_ps(pl_p + shift);
+            ZMM cl = _mm512_load_ps(cl_p + shift);
+            ZMM dr = _mm512_load_ps(dr_p + shift);
+            ZMM ur = _mm512_load_ps(ur_p + shift);
+            ZMM vr = _mm512_load_ps(vr_p + shift);
+            ZMM wr = _mm512_load_ps(wr_p + shift);
+            ZMM pr = _mm512_load_ps(pr_p + shift);
+            ZMM cr = _mm512_load_ps(cr_p + shift);
+            ZMM pm = _mm512_load_ps(pm_p + shift);
+            ZMM um = _mm512_load_ps(um_p + shift);
+            ZMM d, u, v, w, p;
+
+            ZMM c, ums, pms, sh, st, s, uc;
+            Mask cond_um, cond_pm, cond_sh, cond_st, cond_s, cond_sh_st;
+
+            // d/u/p/c/ums
+            cond_um = _mm512_cmplt_ps_mask(um, z);
+            d = _mm512_mask_blend_ps(cond_um, dl, dr);
+            u = _mm512_mask_blend_ps(cond_um, ul, ur);
+            v = _mm512_mask_blend_ps(cond_um, vl, vr);
+            w = _mm512_mask_blend_ps(cond_um, wl, wr);
+            p = _mm512_mask_blend_ps(cond_um, pl, pr);
+            c = _mm512_mask_blend_ps(cond_um, cl, cr);
+            ums = um;
+            u = _mm512_mask_sub_ps(u, cond_um, z, u);
+            ums = _mm512_mask_sub_ps(ums, cond_um, z, ums);
+
+            // Calculate main values.
+            pms = _mm512_div_ps(pm, p);
+            sh = _mm512_sub_ps(u, c);
+            st = _mm512_fnmadd_ps(_mm512_pow_ps(pms, g1), c, ums);
+            s = _mm512_fnmadd_ps(c, _mm512_sqrt_ps(_mm512_fmadd_ps(g2, pms, g1)), u);
+
+            // Conditions.
+            cond_pm = _mm512_cmple_ps_mask(pm, p);
+            cond_sh = _mm512_mask_cmplt_ps_mask(cond_pm, sh, z);
+            cond_st = _mm512_mask_cmplt_ps_mask(cond_sh, st, z);
+            cond_s = _mm512_mask_cmplt_ps_mask(_mm512_knot(cond_pm), s, z);
+
+            // Store.
+            d = _mm512_mask_mov_ps(d, cond_st, _mm512_mul_ps(d, _mm512_pow_ps(pms, _mm512_set1_ps(1.0f / sg))));
+            d = _mm512_mask_mov_ps(d, cond_s, _mm512_mul_ps(d, _mm512_div_ps(_mm512_add_ps(pms, g6), _mm512_fmadd_ps(pms, g6, one))));
+            u = _mm512_mask_mov_ps(u, _mm512_kor(cond_st, cond_s), ums);
+            p = _mm512_mask_mov_ps(p, _mm512_kor(cond_st, cond_s), pm);
+
+            // Low prob - ignnore it.
+            cond_sh_st = _mm512_kand(cond_sh, _mm512_knot(cond_st));
+            if (!cond_sh_st.is_empty())
+            {
+                u = _mm512_mask_mov_ps(u, cond_sh_st, _mm512_mul_ps(g5, _mm512_fmadd_ps(g7, u, c)));
+                uc = _mm512_div_ps(u, c);
+                d = _mm512_mask_mov_ps(d, cond_sh_st, _mm512_mul_ps(d, _mm512_pow_ps(uc, g4)));
+                p = _mm512_mask_mov_ps(p, cond_sh_st, _mm512_mul_ps(p, _mm512_pow_ps(uc, g3)));
+            }
+
+            // Final store.
+            u = _mm512_mask_sub_ps(u, cond_um, z, u);
+
+            _mm512_store_ps(d_p + shift, d);
+            _mm512_store_ps(u_p + shift, u);
+            _mm512_store_ps(v_p + shift, v);
+            _mm512_store_ps(w_p + shift, w);
+            _mm512_store_ps(p_p + shift, p);
+        }
+    }
+
+    bool case_sample(int len,
+                     float random_lo,
+                     float random_hi,
+                     float eps)
+    {
+        int n = len * ZMM::count<float>();
+
+        ArrayManager<float> dl(n);
+        ArrayManager<float> ul(n);
+        ArrayManager<float> vl(n);
+        ArrayManager<float> wl(n);
+        ArrayManager<float> pl(n);
+        ArrayManager<float> cl(n);
+        ArrayManager<float> dr(n);
+        ArrayManager<float> ur(n);
+        ArrayManager<float> vr(n);
+        ArrayManager<float> wr(n);
+        ArrayManager<float> pr(n);
+        ArrayManager<float> cr(n);
+        ArrayManager<float> pm(n);
+        ArrayManager<float> um(n);
+        ArrayManager<float> sd(n);
+        ArrayManager<float> vd(n);
+        ArrayManager<float> su(n);
+        ArrayManager<float> vu(n);
+        ArrayManager<float> sv(n);
+        ArrayManager<float> vv(n);
+        ArrayManager<float> sw(n);
+        ArrayManager<float> vw(n);
+        ArrayManager<float> sp(n);
+        ArrayManager<float> vp(n);
+
+        dl.generate_random(random_lo, random_hi);
+        ul.generate_random(random_lo, random_hi);
+        vl.generate_random(random_lo, random_hi);
+        wl.generate_random(random_lo, random_hi);
+        pl.generate_random(random_lo, random_hi);
+        cl.generate_random(random_lo, random_hi);
+        dr.generate_random(random_lo, random_hi);
+        ur.generate_random(random_lo, random_hi);
+        vr.generate_random(random_lo, random_hi);
+        wr.generate_random(random_lo, random_hi);
+        pr.generate_random(random_lo, random_hi);
+        cr.generate_random(random_lo, random_hi);
+        pm.generate_random(random_lo, random_hi);
+        um.generate_random(random_lo, random_hi);
+
+        scase_sample(n,
+                     dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(), cl.get_data(),
+                     dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(), cr.get_data(),
+                     pm.get_data(), um.get_data(),
+                     sd.get_data(), su.get_data(), sv.get_data(), sw.get_data(), sp.get_data());
+                     
+        vcase_sample(n,
+                     dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(), cl.get_data(),
+                     dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(), cr.get_data(),
+                     pm.get_data(), um.get_data(),
+                     vd.get_data(), vu.get_data(), vv.get_data(), vw.get_data(), vp.get_data());
+
+        bool res = (vd.max_diff(sd) + vu.max_diff(su) + vv.max_diff(sv) + vw.max_diff(sw) + vp.max_diff(sp) < eps);
+
+        if (!res)
+        {
+            std::cout << "max_diff : "
+                      << vd.max_diff(sd) << ", " << vu.max_diff(su) << ", " << vv.max_diff(sv) << ", "
+                      << vw.max_diff(sw) << ", " << vp.max_diff(sp) << std::endl;
+        }
+
+        return res;
+    }
+
 }
