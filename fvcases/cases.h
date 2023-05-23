@@ -139,8 +139,8 @@ namespace fv
                       float* p);
 
     bool case_sample(int len,
-                     float random_lo = 1.0,
-                     float random_hi = 2.0,
+                     float random_lo = 2.0,
+                     float random_hi = 3.0,
                      float eps = 1.0e-6);
 
     // Riemann solver

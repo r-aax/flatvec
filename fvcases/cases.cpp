@@ -11,6 +11,21 @@ namespace fv
     /// <summary>
     /// Case arithmetic scalar.
     /// </summary>
+    /// <param name="a">Input.</param>
+    /// <param name="b">Input.</param>
+    /// <param name="c">Output.</param>
+    void scase_arith_f32_1(float a,
+                           float b,
+                           float& c)
+    {
+        c = (a + b) + (a - b)
+            + (a * b) + (a / b)
+            + std::min(a, b) + std::max(a, b);
+    }
+
+    /// <summary>
+    /// Case arithmetic scalar.
+    /// </summary>
     /// <param name="n">Count.</param>
     /// <param name="a">Input array.</param>
     /// <param name="b">Input array.</param>
@@ -22,9 +37,7 @@ namespace fv
     {
         for (int i = 0; i < n; i++)
         {
-            c[i] = (a[i] + b[i]) + (a[i] - b[i])
-                + (a[i] * b[i]) + (a[i] / b[i])
-                + std::min(a[i], b[i]) + std::max(a[i], b[i]);
+            scase_arith_f32_1(a[i], b[i], c[i]);
         }
     }
 
@@ -109,6 +122,26 @@ namespace fv
     /// <summary>
     /// Case blend scalar.
     /// </summary>
+    /// <param name="a">Input.</param>
+    /// <param name="b">Input.</param>
+    /// <param name="c">Output.</param>
+    void scase_blend_f32_1(float a,
+                           float b,
+                           float& c)
+    {
+        if (a > b)
+        {
+            c = a + b;
+        }
+        else
+        {
+            c = a * b;
+        }
+    }
+
+    /// <summary>
+    /// Case blend scalar.
+    /// </summary>
     /// <param name="n">Count.</param>
     /// <param name="a">Input array.</param>
     /// <param name="b">Input array.</param>
@@ -120,14 +153,7 @@ namespace fv
     {
         for (int i = 0; i < n; i++)
         {
-            if (a[i] > b[i])
-            {
-                c[i] = a[i] + b[i];
-            }
-            else
-            {
-                c[i] = a[i] * b[i];
-            }
+            scase_blend_f32_1(a[i], b[i], c[i]);
         }
     }
 
@@ -206,6 +232,74 @@ namespace fv
     /// <summary>
     /// Case guessp scalar.
     /// </summary>
+    /// <param name="dl">Input.</param>
+    /// <param name="ul">Input.</param>
+    /// <param name="pl">Input.</param>
+    /// <param name="cl">Input.</param>
+    /// <param name="dr">Input.</param>
+    /// <param name="ur">Input.</param>
+    /// <param name="pr">Input.</param>
+    /// <param name="cr">Input.</param>
+    /// <param name="pm">Output.</param>
+    void scase_guessp_1(float dl,
+                        float ul,
+                        float pl,
+                        float cl,
+                        float dr,
+                        float ur,
+                        float pr,
+                        float cr,
+                        float& pm)
+    {
+        float g {1.4f};
+        float g1 = (g - 1.0f) / (2.0f * g);
+        float g3 = 2.0f * g / (g - 1.0f);
+        float g4 = 2.0f / (g - 1.0f);
+        float g5 = 2.0f / (g + 1.0f);
+        float g6 = (g - 1.0f) / (g + 1.0f);
+        float g7 = (g - 1.0f) / 2.0f;
+
+        float cup, gel, ger, pmax, pmin, ppv, pq, ptl, ptr, qmax, quser, um;
+
+        quser = 2.0f;
+
+        // Compute guess pressure from PVRS Riemann solver.
+        cup = 0.25f * (dl + dr) * (cl + cr);
+        ppv = 0.5f * (pl + pr) + 0.5f * (ul - ur) * cup;
+        ppv = (ppv > 0.0f) ? ppv : 0.0f;
+        pmin = (pl < pr) ? pl : pr;
+        pmax = (pl > pr) ? pl : pr;
+        qmax = pmax / pmin;
+
+        if ((qmax <= quser) && (pmin <= ppv) && (ppv <= pmax))
+        {
+            // Select PVRS Riemann solver.
+            pm = ppv;
+        }
+        else
+        {
+            if (ppv < pmin)
+            {
+                // Select Two-Rarefaction Riemann solver.
+                pq = pow(pl / pr, g1);
+                um = (pq * ul / cl + ur / cr + g4 * (pq - 1.0f)) / (pq / cl + 1.0f / cr);
+                ptl = 1.0f + g7 * (ul - um) / cl;
+                ptr = 1.0f + g7 * (um - ur) / cr;
+                pm = 0.5f * (pow(pl * ptl, g3) + pow(pr * ptr, g3));
+            }
+            else
+            {
+                // Select Two-Shock Riemann solver with PVRS as estimate.
+                gel = sqrt((g5 / dl) / (g6 * pl + ppv));
+                ger = sqrt((g5 / dr) / (g6 * pr + ppv));
+                pm = (gel * pl + ger * pr - (ur - ul)) / (gel + ger);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Case guessp scalar.
+    /// </summary>
     /// <param name="n">Count.</param>
     /// <param name="dl">Input array.</param>
     /// <param name="ul">Input array.</param>
@@ -227,52 +321,9 @@ namespace fv
                       float* cr,
                       float* pm)
     {
-        float g {1.4f};
-        float g1 = (g - 1.0f) / (2.0f * g);
-        float g3 = 2.0f * g / (g - 1.0f);
-        float g4 = 2.0f / (g - 1.0f);
-        float g5 = 2.0f / (g + 1.0f);
-        float g6 = (g - 1.0f) / (g + 1.0f);
-        float g7 = (g - 1.0f) / 2.0f;
-
         for (int i = 0; i < n; i++)
         {
-            float cup, gel, ger, pmax, pmin, ppv, pq, ptl, ptr, qmax, quser, um;
-
-            quser = 2.0f;
-
-            // Compute guess pressure from PVRS Riemann solver.
-            cup = 0.25f * (dl[i] + dr[i]) * (cl[i] + cr[i]);
-            ppv = 0.5f * (pl[i] + pr[i]) + 0.5f * (ul[i] - ur[i]) * cup;
-            ppv = (ppv > 0.0f) ? ppv : 0.0f;
-            pmin = (pl[i] < pr[i]) ? pl[i] : pr[i];
-            pmax = (pl[i] > pr[i]) ? pl[i] : pr[i];
-            qmax = pmax / pmin;
-
-            if ((qmax <= quser) && (pmin <= ppv) && (ppv <= pmax))
-            {
-                // Select PVRS Riemann solver.
-                pm[i] = ppv;
-            }
-            else
-            {
-                if (ppv < pmin)
-                {
-                    // Select Two-Rarefaction Riemann solver.
-                    pq = pow(pl[i] / pr[i], g1);
-                    um = (pq * ul[i] / cl[i] + ur[i] / cr[i] + g4 * (pq - 1.0f)) / (pq / cl[i] + 1.0f / cr[i]);
-                    ptl = 1.0f + g7 * (ul[i] - um) / cl[i];
-                    ptr = 1.0f + g7 * (um - ur[i]) / cr[i];
-                    pm[i] = 0.5f * (pow(pl[i] * ptl, g3) + pow(pr[i] * ptr, g3));
-                }
-                else
-                {
-                    // Select Two-Shock Riemann solver with PVRS as estimate.
-                    gel = sqrt((g5 / dl[i]) / (g6 * pl[i] + ppv));
-                    ger = sqrt((g5 / dr[i]) / (g6 * pr[i] + ppv));
-                    pm[i] = (gel * pl[i] + ger * pr[i] - (ur[i] - ul[i])) / (gel + ger);
-                }
-            }
+            scase_guessp_1(dl[i], ul[i], pl[i], cl[i], dr[i], ur[i], pr[i], cr[i], pm[i]);
         }
     }
 
@@ -452,6 +503,49 @@ namespace fv
     /// <summary>
     /// Case prefun scalar.
     /// </summary>
+    /// <param name="f">Output.</param>
+    /// <param name="fd">Output.</param>
+    /// <param name="p">Input.</param>
+    /// <param name="dk">Input.</param>
+    /// <param name="pk">Input.</param>
+    /// <param name="ck">Input.</param>
+    void scase_prefun_1(float& f,
+                        float& fd,
+                        float p,
+                        float dk,
+                        float pk,
+                        float ck)
+    {
+        float g {1.4f};
+        float g1 = (g - 1.0f) / (2.0f * g);
+        float g2 = (g + 1.0f) / (2.0f * g);
+        float g4 = 2.0f / (g - 1.0f);
+        float g5 = 2.0f / (g + 1.0f);
+        float g6 = (g - 1.0f) / (g + 1.0f);
+
+        float ak, bk, pratio, qrt;
+
+        if (p <= pk)
+        {
+            // Rarefaction wave.
+            pratio = p / pk;
+            f = g4 * ck * (pow(pratio, g1) - 1.0f);
+            fd = (1.0f / (dk * ck)) * pow(pratio, -g2);
+        }
+        else
+        {
+            // Shock wave.
+            ak = g5 / dk;
+            bk = g6 * pk;
+            qrt = sqrt(ak / (bk + p));
+            f = (p - pk) * qrt;
+            fd = (1.0f - 0.5f * (p - pk) / (bk + p)) * qrt;
+        }
+    }
+
+    /// <summary>
+    /// Case prefun scalar.
+    /// </summary>
     /// <param name="n">Count.</param>
     /// <param name="f">Output array.</param>
     /// <param name="fd">Output array.</param>
@@ -467,33 +561,9 @@ namespace fv
                       float* pk,
                       float* ck)
     {
-        float g {1.4f};
-        float g1 = (g - 1.0f) / (2.0f * g);
-        float g2 = (g + 1.0f) / (2.0f * g);
-        float g4 = 2.0f / (g - 1.0f);
-        float g5 = 2.0f / (g + 1.0f);
-        float g6 = (g - 1.0f) / (g + 1.0f);
-
         for (int i = 0; i < n; i++)
         {
-            float ak, bk, pratio, qrt;
-
-            if (p[i] <= pk[i])
-            {
-                // Rarefaction wave.
-                pratio = p[i] / pk[i];
-                f[i] = g4 * ck[i] * (pow(pratio, g1) - 1.0f);
-                fd[i] = (1.0f / (dk[i] * ck[i])) * pow(pratio, -g2);
-            }
-            else
-            {
-                // Shock wave.
-                ak = g5 / dk[i];
-                bk = g6 * pk[i];
-                qrt = sqrt(ak / (bk + p[i]));
-                f[i] = (p[i] - pk[i]) * qrt;
-                fd[i] = (1.0f - 0.5f * (p[i] - pk[i]) / (bk + p[i])) * qrt;
-            }
+            scase_prefun_1(f[i], fd[i], p[i], dk[i], pk[i], ck[i]);
         }
     }
 
@@ -637,6 +707,185 @@ namespace fv
     /// <summary>
     /// Case sample scalar.
     /// </summary>
+    /// <param name="dl">Input.</param>
+    /// <param name="ul">Input.</param>
+    /// <param name="vl">Input.</param>
+    /// <param name="wl">Input.</param>
+    /// <param name="pl">Input.</param>
+    /// <param name="cl">Input.</param>
+    /// <param name="dr">Input.</param>
+    /// <param name="ur">Input.</param>
+    /// <param name="vr">Input.</param>
+    /// <param name="wr">Input.</param>
+    /// <param name="pr">Input.</param>
+    /// <param name="cr">Input.</param>
+    /// <param name="pm">Input.</param>
+    /// <param name="um">Input.</param>
+    /// <param name="d">Output.</param>
+    /// <param name="u">Output.</param>
+    /// <param name="v">Output.</param>
+    /// <param name="w">Output.</param>
+    /// <param name="p">Output.</param>
+    void scase_sample_1(float dl,
+                        float ul,
+                        float vl,
+                        float wl,
+                        float pl,
+                        float cl,
+                        float dr,
+                        float ur,
+                        float vr,
+                        float wr,
+                        float pr,
+                        float cr,
+                        float pm,
+                        float um,
+                        float& d,
+                        float& u,
+                        float& v,
+                        float& w,
+                        float& p)
+    {
+        float g {1.4f};
+        float g1 = (g - 1.0f) / (2.0f * g);
+        float g2 = (g + 1.0f) / (2.0f * g);
+        float g3 = 2.0f * g / (g - 1.0f);
+        float g4 = 2.0f / (g - 1.0f);
+        float g5 = 2.0f / (g + 1.0f);
+        float g6 = (g - 1.0f) / (g + 1.0f);
+        float g7 = (g - 1.0f) / 2.0f;
+        float g8 = (g - 1.0f);
+
+        float c, cml, cmr, pml, pmr, shl, shr, sl, sr, stl, str;
+
+        if (0.0f <= um)
+        {
+            // Sampling point lies to the left of the contact discontinuity.
+            v = vl;
+            w = wl;
+
+            if (pm <= pl)
+            {
+                // Left rarefaction.
+                shl = ul - cl;
+
+                if (0.0f <= shl)
+                {
+                    // Sampled point is left data state.
+                    d = dl;
+                    u = ul;
+                    p = pl;
+                }
+                else
+                {
+                    cml = cl * pow(pm / pl, g1);
+                    stl = um - cml;
+
+                    if (0.0f > stl)
+                    {
+                        // Sampled point is star left state.
+                        d = dl * pow(pm / pl, 1.0f / g);
+                        u = um;
+                        p = pm;
+                    }
+                    else
+                    {
+                        // Sampled point is inside left fan.
+                        u = g5 * (cl + g7 * ul);
+                        c = g5 * (cl + g7 * ul);
+                        d = dl * pow(c / cl, g4);
+                        p = pl * pow(c / cl, g3);
+                    }
+                }
+            }
+            else
+            {
+                // Left shock.
+                pml = pm / pl;
+                sl = ul - cl * sqrt(g2 * pml + g1);
+
+                if (0.0 <= sl)
+                {
+                    // Sampled point is left data state.
+                    d = dl;
+                    u = ul;
+                    p = pl;
+                }
+                else
+                {
+                    // Sampled point is star left state.
+                    d = dl * (pml + g6) / (pml * g6 + 1.0f);
+                    u = um;
+                    p = pm;
+                }
+            }
+        }
+        else
+        {
+            // Sampling point lies to the right of the contact discontinuity.
+            v = vr;
+            w = wr;
+
+            if (pm > pr)
+            {
+                // Right shock.
+                pmr = pm / pr;
+                sr = ur + cr * sqrt(g2 * pmr + g1);
+
+                if (0.0f >= sr)
+                {
+                    // Sampled point is right data state.
+                    d = dr;
+                    u = ur;
+                    p = pr;
+                }
+                else
+                {
+                    // Sampled point is star right state.
+                    d = dr * (pmr + g6) / (pmr * g6 + 1.0f);
+                    u = um;
+                    p = pm;
+                }
+            }
+            else
+            {
+                // Right rarefaction.
+                shr = ur + cr;
+                if (0.0f >= shr)
+                {
+                    // Sampled point is right data state.
+                    d = dr;
+                    u = ur;
+                    p = pr;
+                }
+                else
+                {
+                    cmr = cr * pow(pm / pr, g1);
+                    str = um + cmr;
+
+                    if (0.0f <= str)
+                    {
+                        // Sampled point is star right state.
+                        d = dr * pow(pm / pr, 1.0f / g);
+                        u = um;
+                        p = pm;
+                    }
+                    else
+                    {
+                        // Sampled point is inside left fan.
+                        u = g5 * (-cr + g7 * ur);
+                        c = g5 * (cr - g7 * ur);
+                        d = dr * pow(c / cr, g4);
+                        p = pr * pow(c / cr, g3);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Case sample scalar.
+    /// </summary>
     /// <param name="n">Count.</param>
     /// <param name="dl">Input array.</param>
     /// <param name="ul">Input array.</param>
@@ -678,143 +927,11 @@ namespace fv
                       float* w,
                       float* p)
     {
-        float g {1.4f};
-        float g1 = (g - 1.0f) / (2.0f * g);
-        float g2 = (g + 1.0f) / (2.0f * g);
-        float g3 = 2.0f * g / (g - 1.0f);
-        float g4 = 2.0f / (g - 1.0f);
-        float g5 = 2.0f / (g + 1.0f);
-        float g6 = (g - 1.0f) / (g + 1.0f);
-        float g7 = (g - 1.0f) / 2.0f;
-        float g8 = (g - 1.0f);
-
         for (int i = 0; i < n; i++)
         {
-            float c, cml, cmr, pml, pmr, shl, shr, sl, sr, stl, str;
-
-            if (0.0f <= um[i])
-            {
-                // Sampling point lies to the left of the contact discontinuity.
-                v[i] = vl[i];
-                w[i] = wl[i];
-
-                if (pm[i] <= pl[i])
-                {
-                    // Left rarefaction.
-                    shl = ul[i] - cl[i];
-
-                    if (0.0f <= shl)
-                    {
-                        // Sampled point is left data state.
-                        d[i] = dl[i];
-                        u[i] = ul[i];
-                        p[i] = pl[i];
-                    }
-                    else
-                    {
-                        cml = cl[i] * pow(pm[i] / pl[i], g1);
-                        stl = um[i] - cml;
-
-                        if (0.0f > stl)
-                        {
-                            // Sampled point is star left state.
-                            d[i] = dl[i] * pow(pm[i] / pl[i], 1.0f / g);
-                            u[i] = um[i];
-                            p[i] = pm[i];
-                        }
-                        else
-                        {
-                            // Sampled point is inside left fan.
-                            u[i] = g5 * (cl[i] + g7 * ul[i]);
-                            c = g5 * (cl[i] + g7 * ul[i]);
-                            d[i] = dl[i] * pow(c / cl[i], g4);
-                            p[i] = pl[i] * pow(c / cl[i], g3);
-                        }
-                    }
-                }
-                else
-                {
-                    // Left shock.
-                    pml = pm[i] / pl[i];
-                    sl = ul[i] - cl[i] * sqrt(g2 * pml + g1);
-
-                    if (0.0 <= sl)
-                    {
-                        // Sampled point is left data state.
-                        d[i] = dl[i];
-                        u[i] = ul[i];
-                        p[i] = pl[i];
-                    }
-                    else
-                    {
-                        // Sampled point is star left state.
-                        d[i] = dl[i] * (pml + g6) / (pml * g6 + 1.0f);
-                        u[i] = um[i];
-                        p[i] = pm[i];
-                    }
-                }
-            }
-            else
-            {
-                // Sampling point lies to the right of the contact discontinuity.
-                v[i] = vr[i];
-                w[i] = wr[i];
-
-                if (pm[i] > pr[i])
-                {
-                    // Right shock.
-                    pmr = pm[i] / pr[i];
-                    sr = ur[i] + cr[i] * sqrt(g2 * pmr + g1);
-
-                    if (0.0f >= sr)
-                    {
-                        // Sampled point is right data state.
-                        d[i] = dr[i];
-                        u[i] = ur[i];
-                        p[i] = pr[i];
-                    }
-                    else
-                    {
-                        // Sampled point is star right state.
-                        d[i] = dr[i] * (pmr + g6) / (pmr * g6 + 1.0f);
-                        u[i] = um[i];
-                        p[i] = pm[i];
-                    }
-                }
-                else
-                {
-                    // Right rarefaction.
-                    shr = ur[i] + cr[i];
-                    if (0.0f >= shr)
-                    {
-                        // Sampled point is right data state.
-                        d[i] = dr[i];
-                        u[i] = ur[i];
-                        p[i] = pr[i];
-                    }
-                    else
-                    {
-                        cmr = cr[i] * pow(pm[i] / pr[i], g1);
-                        str = um[i] + cmr;
-
-                        if (0.0f <= str)
-                        {
-                            // Sampled point is star right state.
-                            d[i] = dr[i] * pow(pm[i] / pr[i], 1.0f / g);
-                            u[i] = um[i];
-                            p[i] = pm[i];
-                        }
-                        else
-                        {
-                            // Sampled point is inside left fan.
-                            u[i] = g5 * (-cr[i] + g7 * ur[i]);
-                            c = g5 * (cr[i] - g7 * ur[i]);
-                            d[i] = dr[i] * pow(c / cr[i], g4);
-                            p[i] = pr[i] * pow(c / cr[i], g3);
-                        }
-                    }
-                }
-            }
+            scase_sample_1(dl[i], ul[i], vl[i], wl[i], pl[i], cl[i],
+                           dr[i], ur[i], vr[i], wr[i], pr[i], cr[i],
+                           pm[i], um[i], d[i], u[i], v[i], w[i], p[i]);
         }
     }
 
@@ -1035,6 +1152,84 @@ namespace fv
     // Riemann solver
     // starpu function
 
+    /// <summary>
+    /// Case starpu scalar.
+    /// </summary>
+    /// <param name="dl">Input.</param>
+    /// <param name="ul">Input.</param>
+    /// <param name="pl">Input.</param>
+    /// <param name="cl">Input.</param>
+    /// <param name="dr">Input.</param>
+    /// <param name="ur">Input.</param>
+    /// <param name="pr">Input.</param>
+    /// <param name="cr">Input.</param>
+    /// <param name="p">Output.</param>
+    /// <param name="u">Output.</param>
+    void scase_starpu_1(float dl,
+                        float ul,
+                        float pl,
+                        float cl,
+                        float dr,
+                        float ur,
+                        float pr,
+                        float cr,
+                        float& p,
+                        float& u)
+    {
+        const int32_t nriter = 20;
+        const float tolpre = 1.0e-6f;
+        float change, fl, fld, fr, frd, pold, pstart, udiff;
+
+        // Guessed value pstart is computed.
+        scase_guessp_1(dl, ul, pl, cl, dr, ur, pr, cr, pstart);
+        pold = pstart;
+        udiff = ur - ul;
+
+        int32_t i = 1;
+
+        for (; i <= nriter; i++)
+        {
+            scase_prefun_1(fl, fld, pold, dl, pl, cl);
+            scase_prefun_1(fr, frd, pold, dr, pr, cr);
+            p = pold - (fl + fr + udiff) / (fld + frd);
+            change = 2.0 * abs((p - pold) / (p + pold));
+
+            if (change <= tolpre)
+            {
+                break;
+            }
+
+            if (p < 0.0)
+            {
+                p = tolpre;
+            }
+
+            pold = p;
+        }
+
+        if (i > nriter)
+        {
+            p = 99.0;
+        }
+
+        // compute velocity in star region
+        u = 0.5 * (ul + ur + fr - fl);
+    }
+
+    /// <summary>
+    /// Case starpu scalar.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="dl">Input array.</param>
+    /// <param name="ul">Input array.</param>
+    /// <param name="pl">Input array.</param>
+    /// <param name="cl">Input array.</param>
+    /// <param name="dr">Input array.</param>
+    /// <param name="ur">Input array.</param>
+    /// <param name="pr">Input array.</param>
+    /// <param name="cr">Input array.</param>
+    /// <param name="p">Output array.</param>
+    /// <param name="u">Output array.</param>
     void scase_starpu(int n,
                       float* dl,
                       float* ul,
@@ -1047,21 +1242,38 @@ namespace fv
                       float* p,
                       float* u)
     {
+        for (int i = 0; i < n; i++)
+        {
+            scase_starpu_1(dl[i], ul[i], pl[i], cl[i], dr[i], ur[i], pr[i], cr[i], p[i], u[i]);
+        }
     }
 
+    /// <summary>
+    /// Case starpu vector.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="dl_p">Input array.</param>
+    /// <param name="ul_p">Input array.</param>
+    /// <param name="pl_p">Input array.</param>
+    /// <param name="cl_p">Input array.</param>
+    /// <param name="dr_p">Input array.</param>
+    /// <param name="ur_p">Input array.</param>
+    /// <param name="pr_p">Input array.</param>
+    /// <param name="cr_p">Input array.</param>
+    /// <param name="p_p">Output array.</param>
+    /// <param name="u_p">Output array.</param>
     void vcase_starpu(int n,
-                      float* dl,
-                      float* ul,
-                      float* pl,
-                      float* cl,
-                      float* dr,
-                      float* ur,
-                      float* pr,
-                      float* cr,
-                      float* p,
-                      float* u)
+                      float* dl_p,
+                      float* ul_p,
+                      float* pl_p,
+                      float* cl_p,
+                      float* dr_p,
+                      float* ur_p,
+                      float* pr_p,
+                      float* cr_p,
+                      float* p_p,
+                      float* u_p)
     {
-
     }
 
     bool case_starpu(int len,
