@@ -6,7 +6,7 @@
 
 namespace fv
 {
-    // Some constants.
+    // Some constants
 
     ZMM zero = _mm512_set1_ps(0.0f);
     ZMM one = _mm512_set1_ps(1.0f);
@@ -233,6 +233,30 @@ namespace fv
         return res;
     }
 
+    // Constants for Riemann solver
+
+    namespace riemann
+    {
+        float sg {1.4f};
+        float sg1 = (sg - 1.0f) / (2.0f * sg);
+        float sg2 = (sg + 1.0f) / (2.0f * sg);
+        float sg3 = 2.0f * sg / (sg - 1.0f);
+        float sg4 = 2.0f / (sg - 1.0f);
+        float sg5 = 2.0f / (sg + 1.0f);
+        float sg6 = (sg - 1.0f) / (sg + 1.0f);
+        float sg7 = (sg - 1.0f) / 2.0f;
+        float sg8 = (sg - 1.0f);
+
+        ZMM g1 = _mm512_set1_ps(sg1);
+        ZMM g2 = _mm512_set1_ps(sg2);
+        ZMM g3 = _mm512_set1_ps(sg3);
+        ZMM g4 = _mm512_set1_ps(sg4);
+        ZMM g5 = _mm512_set1_ps(sg5);
+        ZMM g6 = _mm512_set1_ps(sg6);
+        ZMM g7 = _mm512_set1_ps(sg7);
+        ZMM g8 = _mm512_set1_ps(sg8);
+    }
+
     // Riemann solver
     // guessp function
     
@@ -258,14 +282,6 @@ namespace fv
                         float cr,
                         float& pm)
     {
-        float g {1.4f};
-        float g1 = (g - 1.0f) / (2.0f * g);
-        float g3 = 2.0f * g / (g - 1.0f);
-        float g4 = 2.0f / (g - 1.0f);
-        float g5 = 2.0f / (g + 1.0f);
-        float g6 = (g - 1.0f) / (g + 1.0f);
-        float g7 = (g - 1.0f) / 2.0f;
-
         float cup, gel, ger, pmax, pmin, ppv, pq, ptl, ptr, qmax, quser, um;
 
         quser = 2.0f;
@@ -288,17 +304,17 @@ namespace fv
             if (ppv < pmin)
             {
                 // Select Two-Rarefaction Riemann solver.
-                pq = pow(pl / pr, g1);
-                um = (pq * ul / cl + ur / cr + g4 * (pq - 1.0f)) / (pq / cl + 1.0f / cr);
-                ptl = 1.0f + g7 * (ul - um) / cl;
-                ptr = 1.0f + g7 * (um - ur) / cr;
-                pm = 0.5f * (pow(pl * ptl, g3) + pow(pr * ptr, g3));
+                pq = pow(pl / pr, riemann::sg1);
+                um = (pq * ul / cl + ur / cr + riemann::sg4 * (pq - 1.0f)) / (pq / cl + 1.0f / cr);
+                ptl = 1.0f + riemann::sg7 * (ul - um) / cl;
+                ptr = 1.0f + riemann::sg7 * (um - ur) / cr;
+                pm = 0.5f * (pow(pl * ptl, riemann::sg3) + pow(pr * ptr, riemann::sg3));
             }
             else
             {
                 // Select Two-Shock Riemann solver with PVRS as estimate.
-                gel = sqrt((g5 / dl) / (g6 * pl + ppv));
-                ger = sqrt((g5 / dr) / (g6 * pr + ppv));
+                gel = sqrt((riemann::sg5 / dl) / (riemann::sg6 * pl + ppv));
+                ger = sqrt((riemann::sg5 / dr) / (riemann::sg6 * pr + ppv));
                 pm = (gel * pl + ger * pr - (ur - ul)) / (gel + ger);
             }
         }
@@ -358,23 +374,8 @@ namespace fv
                       float* cr_p,
                       float* pm_p)
     {
-        float sg {1.4f};
-        float sg1 = (sg - 1.0f) / (2.0f * sg);
-        float sg3 = 2.0f * sg / (sg - 1.0f);
-        float sg4 = 2.0f / (sg - 1.0f);
-        float sg5 = 2.0f / (sg + 1.0f);
-        float sg6 = (sg - 1.0f) / (sg + 1.0f);
-        float sg7 = (sg - 1.0f) / 2.0f;
-
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
-
-        ZMM g1 = _mm512_set1_ps(sg1);
-        ZMM g3 = _mm512_set1_ps(sg3);
-        ZMM g4 = _mm512_set1_ps(sg4);
-        ZMM g5 = _mm512_set1_ps(sg5);
-        ZMM g6 = _mm512_set1_ps(sg6);
-        ZMM g7 = _mm512_set1_ps(sg7);
 
         for (int vi = 0; vi < vn; vi++)
         {
@@ -415,23 +416,25 @@ namespace fv
             // The second branch.
             if (!cond_ppv.is_empty())
             {
-                pq = _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mask_div_ps(zero, cond_ppv, pl, pr), g1);
+                pq = _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mask_div_ps(zero, cond_ppv, pl, pr), riemann::g1);
                 pqcr = _mm512_mul_ps(pq, cr);
                 um = _mm512_mask_div_ps(zero, cond_ppv,
-                                        _mm512_fmadd_ps(_mm512_fmadd_ps(_mm512_sub_ps(pqcr, cr), g4, ur), cl, _mm512_mul_ps(pqcr, ul)),
+                                        _mm512_fmadd_ps(_mm512_fmadd_ps(_mm512_sub_ps(pqcr, cr), riemann::g4, ur), cl, _mm512_mul_ps(pqcr, ul)),
                                         _mm512_add_ps(pqcr, cl));
-                ptl = _mm512_fmadd_ps(_mm512_mask_div_ps(zero, cond_ppv, _mm512_sub_ps(ul, um), cl), g7, one);
-                ptr = _mm512_fmadd_ps(_mm512_mask_div_ps(zero, cond_ppv, _mm512_sub_ps(um, ur), cr), g7, one);
+                ptl = _mm512_fmadd_ps(_mm512_mask_div_ps(zero, cond_ppv, _mm512_sub_ps(ul, um), cl), riemann::g7, one);
+                ptr = _mm512_fmadd_ps(_mm512_mask_div_ps(zero, cond_ppv, _mm512_sub_ps(um, ur), cr), riemann::g7, one);
                 pm = _mm512_mask_mul_ps(pm, cond_ppv, half,
-                                        _mm512_add_ps(_mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pl, ptl), g3),
-                                        _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pr, ptr), g3)));
+                                        _mm512_add_ps(_mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pl, ptl), riemann::g3),
+                                        _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pr, ptr), riemann::g3)));
             }
 
             // The third branch.
             if (!ncond_ppv.is_empty())
             {
-                gel = _mm512_sqrt_ps(_mm512_mask_div_ps(zero, ncond_ppv, g5, _mm512_mul_ps(_mm512_fmadd_ps(g6, pl, ppv), dl)));
-                ger = _mm512_sqrt_ps(_mm512_mask_div_ps(zero, ncond_ppv, g5, _mm512_mul_ps(_mm512_fmadd_ps(g6, pr, ppv), dr)));
+                gel = _mm512_sqrt_ps(_mm512_mask_div_ps(zero, ncond_ppv, riemann::g5,
+                                                        _mm512_mul_ps(_mm512_fmadd_ps(riemann::g6, pl, ppv), dl)));
+                ger = _mm512_sqrt_ps(_mm512_mask_div_ps(zero, ncond_ppv, riemann::g5,
+                                                        _mm512_mul_ps(_mm512_fmadd_ps(riemann::g6, pr, ppv), dr)));
                 pm = _mm512_mask_div_ps(pm, ncond_ppv,
                                         _mm512_fmadd_ps(gel, pl, _mm512_fmadd_ps(ger, pr, _mm512_sub_ps(ul, ur))),
                                         _mm512_add_ps(gel, ger));
@@ -519,27 +522,20 @@ namespace fv
                         float pk,
                         float ck)
     {
-        float g {1.4f};
-        float g1 = (g - 1.0f) / (2.0f * g);
-        float g2 = (g + 1.0f) / (2.0f * g);
-        float g4 = 2.0f / (g - 1.0f);
-        float g5 = 2.0f / (g + 1.0f);
-        float g6 = (g - 1.0f) / (g + 1.0f);
-
         float ak, bk, pratio, qrt;
 
         if (p <= pk)
         {
             // Rarefaction wave.
             pratio = p / pk;
-            f = g4 * ck * (pow(pratio, g1) - 1.0f);
-            fd = (1.0f / (dk * ck)) * pow(pratio, -g2);
+            f = riemann::sg4 * ck * (pow(pratio, riemann::sg1) - 1.0f);
+            fd = (1.0f / (dk * ck)) * pow(pratio, -riemann::sg2);
         }
         else
         {
             // Shock wave.
-            ak = g5 / dk;
-            bk = g6 * pk;
+            ak = riemann::sg5 / dk;
+            bk = riemann::sg6 * pk;
             qrt = sqrt(ak / (bk + p));
             f = (p - pk) * qrt;
             fd = (1.0f - 0.5f * (p - pk) / (bk + p)) * qrt;
@@ -588,21 +584,8 @@ namespace fv
                       float* pk_p,
                       float* ck_p)
     {
-        float sg {1.4f};
-        float sg1 = (sg - 1.0f) / (2.0f * sg);
-        float sg2 = (sg + 1.0f) / (2.0f * sg);
-        float sg4 = 2.0f / (sg - 1.0f);
-        float sg5 = 2.0f / (sg + 1.0f);
-        float sg6 = (sg - 1.0f) / (sg + 1.0f);
-
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
-
-        ZMM g1 = _mm512_set1_ps(sg1);
-        ZMM g2 = _mm512_set1_ps(sg2);
-        ZMM g4 = _mm512_set1_ps(sg4);
-        ZMM g5 = _mm512_set1_ps(sg5);
-        ZMM g6 = _mm512_set1_ps(sg6);
 
         for (int vi = 0; vi < vn; vi++)
         {
@@ -626,18 +609,18 @@ namespace fv
             {
                 pratio = _mm512_mask_div_ps(zero, cond, p, pk);
                 f = _mm512_mask_mul_ps(f, cond,
-                                       _mm512_mul_ps(g4, ck),
-                                       _mm512_sub_ps(_mm512_mask_pow_ps(zero, cond, pratio, g1), one));
+                                       _mm512_mul_ps(riemann::g4, ck),
+                                       _mm512_sub_ps(_mm512_mask_pow_ps(zero, cond, pratio, riemann::g1), one));
                 fd = _mm512_mask_div_ps(fd, cond,
-                                        _mm512_mask_pow_ps(zero, cond, pratio, _mm512_sub_ps(zero, g2)),
+                                        _mm512_mask_pow_ps(zero, cond, pratio, _mm512_sub_ps(zero, riemann::g2)),
                                         _mm512_mul_ps(dk, ck));
             }
 
             // The second branch.
             if (!ncond.is_empty())
             {
-                ak = _mm512_mask_div_ps(zero, ncond, g5, dk);
-                bkp = _mm512_fmadd_ps(g6, pk, p);
+                ak = _mm512_mask_div_ps(zero, ncond, riemann::g5, dk);
+                bkp = _mm512_fmadd_ps(riemann::g6, pk, p);
                 ppk = _mm512_sub_ps(p, pk);
                 qrt = _mm512_mask_sqrt_ps(zero, ncond,
                                           _mm512_mask_div_ps(zero, ncond, ak, bkp));
@@ -746,16 +729,6 @@ namespace fv
                         float& w,
                         float& p)
     {
-        float g {1.4f};
-        float g1 = (g - 1.0f) / (2.0f * g);
-        float g2 = (g + 1.0f) / (2.0f * g);
-        float g3 = 2.0f * g / (g - 1.0f);
-        float g4 = 2.0f / (g - 1.0f);
-        float g5 = 2.0f / (g + 1.0f);
-        float g6 = (g - 1.0f) / (g + 1.0f);
-        float g7 = (g - 1.0f) / 2.0f;
-        float g8 = (g - 1.0f);
-
         float c, cml, cmr, pml, pmr, shl, shr, sl, sr, stl, str;
 
         if (0.0f <= um)
@@ -778,23 +751,23 @@ namespace fv
                 }
                 else
                 {
-                    cml = cl * pow(pm / pl, g1);
+                    cml = cl * pow(pm / pl, riemann::sg1);
                     stl = um - cml;
 
                     if (0.0f > stl)
                     {
                         // Sampled point is star left state.
-                        d = dl * pow(pm / pl, 1.0f / g);
+                        d = dl * pow(pm / pl, 1.0f / riemann::sg);
                         u = um;
                         p = pm;
                     }
                     else
                     {
                         // Sampled point is inside left fan.
-                        u = g5 * (cl + g7 * ul);
-                        c = g5 * (cl + g7 * ul);
-                        d = dl * pow(c / cl, g4);
-                        p = pl * pow(c / cl, g3);
+                        u = riemann::sg5 * (cl + riemann::sg7 * ul);
+                        c = riemann::sg5 * (cl + riemann::sg7 * ul);
+                        d = dl * pow(c / cl, riemann::sg4);
+                        p = pl * pow(c / cl, riemann::sg3);
                     }
                 }
             }
@@ -802,7 +775,7 @@ namespace fv
             {
                 // Left shock.
                 pml = pm / pl;
-                sl = ul - cl * sqrt(g2 * pml + g1);
+                sl = ul - cl * sqrt(riemann::sg2 * pml + riemann::sg1);
 
                 if (0.0 <= sl)
                 {
@@ -814,7 +787,7 @@ namespace fv
                 else
                 {
                     // Sampled point is star left state.
-                    d = dl * (pml + g6) / (pml * g6 + 1.0f);
+                    d = dl * (pml + riemann::sg6) / (pml * riemann::sg6 + 1.0f);
                     u = um;
                     p = pm;
                 }
@@ -830,7 +803,7 @@ namespace fv
             {
                 // Right shock.
                 pmr = pm / pr;
-                sr = ur + cr * sqrt(g2 * pmr + g1);
+                sr = ur + cr * sqrt(riemann::sg2 * pmr + riemann::sg1);
 
                 if (0.0f >= sr)
                 {
@@ -842,7 +815,7 @@ namespace fv
                 else
                 {
                     // Sampled point is star right state.
-                    d = dr * (pmr + g6) / (pmr * g6 + 1.0f);
+                    d = dr * (pmr + riemann::sg6) / (pmr * riemann::sg6 + 1.0f);
                     u = um;
                     p = pm;
                 }
@@ -860,23 +833,23 @@ namespace fv
                 }
                 else
                 {
-                    cmr = cr * pow(pm / pr, g1);
+                    cmr = cr * pow(pm / pr, riemann::sg1);
                     str = um + cmr;
 
                     if (0.0f <= str)
                     {
                         // Sampled point is star right state.
-                        d = dr * pow(pm / pr, 1.0f / g);
+                        d = dr * pow(pm / pr, 1.0f / riemann::sg);
                         u = um;
                         p = pm;
                     }
                     else
                     {
                         // Sampled point is inside left fan.
-                        u = g5 * (-cr + g7 * ur);
-                        c = g5 * (cr - g7 * ur);
-                        d = dr * pow(c / cr, g4);
-                        p = pr * pow(c / cr, g3);
+                        u = riemann::sg5 * (-cr + riemann::sg7 * ur);
+                        c = riemann::sg5 * (cr - riemann::sg7 * ur);
+                        d = dr * pow(c / cr, riemann::sg4);
+                        p = pr * pow(c / cr, riemann::sg3);
                     }
                 }
             }
@@ -979,27 +952,8 @@ namespace fv
                       float* w_p,
                       float* p_p)
     {
-        float sg {1.4f};
-        float sg1 = (sg - 1.0f) / (2.0f * sg);
-        float sg2 = (sg + 1.0f) / (2.0f * sg);
-        float sg3 = 2.0f * sg / (sg - 1.0f);
-        float sg4 = 2.0f / (sg - 1.0f);
-        float sg5 = 2.0f / (sg + 1.0f);
-        float sg6 = (sg - 1.0f) / (sg + 1.0f);
-        float sg7 = (sg - 1.0f) / 2.0f;
-        float sg8 = (sg - 1.0f);
-
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
-
-        ZMM g1 = _mm512_set1_ps(sg1);
-        ZMM g2 = _mm512_set1_ps(sg2);
-        ZMM g3 = _mm512_set1_ps(sg3);
-        ZMM g4 = _mm512_set1_ps(sg4);
-        ZMM g5 = _mm512_set1_ps(sg5);
-        ZMM g6 = _mm512_set1_ps(sg6);
-        ZMM g7 = _mm512_set1_ps(sg7);
-        ZMM g8 = _mm512_set1_ps(sg8);
 
         for (int vi = 0; vi < vn; vi++)
         {
@@ -1039,8 +993,8 @@ namespace fv
             // Calculate main values.
             pms = _mm512_div_ps(pm, p);
             sh = _mm512_sub_ps(u, c);
-            st = _mm512_fnmadd_ps(_mm512_pow_ps(pms, g1), c, ums);
-            s = _mm512_fnmadd_ps(c, _mm512_sqrt_ps(_mm512_fmadd_ps(g2, pms, g1)), u);
+            st = _mm512_fnmadd_ps(_mm512_pow_ps(pms, riemann::g1), c, ums);
+            s = _mm512_fnmadd_ps(c, _mm512_sqrt_ps(_mm512_fmadd_ps(riemann::g2, pms, riemann::g1)), u);
 
             // Conditions.
             cond_pm = _mm512_cmple_ps_mask(pm, p);
@@ -1049,8 +1003,9 @@ namespace fv
             cond_s = _mm512_mask_cmplt_ps_mask(_mm512_knot(cond_pm), s, zero);
 
             // Store.
-            d = _mm512_mask_mov_ps(d, cond_st, _mm512_mul_ps(d, _mm512_pow_ps(pms, _mm512_set1_ps(1.0f / sg))));
-            d = _mm512_mask_mov_ps(d, cond_s, _mm512_mul_ps(d, _mm512_div_ps(_mm512_add_ps(pms, g6), _mm512_fmadd_ps(pms, g6, one))));
+            d = _mm512_mask_mov_ps(d, cond_st, _mm512_mul_ps(d, _mm512_pow_ps(pms, _mm512_set1_ps(1.0f / riemann::sg))));
+            d = _mm512_mask_mov_ps(d, cond_s, _mm512_mul_ps(d, _mm512_div_ps(_mm512_add_ps(pms, riemann::g6),
+                                                                             _mm512_fmadd_ps(pms, riemann::g6, one))));
             u = _mm512_mask_mov_ps(u, _mm512_kor(cond_st, cond_s), ums);
             p = _mm512_mask_mov_ps(p, _mm512_kor(cond_st, cond_s), pm);
 
@@ -1058,10 +1013,10 @@ namespace fv
             cond_sh_st = _mm512_kand(cond_sh, _mm512_knot(cond_st));
             if (!cond_sh_st.is_empty())
             {
-                u = _mm512_mask_mov_ps(u, cond_sh_st, _mm512_mul_ps(g5, _mm512_fmadd_ps(g7, u, c)));
+                u = _mm512_mask_mov_ps(u, cond_sh_st, _mm512_mul_ps(riemann::g5, _mm512_fmadd_ps(riemann::g7, u, c)));
                 uc = _mm512_div_ps(u, c);
-                d = _mm512_mask_mov_ps(d, cond_sh_st, _mm512_mul_ps(d, _mm512_pow_ps(uc, g4)));
-                p = _mm512_mask_mov_ps(p, cond_sh_st, _mm512_mul_ps(p, _mm512_pow_ps(uc, g3)));
+                d = _mm512_mask_mov_ps(d, cond_sh_st, _mm512_mul_ps(d, _mm512_pow_ps(uc, riemann::g4)));
+                p = _mm512_mask_mov_ps(p, cond_sh_st, _mm512_mul_ps(p, _mm512_pow_ps(uc, riemann::g3)));
             }
 
             // Final store.
@@ -1189,7 +1144,7 @@ namespace fv
             scase_prefun_1(fl, fld, pold, dl, pl, cl);
             scase_prefun_1(fr, frd, pold, dr, pr, cr);
             p = pold - (fl + fr + udiff) / (fld + frd);
-            change = 2.0 * abs((p - pold) / (p + pold));
+            change = 2.0f * abs((p - pold) / (p + pold));
 
             if (change <= tolpre)
             {
@@ -1210,7 +1165,7 @@ namespace fv
         }
 
         // compute velocity in star region
-        u = 0.5 * (ul + ur + fr - fl);
+        u = 0.5f * (ul + ur + fr - fl);
     }
 
     /// <summary>
