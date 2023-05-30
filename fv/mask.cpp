@@ -66,12 +66,13 @@ namespace fv
     /// <summary>
     /// Generate full mask.
     /// </summary>
+    /// <param name="n">Tail size.</param>
     /// <returns>Full mask.</returns>
-    Mask Mask::full()
+    Mask Mask::full_tail(int n)
     {
         Mask k;
 
-        k.fill();
+        k.fill_tail(n);
 
         return k;
     }
@@ -81,13 +82,14 @@ namespace fv
     /// <summary>
     /// Check if mask is empty.
     /// </summary>
+    /// <param name="n">Tail size.</param>
     /// <returns>
     /// true - if mask is empty,
     /// false - if mask is not empty.
     /// </returns>
-    bool Mask::is_empty() const
+    bool Mask::is_empty_tail(int n) const
     {
-        for (int i = 0; i < bits; i++)
+        for (int i = 0; i < n; i++)
         {
             if (is_true(i))
             {

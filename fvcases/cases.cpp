@@ -624,19 +624,21 @@ namespace fv
     /// <param name="dk">Input.</param>
     /// <param name="pk">Input.</param>
     /// <param name="ck">Input.</param>
+    /// <param name="m">Mask.</param>
     void vcase_prefun_1(ZMM& f,
                         ZMM& fd,
                         ZMM p,
                         ZMM dk,
                         ZMM pk,
-                        ZMM ck)
+                        ZMM ck,
+                        Mask m)
     {
         ZMM pratio, ak, bkp, ppk, qrt;
         Mask cond, ncond;
 
         // Conditions.
-        cond = _mm512_cmple_ps_mask(p, pk);
-        ncond = _mm512_knot(cond);
+        cond = _mm512_kand(_mm512_cmple_ps_mask(p, pk), m);
+        ncond = _mm512_kand(_mm512_knot(cond), m);
 
         // The first branch.
         if (!cond.is_empty())
@@ -695,7 +697,8 @@ namespace fv
                            _mm512_load_ps(p_p + sh),
                            _mm512_load_ps(dk_p + sh),
                            _mm512_load_ps(pk_p + sh),
-                           _mm512_load_ps(ck_p + sh));
+                           _mm512_load_ps(ck_p + sh),
+                           Mask::full());
 
             _mm512_store_ps(f_p + sh, f);
             _mm512_store_ps(fd_p + sh, fd);
@@ -1335,7 +1338,44 @@ namespace fv
                         ZMM& p,
                         ZMM& u)
     {
-        ;
+        ZMM tolpre, tolpre2, udiff, pold, fl, fld, fr, frd, change;
+        Mask cond_break, cond_neg, m;
+        const int nriter = 20;
+        int iter = 1;
+
+        tolpre = _mm512_set1_ps(1.0e-6f);
+        tolpre2 = _mm512_set1_ps(5.0e-7f);
+        udiff = _mm512_sub_ps(ur, ul);
+
+        vcase_guessp_1(dl, ul, pl, cl, dr, ur, pr, cr, pold);
+
+        // Start with full mask.
+        m = Mask::full_tail(ZMM::count<float>());
+
+        for (; (iter <= nriter) && (!m.is_empty_tail(ZMM::count<float>())); iter++)
+        {
+            vcase_prefun_1(fl, fld, pold, dl, pl, cl, m);
+            vcase_prefun_1(fr, frd, pold, dr, pr, cr, m);
+            p = _mm512_mask_sub_ps(p, m, pold,
+                                   _mm512_mask_div_ps(zero, m,
+                                                      _mm512_add_ps(_mm512_add_ps(fl, fr), udiff),
+                                                      _mm512_add_ps(fld, frd)));
+            change = _mm512_abs_ps(_mm512_mask_div_ps(zero, m, _mm512_sub_ps(p, pold), _mm512_add_ps(p, pold)));
+            cond_break = _mm512_mask_cmple_ps_mask(m, change, tolpre2);
+            m = _mm512_kand(m, _mm512_knot(cond_break));
+            cond_neg = _mm512_mask_cmplt_ps_mask(m, p, zero);
+            p = _mm512_mask_mov_ps(p, cond_neg, tolpre);
+            pold = _mm512_mask_mov_ps(pold, m, p);
+        }
+
+        // Check for divergence.
+        if (iter > nriter)
+        {
+            std::cout << "divergence in Newton-Raphson iteration" << std::endl;
+            exit(1);
+        }
+
+        u = _mm512_mul_ps(half, _mm512_add_ps(_mm512_add_ps(ul, ur), _mm512_sub_ps(fr, fl)));
     }
 
     /// <summary>

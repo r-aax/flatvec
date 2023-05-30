@@ -81,11 +81,32 @@ namespace fv
             fill_tail(bits);
         }
 
-        static Mask full();
+        static Mask full_tail(int n);
+
+        /// <summary>
+        /// Mask with full tail.
+        /// </summary>
+        /// <returns>Mask with full tail.</returns>
+        inline static Mask full()
+        {
+            return full_tail(bits);
+        }
 
         // Check mask.
 
-        bool is_empty() const;
+        bool is_empty_tail(int n) const;
+
+        /// <summary>
+        /// Check if tail is empty.
+        /// </summary>
+        /// <returns>
+        /// true - if mask is empty,
+        /// false - if mask is not empty.
+        /// </returns>
+        inline bool is_empty() const
+        {
+            return is_empty_tail(bits);
+        }
     };
 }
 

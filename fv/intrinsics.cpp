@@ -78,6 +78,18 @@ namespace fv
     //
 
     /// <summary>
+    /// Semantic for abs.
+    /// </summary>
+    /// <param name="a">Argument.</param>
+    /// <returns>Result ZMM register.</returns>
+    ZMM _mm512_abs_ps(ZMM a)
+    {
+        return arith1<float>(a, [] (float x) { return abs(x); });
+    }
+
+    //
+
+    /// <summary>
     /// Semantic for sqrt.
     /// </summary>
     /// <param name="a">Argument.</param>
@@ -479,6 +491,20 @@ namespace fv
                               ZMM b)
     {
         return compare<float>(a, b, [] (float x, float y) { return x <= y; });
+    }
+
+    /// <summary>
+    /// Semantic for cmple.
+    /// </summary>
+    /// <param name="k">Mask.</param>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <returns>Result mask.</returns>
+    Mask _mm512_mask_cmple_ps_mask(Mask k,
+                                   ZMM a,
+                                   ZMM b)
+    {
+        return mask_compare<float>(k, a, b, [] (float x, float y) { return x <= y; });
     }
 
     //

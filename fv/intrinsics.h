@@ -75,6 +75,10 @@ namespace fv
 
     //
 
+    ZMM _mm512_abs_ps(ZMM a);
+
+    //
+
     ZMM _mm512_sqrt_ps(ZMM a);
 
     ZMM _mm512_mask_sqrt_ps(ZMM src,
@@ -364,10 +368,18 @@ namespace fv
     Mask _mm512_cmple_ps_mask(ZMM a,
                               ZMM b);
 
+    Mask _mm512_mask_cmple_ps_mask(Mask k,
+                                   ZMM a,
+                                   ZMM b);
+
     //
 
     Mask _mm512_cmplt_ps_mask(ZMM a,
                               ZMM b);
+
+    Mask _mm512_mask_cmplt_ps_mask(Mask k,
+                                   ZMM a,
+                                   ZMM b);
 
     //
 
@@ -383,10 +395,6 @@ namespace fv
 
     Mask _mm512_cmpnlt_ps_mask(ZMM a,
                                ZMM b);
-
-    Mask _mm512_mask_cmplt_ps_mask(Mask k,
-                                   ZMM a,
-                                   ZMM b);
 
     //
 
