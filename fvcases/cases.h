@@ -172,7 +172,7 @@ namespace fv
 
     bool case_starpu(int len,
                      float random_lo = 1.0,
-                     float random_hi = 2.0,
+                     float random_hi = 1.1,
                      float eps = 1.0e-6);
 }
 
