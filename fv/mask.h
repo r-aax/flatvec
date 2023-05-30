@@ -37,16 +37,49 @@ namespace fv
 
         bool get(int i) const;
 
-        bool is_set(int i) const;
+        bool is_true(int i) const;
 
         void set(int i,
                  bool v);
 
-        // Generate full mask.
+        // Generate masks.
 
-        void clear();
+        void set_tail(int n,
+                      bool v);
 
-        void set_full();
+        /// <summary>
+        /// Clear tail.
+        /// </summary>
+        /// <param name="n">Tail size.</param>
+        inline void clear_tail(int n)
+        {
+            set_tail(n, false);
+        }
+
+        /// <summary>
+        /// Clear all bits.
+        /// </summary>
+        inline void clear()
+        {
+            clear_tail(bits);
+        }
+
+        /// <summary>
+        /// Fill tail.
+        /// </summary>
+        /// <param name="n">Tail size.</param>
+        inline void fill_tail(int n)
+        {
+            set_tail(n, true);
+        }
+
+        /// <summary>
+        /// Fill all bits.
+        /// </summary>
+        void fill()
+        {
+            fill_tail(bits);
+        }
 
         static Mask full();
 

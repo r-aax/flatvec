@@ -31,7 +31,7 @@ namespace fv
     /// </summary>
     /// <param name="i">Index.</param>
     /// <returns>Mask element value.</returns>
-    bool Mask::is_set(int i) const
+    bool Mask::is_true(int i) const
     {
         return get(i);
     }
@@ -47,27 +47,19 @@ namespace fv
         data[i] = v;
     }
 
-    // Generate full mask.
+    // Generate masks.
 
     /// <summary>
-    /// Clear mask.
+    /// Set tail.
     /// </summary>
-    void Mask::clear()
+    /// <param name="n">Tail size.</param>
+    /// <param name="v">Value.</param>
+    void Mask::set_tail(int n,
+                        bool v)
     {
-        for (int i = 0; i < bits; i++)
+        for (int i = 0; i < n; i++)
         {
-            data[i] = false;
-        }
-    }
-
-    /// <summary>
-    /// Set full mask.
-    /// </summary>
-    void Mask::set_full()
-    {
-        for (int i = 0; i < bits; i++)
-        {
-            data[i] = true;
+            data[i] = v;
         }
     }
 
@@ -79,7 +71,7 @@ namespace fv
     {
         Mask k;
 
-        k.set_full();
+        k.fill();
 
         return k;
     }
@@ -97,7 +89,7 @@ namespace fv
     {
         for (int i = 0; i < bits; i++)
         {
-            if (is_set(i))
+            if (is_true(i))
             {
                 return false;
             }

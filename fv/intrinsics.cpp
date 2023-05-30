@@ -596,7 +596,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::count<float>(); i++)
         {
-            r.set<float>(i, k.is_set(i) ? b.get<float>(i) : a.get<float>(i));
+            r.set<float>(i, k.is_true(i) ? b.get<float>(i) : a.get<float>(i));
         }
 
         return r;

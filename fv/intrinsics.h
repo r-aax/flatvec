@@ -40,7 +40,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::count<T>(); i++)
         {
-            if (k.is_set(i))
+            if (k.is_true(i))
             {
                 dst.set<T>(i, op(a.get<T>(i)));
             }
@@ -106,7 +106,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::count<T>(); i++)
         {
-            if (k.is_set(i))
+            if (k.is_true(i))
             {
                 dst.set<T>(i, op(a.get<T>(i), b.get<T>(i)));
             }
@@ -325,7 +325,7 @@ namespace fv
 
         for (int i = 0; i < ZMM::count<T>(); i++)
         {
-            if (k1.is_set(i))
+            if (k1.is_true(i))
             {
                 k.set(i, op(a.get<float>(i), b.get<float>(i)));
             }
