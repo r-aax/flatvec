@@ -328,6 +328,11 @@ namespace fv
         float sg8 = (sg - 1.0f);
 
         /// <summary>
+        /// Vector constant G.
+        /// </summary>
+        ZMM g = _mm512_set1_ps(sg);
+
+        /// <summary>
         /// Vector constant G1.
         /// </summary>
         ZMM g1 = _mm512_set1_ps(sg1);
@@ -1684,6 +1689,61 @@ namespace fv
     }
 
     /// <summary>
+    /// Vector riemann case.
+    /// </summary>
+    /// <param name="dl">Input.</param>
+    /// <param name="ul">Input.</param>
+    /// <param name="vl">Input.</param>
+    /// <param name="wl">Input.</param>
+    /// <param name="pl">Input.</param>
+    /// <param name="dr">Input.</param>
+    /// <param name="ur">Input.</param>
+    /// <param name="vr">Input.</param>
+    /// <param name="wr">Input.</param>
+    /// <param name="pr">Input.</param>
+    /// <param name="d">Output.</param>
+    /// <param name="u">Output.</param>
+    /// <param name="v">Output.</param>
+    /// <param name="w">Output.</param>
+    /// <param name="p">Output.</param>
+    void vcase_riemann_1(ZMM dl,
+                         ZMM ul,
+                         ZMM vl,
+                         ZMM wl,
+                         ZMM pl,
+                         ZMM dr,
+                         ZMM ur,
+                         ZMM vr,
+                         ZMM wr,
+                         ZMM pr,
+                         ZMM& d,
+                         ZMM& u,
+                         ZMM& v,
+                         ZMM& w,
+                         ZMM& p)
+    {
+        ZMM cl, cr, pm, um;
+        Mask vacuum_mask;
+
+        cl = _mm512_sqrt_ps(_mm512_div_ps(_mm512_mul_ps(riemann::g, pl), dl));
+        cr = _mm512_sqrt_ps(_mm512_div_ps(_mm512_mul_ps(riemann::g, pr), dr));
+        vacuum_mask = _mm512_cmple_ps_mask(_mm512_mul_ps(riemann::g4, _mm512_add_ps(cl, cr)),
+                                           _mm512_sub_ps(ur, ul));
+
+        // Vacuum check.
+        if (!vacuum_mask.is_empty_tail(ZMM::count<float>()))
+        {
+            std::cout << "VACUUM" << std::endl;
+            exit(1);
+        }
+        vcase_starpu_1(dl, ul, pl, cl, dr, ur, pr, cr, pm, um);
+        vcase_sample_1(dl, ul, vl, wl, pl, cl,
+                       dr, ur, vr, wr, pr, cr,
+                       pm, um,
+                       d, u, v, w, p);
+    }
+
+    /// <summary>
     /// Vectorized riemann case.
     /// </summary>
     /// <param name="n">Count.</param>
@@ -1719,7 +1779,32 @@ namespace fv
                        float* w_p,
                        float* p_p)
     {
-        ;
+        assert(n % ZMM::count<float>() == 0);
+        int vn = n / ZMM::count<float>();
+
+        for (int vi = 0; vi < vn; vi++)
+        {
+            int sh = vi * ZMM::count<float>();
+            ZMM d, u, v, w, p;
+
+            vcase_riemann_1(_mm512_load_ps(dl_p + sh),
+                            _mm512_load_ps(ul_p + sh),
+                            _mm512_load_ps(vl_p + sh),
+                            _mm512_load_ps(wl_p + sh),
+                            _mm512_load_ps(pl_p + sh),
+                            _mm512_load_ps(dr_p + sh),
+                            _mm512_load_ps(ur_p + sh),
+                            _mm512_load_ps(vr_p + sh),
+                            _mm512_load_ps(wr_p + sh),
+                            _mm512_load_ps(pr_p + sh),
+                            d, u, v, w, p);
+
+            _mm512_store_ps(d_p + sh, d);
+            _mm512_store_ps(u_p + sh, u);
+            _mm512_store_ps(v_p + sh, v);
+            _mm512_store_ps(w_p + sh, w);
+            _mm512_store_ps(p_p + sh, p);
+        }
     }
 
     /// <summary>
@@ -1778,7 +1863,7 @@ namespace fv
                       sd.get_data(), su.get_data(), sv.get_data(), sw.get_data(), sp.get_data());
 
         vcase_riemann(n,
-                      dl.get_data(), ul.get_data(), vp.get_data(), wl.get_data(), pl.get_data(),
+                      dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(),
                       dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(),
                       vd.get_data(), vu.get_data(), vv.get_data(), vw.get_data(), vp.get_data());
 
@@ -1786,17 +1871,6 @@ namespace fv
 
         if (!res)
         {
-            sd.print();
-            su.print();
-            sv.print();
-            sw.print();
-            sp.print();
-            vd.print();
-            vu.print();
-            vv.print();
-            vw.print();
-            vp.print();
-
             std::cout << "max_diff : "
                       << vd.max_diff(sd) << ", " << vu.max_diff(su) << ", " << vv.max_diff(sv) << ", "
                       << vw.max_diff(sw) << ", " << vp.max_diff(sp)

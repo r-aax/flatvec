@@ -35,6 +35,11 @@ namespace fv
             : size {s}
         {
             data = new T[size];
+
+            for (int i = 0; i < s; i++)
+            {
+                data[i] = static_cast<T>(0);
+            }
         }
 
         /// <summary>
