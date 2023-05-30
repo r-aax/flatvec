@@ -8,9 +8,24 @@ namespace fv
 {
     // Some constants
 
+    /// <summary>
+    /// Zero.
+    /// </summary>
     ZMM zero = _mm512_set1_ps(0.0f);
+
+    /// <summary>
+    /// One.
+    /// </summary>
     ZMM one = _mm512_set1_ps(1.0f);
+
+    /// <summary>
+    /// Two.
+    /// </summary>
     ZMM two = _mm512_set1_ps(2.0f);
+
+    /// <summary>
+    /// Half.
+    /// </summary>
     ZMM half = _mm512_set1_ps(0.5f);
 
     // arith_f32
@@ -262,25 +277,94 @@ namespace fv
 
     // Constants for Riemann solver
 
+    /// <summary>
+    /// Namespace for riemann cases.
+    /// </summary>
     namespace riemann
     {
+        /// <summary>
+        /// Constant G.
+        /// </summary>
         float sg {1.4f};
+
+        /// <summary>
+        /// Constant G1.
+        /// </summary>
         float sg1 = (sg - 1.0f) / (2.0f * sg);
+
+        /// <summary>
+        /// Constant G2.
+        /// </summary>
         float sg2 = (sg + 1.0f) / (2.0f * sg);
+
+        /// <summary>
+        /// Constant G3.
+        /// </summary>
         float sg3 = 2.0f * sg / (sg - 1.0f);
+
+        /// <summary>
+        /// Constant G4.
+        /// </summary>
         float sg4 = 2.0f / (sg - 1.0f);
+
+        /// <summary>
+        /// Constant G5.
+        /// </summary>
         float sg5 = 2.0f / (sg + 1.0f);
+
+        /// <summary>
+        /// Constant G6.
+        /// </summary>
         float sg6 = (sg - 1.0f) / (sg + 1.0f);
+
+        /// <summary>
+        /// Constant G7.
+        /// </summary>
         float sg7 = (sg - 1.0f) / 2.0f;
+
+        /// <summary>
+        /// Constant G8.
+        /// </summary>
         float sg8 = (sg - 1.0f);
 
+        /// <summary>
+        /// Vector constant G1.
+        /// </summary>
         ZMM g1 = _mm512_set1_ps(sg1);
+
+        /// <summary>
+        /// Vector constant G2.
+        /// </summary>
         ZMM g2 = _mm512_set1_ps(sg2);
+
+        /// <summary>
+        /// Vector constant G3.
+        /// </summary>
         ZMM g3 = _mm512_set1_ps(sg3);
+
+        /// <summary>
+        /// Vector constant G4.
+        /// </summary>
         ZMM g4 = _mm512_set1_ps(sg4);
+
+        /// <summary>
+        /// Vector constant G5.
+        /// </summary>
         ZMM g5 = _mm512_set1_ps(sg5);
+
+        /// <summary>
+        /// Vector constant G6.
+        /// </summary>
         ZMM g6 = _mm512_set1_ps(sg6);
+
+        /// <summary>
+        /// Vector constant G7.
+        /// </summary>
         ZMM g7 = _mm512_set1_ps(sg7);
+
+        /// <summary>
+        /// Vector constant G8.
+        /// </summary>
         ZMM g8 = _mm512_set1_ps(sg8);
     }
 
@@ -501,7 +585,7 @@ namespace fv
     /// <param name="len">Vectors count.</param>
     /// <param name="random_lo">Lo value for random generation.</param>
     /// <param name="random_hi">Hi value for random generation.</param>
-    /// <param name="eps"></param>
+    /// <param name="eps">Max deviation.</param>
     /// <returns>
     /// true - OK result,
     /// false - ERROR result.
@@ -711,7 +795,7 @@ namespace fv
     /// <param name="len">Vectors count.</param>
     /// <param name="random_lo">Lo value for random generation.</param>
     /// <param name="random_hi">Hi value for random generation.</param>
-    /// <param name="eps"></param>
+    /// <param name="eps">Max deviation.</param>
     /// <returns>
     /// true - OK result,
     /// false - ERROR result.
@@ -1144,6 +1228,17 @@ namespace fv
         }
     }
 
+    /// <summary>
+    /// Case sample.
+    /// </summary>
+    /// <param name="len">Vectors count.</param>
+    /// <param name="random_lo">Lo bound for random.</param>
+    /// <param name="random_hi">Hi bound for random.</param>
+    /// <param name="eps">Max deviation.</param>
+    /// <returns>
+    /// true - OK result,
+    /// false - ERROR result.
+    /// </returns>
     bool case_sample(int len,
                      float random_lo,
                      float random_hi,
@@ -1427,6 +1522,17 @@ namespace fv
         }
     }
 
+    /// <summary>
+    /// Case starpu.
+    /// </summary>
+    /// <param name="len">Count of vectors.</param>
+    /// <param name="random_lo">Lo bound for random.</param>
+    /// <param name="random_hi">Hi bound for random.</param>
+    /// <param name="eps">Max deviation.</param>
+    /// <returns>
+    /// true - OK result,
+    /// false - ERROR result.
+    /// </returns>
     bool case_starpu(int len,
                      float random_lo,
                      float random_hi,
@@ -1455,10 +1561,6 @@ namespace fv
         ur.generate_random(random_lo, random_hi);
         pr.generate_random(random_lo, random_hi);
         cr.generate_random(random_lo, random_hi);
-        sp.generate_random(random_lo, random_hi);
-        vp.generate_random(random_lo, random_hi);
-        su.generate_random(random_lo, random_hi);
-        vu.generate_random(random_lo, random_hi);
 
         scase_starpu(n,
                      dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
@@ -1475,6 +1577,230 @@ namespace fv
         if (!res)
         {
             std::cout << "max_diff : " << vp.max_diff(sp) << ", " << vu.max_diff(su) << std::endl;
+        }
+
+        return res;
+    }
+
+    /// <summary>
+    /// Scalar riemann case.
+    /// </summary>
+    /// <param name="dl">Input.</param>
+    /// <param name="ul">Input.</param>
+    /// <param name="vl">Input.</param>
+    /// <param name="wl">Input.</param>
+    /// <param name="pl">Input.</param>
+    /// <param name="dr">Input.</param>
+    /// <param name="ur">Input.</param>
+    /// <param name="vr">Input.</param>
+    /// <param name="wr">Input.</param>
+    /// <param name="pr">Input.</param>
+    /// <param name="d">Output.</param>
+    /// <param name="u">Output.</param>
+    /// <param name="v">Output.</param>
+    /// <param name="w">Output.</param>
+    /// <param name="p">Output.</param>
+    void scase_riemann_1(float dl,
+                         float ul,
+                         float vl,
+                         float wl,
+                         float pl,
+                         float dr,
+                         float ur,
+                         float vr,
+                         float wr,
+                         float pr,
+                         float& d,
+                         float& u,
+                         float& v,
+                         float& w,
+                         float& p)
+    {
+        float pm, um, cl, cr;
+
+        pm = 0.0;
+
+        // Sound speeds.
+        cl = sqrt(riemann::sg * pl / dl);
+        cr = sqrt(riemann::sg * pr / dr);
+
+        // Check for vacuum.
+        if (riemann::sg4 * (cl + cr) <= (ur - ul))
+        {
+            std::cout << "VACUUM" << std::endl;
+            exit(1);
+        }
+
+        // Exact solution.
+        scase_starpu_1(dl, ul, pl, cl, dr, ur, pr, cr, pm, um);
+        scase_sample_1(dl, ul, vl, wl, pl, cl,
+                       dr, ur, vr, wr, pr, cr,
+                       pm, um,
+                       d, u, v, w, p);
+    }
+
+    /// <summary>
+    /// Scalar case riemann.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="dl">Input array.</param>
+    /// <param name="ul">Input array.</param>
+    /// <param name="vl">Input array.</param>
+    /// <param name="wl">Input array.</param>
+    /// <param name="pl">Input array.</param>
+    /// <param name="dr">Input array.</param>
+    /// <param name="ur">Input array.</param>
+    /// <param name="vr">Input array.</param>
+    /// <param name="wr">Input array.</param>
+    /// <param name="pr">Input array.</param>
+    /// <param name="d">Output array.</param>
+    /// <param name="u">Output array.</param>
+    /// <param name="v">Output array.</param>
+    /// <param name="w">Output array.</param>
+    /// <param name="p">Output array.</param>
+    void scase_riemann(int n,
+                       float* dl,
+                       float* ul,
+                       float* vl,
+                       float* wl,
+                       float* pl,
+                       float* dr,
+                       float* ur,
+                       float* vr,
+                       float* wr,
+                       float* pr,
+                       float* d,
+                       float* u,
+                       float* v,
+                       float* w,
+                       float* p)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            scase_riemann_1(dl[i], ul[i], vl[i], wl[i], pl[i],
+                            dr[i], ur[i], vr[i], wr[i], pr[i],
+                            d[i], u[i], v[i], w[i], p[i]);
+        }
+    }
+
+    /// <summary>
+    /// Vectorized riemann case.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="dl_p">Input array.</param>
+    /// <param name="ul_p">Input array.</param>
+    /// <param name="vl_p">Input array.</param>
+    /// <param name="wl_p">Input array.</param>
+    /// <param name="pl_p">Input array.</param>
+    /// <param name="dr_p">Input array.</param>
+    /// <param name="ur_p">Input array.</param>
+    /// <param name="vr_p">Input array.</param>
+    /// <param name="wr_p">Input array.</param>
+    /// <param name="pr_p">Input array.</param>
+    /// <param name="d_p">Output array.</param>
+    /// <param name="u_p">Output array.</param>
+    /// <param name="v_p">Output array.</param>
+    /// <param name="w_p">Output array.</param>
+    /// <param name="p_p">Output array.</param>
+    void vcase_riemann(int n,
+                       float* dl_p,
+                       float* ul_p,
+                       float* vl_p,
+                       float* wl_p,
+                       float* pl_p,
+                       float* dr_p,
+                       float* ur_p,
+                       float* vr_p,
+                       float* wr_p,
+                       float* pr_p,
+                       float* d_p,
+                       float* u_p,
+                       float* v_p,
+                       float* w_p,
+                       float* p_p)
+    {
+        ;
+    }
+
+    /// <summary>
+    /// Case riemann.
+    /// </summary>
+    /// <param name="len">Count of vectors.</param>
+    /// <param name="random_lo">Lo bound for random.</param>
+    /// <param name="random_hi">Hi bound for random.</param>
+    /// <param name="eps">Max deviation.</param>
+    /// <returns>
+    /// true - OK result,
+    /// false - ERROR result.
+    /// </returns>
+    bool case_riemann(int len,
+                      float random_lo,
+                      float random_hi,
+                      float eps)
+    {
+        int n = len * ZMM::count<float>();
+
+        ArrayManager<float> dl(n);
+        ArrayManager<float> ul(n);
+        ArrayManager<float> vl(n);
+        ArrayManager<float> wl(n);
+        ArrayManager<float> pl(n);
+        ArrayManager<float> dr(n);
+        ArrayManager<float> ur(n);
+        ArrayManager<float> vr(n);
+        ArrayManager<float> wr(n);
+        ArrayManager<float> pr(n);
+        ArrayManager<float> sd(n);
+        ArrayManager<float> su(n);
+        ArrayManager<float> sv(n);
+        ArrayManager<float> sw(n);
+        ArrayManager<float> sp(n);
+        ArrayManager<float> vd(n);
+        ArrayManager<float> vu(n);
+        ArrayManager<float> vv(n);
+        ArrayManager<float> vw(n);
+        ArrayManager<float> vp(n);
+
+        dl.generate_random(random_lo, random_hi);
+        ul.generate_random(random_lo, random_hi);
+        vl.generate_random(random_lo, random_hi);
+        wl.generate_random(random_lo, random_hi);
+        pl.generate_random(random_lo, random_hi);
+        dr.generate_random(random_lo, random_hi);
+        ur.generate_random(random_lo, random_hi);
+        vr.generate_random(random_lo, random_hi);
+        wr.generate_random(random_lo, random_hi);
+        pr.generate_random(random_lo, random_hi);
+
+        scase_riemann(n,
+                      dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(),
+                      dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(),
+                      sd.get_data(), su.get_data(), sv.get_data(), sw.get_data(), sp.get_data());
+
+        vcase_riemann(n,
+                      dl.get_data(), ul.get_data(), vp.get_data(), wl.get_data(), pl.get_data(),
+                      dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(),
+                      vd.get_data(), vu.get_data(), vv.get_data(), vw.get_data(), vp.get_data());
+
+        bool res = (vd.max_diff(sd) + vu.max_diff(su) + vv.max_diff(sv) + vw.max_diff(sw) + vp.max_diff(sp) < eps);
+
+        if (!res)
+        {
+            sd.print();
+            su.print();
+            sv.print();
+            sw.print();
+            sp.print();
+            vd.print();
+            vu.print();
+            vv.print();
+            vw.print();
+            vp.print();
+
+            std::cout << "max_diff : "
+                      << vd.max_diff(sd) << ", " << vu.max_diff(su) << ", " << vv.max_diff(sv) << ", "
+                      << vw.max_diff(sw) << ", " << vp.max_diff(sp)
+                      << std::endl;
         }
 
         return res;

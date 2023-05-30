@@ -19,6 +19,7 @@ int main()
     std::cout << (case_prefun(10)    ? "prefun    : OK" : "prefun    : ERROR") << std::endl;
     std::cout << (case_sample(10)    ? "sample    : OK" : "sample    : ERROR") << std::endl;
     std::cout << (case_starpu(10)    ? "starpu    : OK" : "starpu    : ERROR") << std::endl;
+    std::cout << (case_riemann(1)    ? "riemann   : OK" : "riemann   : ERROR") << std::endl;
 
     return 0;
 }
