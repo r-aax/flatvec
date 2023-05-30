@@ -51,16 +51,13 @@ namespace fv
     /// <summary>
     /// Case arithmetic vector.
     /// </summary>
-    /// <param name="a_p">Input.</param>
-    /// <param name="b_p">Input.</param>
-    /// <param name="c_p">Output.</param>
-    void vcase_arith_f32_1(float* a_p,
-                           float* b_p,
-                           float* c_p)
+    /// <param name="a">Input.</param>
+    /// <param name="b">Input.</param>
+    /// <param name="c">Output.</param>
+    void vcase_arith_f32_1(ZMM a,
+                           ZMM b,
+                           ZMM& c)
     {
-        ZMM a = _mm512_load_ps(a_p);
-        ZMM b = _mm512_load_ps(b_p);
-
         ZMM add = _mm512_add_ps(a, b);
         ZMM sub = _mm512_sub_ps(a, b);
         ZMM mul = _mm512_mul_ps(a, b);
@@ -68,26 +65,24 @@ namespace fv
         ZMM min = _mm512_min_ps(a, b);
         ZMM max = _mm512_max_ps(a, b);
 
-        ZMM c = _mm512_add_ps(add, sub);
+        c = _mm512_add_ps(add, sub);
         c = _mm512_add_ps(c, mul);
         c = _mm512_add_ps(c, div);
         c = _mm512_add_ps(c, min);
         c = _mm512_add_ps(c, max);
-
-        _mm512_store_ps(c_p, c);
     }
 
     /// <summary>
     /// Case arithmetic vector.
     /// </summary>
     /// <param name="n">Count.</param>
-    /// <param name="a">Input array.</param>
-    /// <param name="b">Input array.</param>
-    /// <param name="c">Output array.</param>
+    /// <param name="a_p">Input array.</param>
+    /// <param name="b_p">Input array.</param>
+    /// <param name="c_p">Output array.</param>
     void vcase_arith_f32(int n,
-                         float* a,
-                         float* b,
-                         float* c)
+                         float* a_p,
+                         float* b_p,
+                         float* c_p)
     {
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
@@ -95,8 +90,13 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * ZMM::count<float>();
+            ZMM c;
 
-            vcase_arith_f32_1(a + sh, b + sh, c + sh);
+            vcase_arith_f32_1(_mm512_load_ps(a_p + sh),
+                              _mm512_load_ps(b_p + sh),
+                              c);
+
+            _mm512_store_ps(c_p + sh, c);
         }
     }
 
@@ -180,36 +180,32 @@ namespace fv
     /// <summary>
     /// Case blend vector.
     /// </summary>
-    /// <param name="a_p">Input.</param>
-    /// <param name="b_p">Input.</param>
-    /// <param name="c_p">Output.</param>
-    void vcase_blend_f32_1(float* a_p,
-                           float* b_p,
-                           float* c_p)
+    /// <param name="a">Input.</param>
+    /// <param name="b">Input.</param>
+    /// <param name="c">Output.</param>
+    void vcase_blend_f32_1(ZMM a,
+                           ZMM b,
+                           ZMM& c)
     {
-        ZMM a = _mm512_load_ps(a_p);
-        ZMM b = _mm512_load_ps(b_p);
         Mask k = _mm512_cmpgt_ps_mask(a, b);
-        ZMM add, mul, c;
+        ZMM add, mul;
 
         add = _mm512_maskz_add_ps(add, k, a, b);
         mul = _mm512_maskz_mul_ps(mul, _mm512_knot(k), a, b);
         c = _mm512_mask_blend_ps(k, mul, add);
-
-        _mm512_store_ps(c_p, c);
     }
 
     /// <summary>
     /// Case blend vector.
     /// </summary>
     /// <param name="n">Count.</param>
-    /// <param name="a">Input array.</param>
-    /// <param name="b">Input array.</param>
-    /// <param name="c">Output array.</param>
+    /// <param name="a_p">Input array.</param>
+    /// <param name="b_p">Input array.</param>
+    /// <param name="c_p">Output array.</param>
     void vcase_blend_f32(int n,
-                         float* a,
-                         float* b,
-                         float* c)
+                         float* a_p,
+                         float* b_p,
+                         float* c_p)
     {
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
@@ -217,8 +213,13 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * ZMM::count<float>();
+            ZMM c;
 
-            vcase_blend_f32_1(a + sh, b + sh, c + sh);
+            vcase_blend_f32_1(_mm512_load_ps(a_p + sh),
+                              _mm512_load_ps(b_p + sh),
+                              c);
+
+            _mm512_store_ps(c_p + sh, c);
         }
     }
 
@@ -379,35 +380,25 @@ namespace fv
     /// <summary>
     /// Case guessp vector.
     /// </summary>
-    /// <param name="dl_p">Input.</param>
-    /// <param name="ul_p">Input.</param>
-    /// <param name="pl_p">Input.</param>
-    /// <param name="cl_p">Input.</param>
-    /// <param name="dr_p">Input.</param>
-    /// <param name="ur_p">Input.</param>
-    /// <param name="pr_p">Input.</param>
-    /// <param name="cr_p">Input.</param>
-    /// <param name="pm_p">Output.</param>
-    void vcase_guessp_1(float* dl_p,
-                        float* ul_p,
-                        float* pl_p,
-                        float* cl_p,
-                        float* dr_p,
-                        float* ur_p,
-                        float* pr_p,
-                        float* cr_p,
-                        float* pm_p)
+    /// <param name="dl">Input.</param>
+    /// <param name="ul">Input.</param>
+    /// <param name="pl">Input.</param>
+    /// <param name="cl">Input.</param>
+    /// <param name="dr">Input.</param>
+    /// <param name="ur">Input.</param>
+    /// <param name="pr">Input.</param>
+    /// <param name="cr">Input.</param>
+    /// <param name="pm">Output.</param>
+    void vcase_guessp_1(ZMM dl,
+                        ZMM ul,
+                        ZMM pl,
+                        ZMM cl,
+                        ZMM dr,
+                        ZMM ur,
+                        ZMM pr,
+                        ZMM cr,
+                        ZMM& pm)
     {
-        ZMM dl = _mm512_load_ps(dl_p);
-        ZMM ul = _mm512_load_ps(ul_p);
-        ZMM pl = _mm512_load_ps(pl_p);
-        ZMM cl = _mm512_load_ps(cl_p);
-        ZMM dr = _mm512_load_ps(dr_p);
-        ZMM ur = _mm512_load_ps(ur_p);
-        ZMM pr = _mm512_load_ps(pr_p);
-        ZMM cr = _mm512_load_ps(cr_p);
-        ZMM pm;
-
         // Begin of calculation part.
 
         ZMM cup, ppv, pmin, pmax, qmax, pq, um, ptl, ptr, gel, ger, pqcr;
@@ -456,35 +447,31 @@ namespace fv
                                     _mm512_fmadd_ps(gel, pl, _mm512_fmadd_ps(ger, pr, _mm512_sub_ps(ul, ur))),
                                     _mm512_add_ps(gel, ger));
         }
-
-        // End of calculation part.
-        
-        _mm512_store_ps(pm_p, pm);
     }
 
     /// <summary>
     /// Case guessp vector.
     /// </summary>
     /// <param name="n">Count.</param>
-    /// <param name="dl">Input array.</param>
-    /// <param name="ul">Input array.</param>
-    /// <param name="pl">Input array.</param>
-    /// <param name="cl">Input array.</param>
-    /// <param name="dr">Input array.</param>
-    /// <param name="ur">Input array.</param>
-    /// <param name="pr">Input array.</param>
-    /// <param name="cr">Input array.</param>
-    /// <param name="pm">Output array.</param>
+    /// <param name="dl_p">Input array.</param>
+    /// <param name="ul_p">Input array.</param>
+    /// <param name="pl_p">Input array.</param>
+    /// <param name="cl_p">Input array.</param>
+    /// <param name="dr_p">Input array.</param>
+    /// <param name="ur_p">Input array.</param>
+    /// <param name="pr_p">Input array.</param>
+    /// <param name="cr_p">Input array.</param>
+    /// <param name="pm_p">Output array.</param>
     void vcase_guessp(int n,
-                      float* dl,
-                      float* ul,
-                      float* pl,
-                      float* cl,
-                      float* dr,
-                      float* ur,
-                      float* pr,
-                      float* cr,
-                      float* pm)
+                      float* dl_p,
+                      float* ul_p,
+                      float* pl_p,
+                      float* cl_p,
+                      float* dr_p,
+                      float* ur_p,
+                      float* pr_p,
+                      float* cr_p,
+                      float* pm_p)
     {
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
@@ -492,10 +479,19 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * ZMM::count<float>();
+            ZMM pm;
 
-            vcase_guessp_1(dl + sh, ul + sh, pl + sh, cl + sh,
-                           dr + sh, ur + sh, pr + sh, cr + sh,
-                           pm + sh);
+            vcase_guessp_1(_mm512_load_ps(dl_p + sh),
+                           _mm512_load_ps(ul_p + sh),
+                           _mm512_load_ps(pl_p + sh),
+                           _mm512_load_ps(cl_p + sh),
+                           _mm512_load_ps(dr_p + sh),
+                           _mm512_load_ps(ur_p + sh),
+                           _mm512_load_ps(pr_p + sh),
+                           _mm512_load_ps(cr_p + sh),
+                           pm);
+
+            _mm512_store_ps(pm_p + sh, pm);
         }
     }
 
@@ -622,25 +618,19 @@ namespace fv
     /// <summary>
     /// Case prefun vector.
     /// </summary>
-    /// <param name="f_p">Output.</param>
-    /// <param name="fd_p">Output.</param>
-    /// <param name="p_p">Input.</param>
-    /// <param name="dk_p">Input.</param>
-    /// <param name="pk_p">Input.</param>
-    /// <param name="ck_p">Input.</param>
-    void vcase_prefun_1(float* f_p,
-                        float* fd_p,
-                        float* p_p,
-                        float* dk_p,
-                        float* pk_p,
-                        float* ck_p)
+    /// <param name="f">Output.</param>
+    /// <param name="fd">Output.</param>
+    /// <param name="p">Input.</param>
+    /// <param name="dk">Input.</param>
+    /// <param name="pk">Input.</param>
+    /// <param name="ck">Input.</param>
+    void vcase_prefun_1(ZMM& f,
+                        ZMM& fd,
+                        ZMM p,
+                        ZMM dk,
+                        ZMM pk,
+                        ZMM ck)
     {
-        ZMM p = _mm512_load_ps(p_p);
-        ZMM dk = _mm512_load_ps(dk_p);
-        ZMM pk = _mm512_load_ps(pk_p);
-        ZMM ck = _mm512_load_ps(ck_p);
-        ZMM f, fd;
-
         ZMM pratio, ak, bkp, ppk, qrt;
         Mask cond, ncond;
 
@@ -673,28 +663,25 @@ namespace fv
                                     _mm512_fnmadd_ps(_mm512_mask_div_ps(zero, ncond, ppk, bkp),
                                     _mm512_set1_ps(0.5), one));
         }
-
-        _mm512_store_ps(f_p, f);
-        _mm512_store_ps(fd_p, fd);
     }
 
     /// <summary>
     /// Case prefun vector.
     /// </summary>
     /// <param name="n">Count.</param>
-    /// <param name="f">Output array.</param>
-    /// <param name="fd">Output array.</param>
-    /// <param name="p">Input array.</param>
-    /// <param name="dk">Input array.</param>
-    /// <param name="pk">Input array.</param>
-    /// <param name="ck">Input array.</param>
+    /// <param name="f_p">Output array.</param>
+    /// <param name="fd_p">Output array.</param>
+    /// <param name="p_p">Input array.</param>
+    /// <param name="dk_p">Input array.</param>
+    /// <param name="pk_p">Input array.</param>
+    /// <param name="ck_p">Input array.</param>
     void vcase_prefun(int n,
-                      float* f,
-                      float* fd,
-                      float* p,
-                      float* dk,
-                      float* pk,
-                      float* ck)
+                      float* f_p,
+                      float* fd_p,
+                      float* p_p,
+                      float* dk_p,
+                      float* pk_p,
+                      float* ck_p)
     {
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
@@ -702,8 +689,16 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * ZMM::count<float>();
+            ZMM f, fd;
 
-            vcase_prefun_1(f + sh, fd + sh, p + sh, dk + sh, pk + sh, ck + sh);
+            vcase_prefun_1(f, fd,
+                           _mm512_load_ps(p_p + sh),
+                           _mm512_load_ps(dk_p + sh),
+                           _mm512_load_ps(pk_p + sh),
+                           _mm512_load_ps(ck_p + sh));
+
+            _mm512_store_ps(f_p + sh, f);
+            _mm512_store_ps(fd_p + sh, fd);
         }
     }
 
@@ -983,61 +978,45 @@ namespace fv
     /// <summary>
     /// Case sample vector.
     /// </summary>
-    /// <param name="dl_p">Input.</param>
-    /// <param name="ul_p">Input.</param>
-    /// <param name="vl_p">Input.</param>
-    /// <param name="wl_p">Input.</param>
-    /// <param name="pl_p">Input.</param>
-    /// <param name="cl_p">Input.</param>
-    /// <param name="dr_p">Input.</param>
-    /// <param name="ur_p">Input.</param>
-    /// <param name="vr_p">Input.</param>
-    /// <param name="wr_p">Input.</param>
-    /// <param name="pr_p">Input.</param>
-    /// <param name="cr_p">Input.</param>
-    /// <param name="pm_p">Input.</param>
-    /// <param name="um_p">Input.</param>
-    /// <param name="d_p">Output.</param>
-    /// <param name="u_p">Output.</param>
-    /// <param name="v_p">Output.</param>
-    /// <param name="w_p">Output.</param>
-    /// <param name="p_p">Output.</param>
-    void vcase_sample_1(float* dl_p,
-                        float* ul_p,
-                        float* vl_p,
-                        float* wl_p,
-                        float* pl_p,
-                        float* cl_p,
-                        float* dr_p,
-                        float* ur_p,
-                        float* vr_p,
-                        float* wr_p,
-                        float* pr_p,
-                        float* cr_p,
-                        float* pm_p,
-                        float* um_p,
-                        float* d_p,
-                        float* u_p,
-                        float* v_p,
-                        float* w_p,
-                        float* p_p)
+    /// <param name="dl">Input.</param>
+    /// <param name="ul">Input.</param>
+    /// <param name="vl">Input.</param>
+    /// <param name="wl">Input.</param>
+    /// <param name="pl">Input.</param>
+    /// <param name="cl">Input.</param>
+    /// <param name="dr">Input.</param>
+    /// <param name="ur">Input.</param>
+    /// <param name="vr">Input.</param>
+    /// <param name="wr">Input.</param>
+    /// <param name="pr">Input.</param>
+    /// <param name="cr">Input.</param>
+    /// <param name="pm">Input.</param>
+    /// <param name="um">Input.</param>
+    /// <param name="d">Output.</param>
+    /// <param name="u">Output.</param>
+    /// <param name="v">Output.</param>
+    /// <param name="w">Output.</param>
+    /// <param name="p">Output.</param>
+    void vcase_sample_1(ZMM dl,
+                        ZMM ul,
+                        ZMM vl,
+                        ZMM wl,
+                        ZMM pl,
+                        ZMM cl,
+                        ZMM dr,
+                        ZMM ur,
+                        ZMM vr,
+                        ZMM wr,
+                        ZMM pr,
+                        ZMM cr,
+                        ZMM pm,
+                        ZMM um,
+                        ZMM& d,
+                        ZMM& u,
+                        ZMM& v,
+                        ZMM& w,
+                        ZMM& p)
     {
-        ZMM dl = _mm512_load_ps(dl_p);
-        ZMM ul = _mm512_load_ps(ul_p);
-        ZMM vl = _mm512_load_ps(vl_p);
-        ZMM wl = _mm512_load_ps(wl_p);
-        ZMM pl = _mm512_load_ps(pl_p);
-        ZMM cl = _mm512_load_ps(cl_p);
-        ZMM dr = _mm512_load_ps(dr_p);
-        ZMM ur = _mm512_load_ps(ur_p);
-        ZMM vr = _mm512_load_ps(vr_p);
-        ZMM wr = _mm512_load_ps(wr_p);
-        ZMM pr = _mm512_load_ps(pr_p);
-        ZMM cr = _mm512_load_ps(cr_p);
-        ZMM pm = _mm512_load_ps(pm_p);
-        ZMM um = _mm512_load_ps(um_p);
-        ZMM d, u, v, w, p;
-
         ZMM c, ums, pms, sh, st, s, uc;
         Mask cond_um, cond_pm, cond_sh, cond_st, cond_s, cond_sh_st;
 
@@ -1084,57 +1063,51 @@ namespace fv
 
         // Final store.
         u = _mm512_mask_sub_ps(u, cond_um, zero, u);
-
-        _mm512_store_ps(d_p, d);
-        _mm512_store_ps(u_p, u);
-        _mm512_store_ps(v_p, v);
-        _mm512_store_ps(w_p, w);
-        _mm512_store_ps(p_p, p);
     }
 
     /// <summary>
     /// Case sample vector.
     /// </summary>
     /// <param name="n">Count.</param>
-    /// <param name="dl">Input array.</param>
-    /// <param name="ul">Input array.</param>
-    /// <param name="vl">Input array.</param>
-    /// <param name="wl">Input array.</param>
-    /// <param name="pl">Input array.</param>
-    /// <param name="cl">Input array.</param>
-    /// <param name="dr">Input array.</param>
-    /// <param name="ur">Input array.</param>
-    /// <param name="vr">Input array.</param>
-    /// <param name="wr">Input array.</param>
-    /// <param name="pr">Input array.</param>
-    /// <param name="cr">Input array.</param>
-    /// <param name="pm">Input array.</param>
-    /// <param name="um">Input array.</param>
-    /// <param name="d">Output array.</param>
-    /// <param name="u">Output array.</param>
-    /// <param name="v">Output array.</param>
-    /// <param name="w">Output array.</param>
-    /// <param name="p">Output array.</param>
+    /// <param name="dl_p">Input array.</param>
+    /// <param name="ul_p">Input array.</param>
+    /// <param name="vl_p">Input array.</param>
+    /// <param name="wl_p">Input array.</param>
+    /// <param name="pl_p">Input array.</param>
+    /// <param name="cl_p">Input array.</param>
+    /// <param name="dr_p">Input array.</param>
+    /// <param name="ur_p">Input array.</param>
+    /// <param name="vr_p">Input array.</param>
+    /// <param name="wr_p">Input array.</param>
+    /// <param name="pr_p">Input array.</param>
+    /// <param name="cr_p">Input array.</param>
+    /// <param name="pm_p">Input array.</param>
+    /// <param name="um_p">Input array.</param>
+    /// <param name="d_p">Output array.</param>
+    /// <param name="u_p">Output array.</param>
+    /// <param name="v_p">Output array.</param>
+    /// <param name="w_p">Output array.</param>
+    /// <param name="p_p">Output array.</param>
     void vcase_sample(int n,
-                      float* dl,
-                      float* ul,
-                      float* vl,
-                      float* wl,
-                      float* pl,
-                      float* cl,
-                      float* dr,
-                      float* ur,
-                      float* vr,
-                      float* wr,
-                      float* pr,
-                      float* cr,
-                      float* pm,
-                      float* um,
-                      float* d,
-                      float* u,
-                      float* v,
-                      float* w,
-                      float* p)
+                      float* dl_p,
+                      float* ul_p,
+                      float* vl_p,
+                      float* wl_p,
+                      float* pl_p,
+                      float* cl_p,
+                      float* dr_p,
+                      float* ur_p,
+                      float* vr_p,
+                      float* wr_p,
+                      float* pr_p,
+                      float* cr_p,
+                      float* pm_p,
+                      float* um_p,
+                      float* d_p,
+                      float* u_p,
+                      float* v_p,
+                      float* w_p,
+                      float* p_p)
     {
         assert(n % ZMM::count<float>() == 0);
         int vn = n / ZMM::count<float>();
@@ -1142,11 +1115,29 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * ZMM::count<float>();
+            ZMM d, u, v, w, p;
 
-            vcase_sample_1(dl + sh, ul + sh, vl + sh, wl + sh, pl + sh, cl + sh,
-                           dr + sh, ur + sh, vr + sh, wr + sh, pr + sh, cr + sh,
-                           pm + sh, um + sh,
-                           d + sh, u + sh, v + sh, w + sh, p + sh);
+            vcase_sample_1(_mm512_load_ps(dl_p + sh),
+                           _mm512_load_ps(ul_p + sh),
+                           _mm512_load_ps(vl_p + sh),
+                           _mm512_load_ps(wl_p + sh),
+                           _mm512_load_ps(pl_p + sh),
+                           _mm512_load_ps(cl_p + sh),
+                           _mm512_load_ps(dr_p + sh),
+                           _mm512_load_ps(ur_p + sh),
+                           _mm512_load_ps(vr_p + sh),
+                           _mm512_load_ps(wr_p + sh),
+                           _mm512_load_ps(pr_p + sh),
+                           _mm512_load_ps(cr_p + sh),
+                           _mm512_load_ps(pm_p + sh),
+                           _mm512_load_ps(um_p + sh),
+                           d, u, v, w, p);
+
+            _mm512_store_ps(d_p + sh, d);
+            _mm512_store_ps(u_p + sh, u);
+            _mm512_store_ps(v_p + sh, v);
+            _mm512_store_ps(w_p + sh, w);
+            _mm512_store_ps(p_p + sh, p);
         }
     }
 
@@ -1323,6 +1314,33 @@ namespace fv
     /// <summary>
     /// Case starpu vector.
     /// </summary>
+    /// <param name="dl">Input.</param>
+    /// <param name="ul">Input.</param>
+    /// <param name="pl">Input.</param>
+    /// <param name="cl">Input.</param>
+    /// <param name="dr">Input.</param>
+    /// <param name="ur">Input.</param>
+    /// <param name="pr">Input.</param>
+    /// <param name="cr">Input.</param>
+    /// <param name="p">Output.</param>
+    /// <param name="u">Output.</param>
+    void vcase_starpu_1(ZMM dl,
+                        ZMM ul,
+                        ZMM pl,
+                        ZMM cl,
+                        ZMM dr,
+                        ZMM ur,
+                        ZMM pr,
+                        ZMM cr,
+                        ZMM& p,
+                        ZMM& u)
+    {
+        ;
+    }
+
+    /// <summary>
+    /// Case starpu vector.
+    /// </summary>
     /// <param name="n">Count.</param>
     /// <param name="dl_p">Input array.</param>
     /// <param name="ul_p">Input array.</param>
@@ -1346,6 +1364,27 @@ namespace fv
                       float* p_p,
                       float* u_p)
     {
+        assert(n % ZMM::count<float>() == 0);
+        int vn = n / ZMM::count<float>();
+
+        for (int vi = 0; vi < vn; vi++)
+        {
+            int sh = vi * ZMM::count<float>();
+            ZMM p, u;
+
+            vcase_starpu_1(_mm512_load_ps(dl_p + sh),
+                           _mm512_load_ps(ul_p + sh),
+                           _mm512_load_ps(pl_p + sh),
+                           _mm512_load_ps(cl_p + sh),
+                           _mm512_load_ps(dr_p + sh),
+                           _mm512_load_ps(ur_p + sh),
+                           _mm512_load_ps(pr_p + sh),
+                           _mm512_load_ps(cr_p + sh),
+                           p, u);
+
+            _mm512_store_ps(p_p + sh, p);
+            _mm512_store_ps(u_p + sh, u);
+        }
     }
 
     bool case_starpu(int len,
