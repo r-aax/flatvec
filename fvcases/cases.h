@@ -51,6 +51,13 @@ namespace fv
                       float random_lo = 1.0f,
                       float random_hi = 1.1f,
                       float eps = 1.0e-6f);
+
+    //
+
+    // Check general case.
+    void test_case(std::string name,
+                   std::function<bool(int)> fun,
+                   int count);
 }
 
 #endif

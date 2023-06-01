@@ -1879,4 +1879,19 @@ namespace fv
 
         return res;
     }
+
+    //
+
+    /// <summary>
+    /// General case.
+    /// </summary>
+    /// <param name="name">Name.</param>
+    /// <param name="fun">Function.</param>
+    /// <param name="count">Count.</param>
+    void test_case(std::string name,
+                   std::function<bool(int)> fun,
+                   int count)
+    {
+        std::cout << name << " : " << (fun(count) ? "OK" : "ERROR") << std::endl;
+    }
 }
