@@ -1810,31 +1810,31 @@ namespace fv
     /// <summary>
     /// Case riemann.
     /// </summary>
-    /// <param name="len">Count of vectors.</param>
-    /// <param name="random_lo">Lo bound for random.</param>
-    /// <param name="random_hi">Hi bound for random.</param>
+    /// <param name="len">Vectors count.</param>
     /// <param name="eps">Max deviation.</param>
     /// <returns>
     /// true - OK result,
     /// false - ERROR result.
     /// </returns>
     bool case_riemann(int len,
-                      float random_lo,
-                      float random_hi,
                       float eps)
     {
         int n = len * ZMM::count<float>();
 
-        ArrayManager<float> dl(n);
-        ArrayManager<float> ul(n);
+        // Files ../fvcases/data/case_riemann_{dl,ul,pl,dr,ur,pr}.txt
+        // contain 419997 float elements.
+        // So it has no sense to pass len more than 26249.
+
+        ArrayManager<float> dl(n, "../fvcases/data/case_riemann_dl.txt");
+        ArrayManager<float> ul(n, "../fvcases/data/case_riemann_ul.txt");
         ArrayManager<float> vl(n);
         ArrayManager<float> wl(n);
-        ArrayManager<float> pl(n);
-        ArrayManager<float> dr(n);
-        ArrayManager<float> ur(n);
+        ArrayManager<float> pl(n, "../fvcases/data/case_riemann_pl.txt");
+        ArrayManager<float> dr(n, "../fvcases/data/case_riemann_dr.txt");
+        ArrayManager<float> ur(n, "../fvcases/data/case_riemann_ur.txt");
         ArrayManager<float> vr(n);
         ArrayManager<float> wr(n);
-        ArrayManager<float> pr(n);
+        ArrayManager<float> pr(n, "../fvcases/data/case_riemann_pr.txt");
         ArrayManager<float> sd(n);
         ArrayManager<float> su(n);
         ArrayManager<float> sv(n);
@@ -1845,17 +1845,6 @@ namespace fv
         ArrayManager<float> vv(n);
         ArrayManager<float> vw(n);
         ArrayManager<float> vp(n);
-
-        dl.generate_random(random_lo, random_hi);
-        ul.generate_random(random_lo, random_hi);
-        vl.generate_random(random_lo, random_hi);
-        wl.generate_random(random_lo, random_hi);
-        pl.generate_random(random_lo, random_hi);
-        dr.generate_random(random_lo, random_hi);
-        ur.generate_random(random_lo, random_hi);
-        vr.generate_random(random_lo, random_hi);
-        wr.generate_random(random_lo, random_hi);
-        pr.generate_random(random_lo, random_hi);
 
         scase_riemann(n,
                       dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(),

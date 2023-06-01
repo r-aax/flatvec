@@ -43,11 +43,51 @@ namespace fv
         }
 
         /// <summary>
+        /// Constructor from file name.
+        /// </summary>
+        /// <param name="s">Size.</param>
+        /// <param name="fn">File name.</param>
+        explicit ArrayManager<T>(int s,
+                                 std::string fn)
+            : ArrayManager<T>(s)
+        {
+            std::ifstream f(fn);
+
+            if (f)
+            {
+                char c;
+
+                for (int i = 0; i < s; i++)
+                {
+                    if (!f.eof())
+                    {
+                        f >> data[i] >> c;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                f.close();
+            }
+        }
+
+        /// <summary>
         /// Destructor.
         /// </summary>
         ~ArrayManager<T>()
         {
             delete[] data;
+        }
+
+        /// <summary>
+        /// Get array size.
+        /// </summary>
+        /// <returns>Size.</returns>
+        int get_size() const
+        {
+            return size;
         }
 
         /// <summary>

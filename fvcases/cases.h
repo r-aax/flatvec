@@ -48,9 +48,7 @@ namespace fv
     // Riemann solver
     // riemann function
     bool case_riemann(int len,
-                      float random_lo = 1.0f,
-                      float random_hi = 1.1f,
-                      float eps = 1.0e-6f);
+                      float eps = 1.0e-3f);
 
     //
 
