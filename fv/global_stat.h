@@ -13,11 +13,17 @@ namespace fv
 
 	private:
 
-		// Vectors operations.
+		// Vector operations.
 		int vector_opers_count;
+
+		// Scalar operations.
+		int scalar_opers_count;
 
 		// Mask operations.
 		int mask_opers_count;
+
+		// Vector operations mask total density.
+		double vector_opers_masks_total_density;
 
 	public:
 
@@ -28,10 +34,13 @@ namespace fv
 		void clean();
 
 		// Append vector operation information.
-		void append_vector_oper();
+		void append_vector_oper(int width, int scalar_opers);
 
 		// Append mask operation information.
 		void append_mask_oper();
+
+		// Mean masks density.
+		double mean_masks_density() const;
 
 		// Print statistics.
 		void print();

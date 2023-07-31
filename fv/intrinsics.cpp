@@ -14,14 +14,15 @@ namespace fv
     /// <returns>Result ZMM register.</returns>
     ZMM _mm512_set1_ps(float a)
     {
+        int w = ZMM::count<float>();
         ZMM dst;
 
-        for (int i = 0; i < ZMM::count<float>(); i++)
+        for (int i = 0; i < w; i++)
         {
             dst.set<float>(i, a);
         }
 
-        GS.append_vector_oper();
+        GS.append_vector_oper(w, w);
 
         return dst;
     }
@@ -35,15 +36,16 @@ namespace fv
     /// <returns>Result ZMM register.</returns>
     ZMM _mm512_load_ps(void const* mem_addr)
     {
+        int w = ZMM::count<float>();
         ZMM r;
         float const* faddr = static_cast<float const*>(mem_addr);
 
-        for (int i = 0; i < ZMM::count<float>(); i++)
+        for (int i = 0; i < w; i++)
         {
             r.set<float>(i, faddr[i]);
         }
 
-        GS.append_vector_oper();
+        GS.append_vector_oper(w, w);
 
         return r;
     }
@@ -56,14 +58,15 @@ namespace fv
     void _mm512_store_ps(void* mem_addr,
                          ZMM a)
     {
+        int w = ZMM::count<float>();
         float* faddr = static_cast<float*>(mem_addr);
 
-        for (int i = 0; i < ZMM::count<float>(); i++)
+        for (int i = 0; i < w; i++)
         {
             faddr[i] = a.get<float>(i);
         }
 
-        GS.append_vector_oper();
+        GS.append_vector_oper(w, w);
     }
 
     // Arithmetic operations with 1 argument.
@@ -625,14 +628,15 @@ namespace fv
                              ZMM a,
                              ZMM b)
     {
+        int w = ZMM::count<float>();
         ZMM r;
 
-        for (int i = 0; i < ZMM::count<float>(); i++)
+        for (int i = 0; i < w; i++)
         {
             r.set<float>(i, k.is_true(i) ? b.get<float>(i) : a.get<float>(i));
         }
 
-        GS.append_vector_oper();
+        GS.append_vector_oper(w, w);
 
         return r;
     }

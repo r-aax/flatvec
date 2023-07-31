@@ -99,4 +99,39 @@ namespace fv
 
         return true;
     }
+
+    // Get information about mask density.
+
+    /// <summary>
+    /// Count of 1 bits in the tail.
+    /// </summary>
+    /// <param name="tail_len">Tail length.</param>
+    /// <returns>Count of 1 bits count in the tail.</returns>
+    int Mask::tail_1_bits_count(int tail_len)
+    {
+        int cnt = 0;
+
+        for (int i = 0; i < tail_len; i++)
+        {
+            if (data[i])
+            {
+                cnt++;
+            }
+        }
+
+        return cnt;
+    }
+
+    /// <summary>
+    /// Mask density.
+    /// </summary>
+    /// <param name="tail_len">Length of tail.</param>
+    /// <returns>Density.</returns>
+    double Mask::density(int tail_len)
+    {
+        double b1 = static_cast<double>(tail_1_bits_count(tail_len));
+        double b = static_cast<double>(tail_len);
+
+        return b1 / b;
+    }
 }

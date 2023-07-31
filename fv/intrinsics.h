@@ -37,9 +37,10 @@ namespace fv
                     ZMM a,
                     std::function<T(T)> op)
     {
+        int w = ZMM::count<T>();
         ZMM dst;
 
-        for (int i = 0; i < ZMM::count<T>(); i++)
+        for (int i = 0; i < w; i++)
         {
             if (k.is_true(i))
             {
@@ -51,7 +52,7 @@ namespace fv
             }
         }
 
-        GS.append_vector_oper();
+        GS.append_vector_oper(w, k.tail_1_bits_count(w));
 
         return dst;
     }
@@ -109,9 +110,10 @@ namespace fv
                     std::function<T(T, T)> op,
                     bool is_z = false)
     {
+        int w = ZMM::count<T>();
         ZMM dst;
 
-        for (int i = 0; i < ZMM::count<T>(); i++)
+        for (int i = 0; i < w; i++)
         {
             if (k.is_true(i))
             {
@@ -130,7 +132,7 @@ namespace fv
             }
         }
 
-        GS.append_vector_oper();
+        GS.append_vector_oper(w, k.tail_1_bits_count(w));
 
         return dst;
     }
@@ -293,14 +295,15 @@ namespace fv
                ZMM c,
                std::function<T(T, T, T)> op)
     {
+        int w = ZMM::count<T>();
         ZMM dst;
 
-        for (int i = 0; i < ZMM::count<T>(); i++)
+        for (int i = 0; i < w; i++)
         {
             dst.set<T>(i, op(a.get<T>(i), b.get<T>(i), c.get<T>(i)));
         }
 
-        GS.append_vector_oper();
+        GS.append_vector_oper(w, w);
 
         return dst;
     }
@@ -332,9 +335,10 @@ namespace fv
                       ZMM b,
                       std::function<bool(T, T)> op)
     {
+        int w = ZMM::count<T>();
         Mask k;
 
-        for (int i = 0; i < ZMM::count<T>(); i++)
+        for (int i = 0; i < w; i++)
         {
             if (k1.is_true(i))
             {
@@ -346,7 +350,7 @@ namespace fv
             }
         }
 
-        GS.append_vector_oper();
+        GS.append_vector_oper(w, k.tail_1_bits_count(w));
 
         return k;
     }

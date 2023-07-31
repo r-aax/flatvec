@@ -107,6 +107,22 @@ namespace fv
         {
             return is_empty_tail(bits);
         }
+
+        // Get information about mask density.
+
+        /// <summary>
+        /// Count of 1 bits in the tail.
+        /// </summary>
+        /// <param name="tail_len">Tail length.</param>
+        /// <returns>Count of 1 bits count in the tail.</returns>
+        int tail_1_bits_count(int tail_len);
+
+        /// <summary>
+        /// Mask density.
+        /// </summary>
+        /// <param name="tail_len">Length of tail.</param>
+        /// <returns>Density.</returns>
+        double density(int tail_len);
     };
 }
 
