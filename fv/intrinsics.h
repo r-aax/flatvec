@@ -5,6 +5,7 @@
 
 #include "zmm.h"
 #include "mask.h"
+#include "global_stat.h"
 
 namespace fv
 {
@@ -49,6 +50,8 @@ namespace fv
                 dst.set<T>(i, src.get<T>(i));
             }
         }
+
+        GS.append_vector_oper();
 
         return dst;
     }
@@ -126,6 +129,8 @@ namespace fv
                 }
             }
         }
+
+        GS.append_vector_oper();
 
         return dst;
     }
@@ -295,6 +300,8 @@ namespace fv
             dst.set<T>(i, op(a.get<T>(i), b.get<T>(i), c.get<T>(i)));
         }
 
+        GS.append_vector_oper();
+
         return dst;
     }
 
@@ -338,6 +345,8 @@ namespace fv
                 k.set(i, false);
             }
         }
+
+        GS.append_vector_oper();
 
         return k;
     }

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "intrinsics.h"
+#include "global_stat.h"
 
 namespace fv
 {
@@ -19,6 +20,8 @@ namespace fv
         {
             dst.set<float>(i, a);
         }
+
+        GS.append_vector_oper();
 
         return dst;
     }
@@ -40,6 +43,8 @@ namespace fv
             r.set<float>(i, faddr[i]);
         }
 
+        GS.append_vector_oper();
+
         return r;
     }
 
@@ -57,6 +62,8 @@ namespace fv
         {
             faddr[i] = a.get<float>(i);
         }
+
+        GS.append_vector_oper();
     }
 
     // Arithmetic operations with 1 argument.
@@ -625,6 +632,8 @@ namespace fv
             r.set<float>(i, k.is_true(i) ? b.get<float>(i) : a.get<float>(i));
         }
 
+        GS.append_vector_oper();
+
         return r;
     }
 
@@ -656,6 +665,8 @@ namespace fv
                 k.set(i, false);
             }
         }
+
+        GS.append_mask_oper();
 
         return k;
     }

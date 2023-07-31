@@ -6,5 +6,6 @@
 #include "zmm.h"
 #include "intrinsics.h"
 #include "intrinsics_ext.h"
+#include "global_stat.h"
 
 #endif

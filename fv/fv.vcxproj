@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fv.h" />
+    <ClInclude Include="global_stat.h" />
     <ClInclude Include="intrinsics.h" />
     <ClInclude Include="intrinsics_ext.h" />
     <ClInclude Include="mask.h" />
@@ -141,6 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fv.cpp" />
+    <ClCompile Include="global_stat.cpp" />
     <ClCompile Include="intrinsics.cpp" />
     <ClCompile Include="intrinsics_ext.cpp" />
     <ClCompile Include="mask.cpp" />

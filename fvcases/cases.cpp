@@ -3,6 +3,7 @@
 #include "cases.h"
 
 #include "array_manager.h"
+#include "global_stat.h"
 
 namespace fv
 {
@@ -1881,6 +1882,8 @@ namespace fv
                    std::function<bool(int)> fun,
                    int count)
     {
+        GS.clean();
         std::cout << name << " : " << (fun(count) ? "OK" : "ERROR") << std::endl;
+        GS.print();
     }
 }

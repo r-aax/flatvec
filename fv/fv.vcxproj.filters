@@ -42,6 +42,9 @@
     <ClInclude Include="intrinsics_ext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="global_stat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -60,6 +63,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="intrinsics_ext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="global_stat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
