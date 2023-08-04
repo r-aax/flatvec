@@ -60,6 +60,42 @@ namespace fv
 	}
 
 	/// <summary>
+	/// Fix time before.
+	/// </summary>
+	void GlobalStat::fix_time_before()
+	{
+		time_before = std::chrono::steady_clock::now();
+	}
+
+	/// <summary>
+	/// Fix time in the middle.
+	/// </summary>
+	void GlobalStat::fix_time_middle()
+	{
+		time_middle = std::chrono::steady_clock::now();
+	}
+
+	/// <summary>
+	/// Fix time in the end.
+	/// </summary>
+	void GlobalStat::fix_time_after()
+	{
+		time_after = std::chrono::steady_clock::now();
+	}
+
+	/// <summary>
+	/// Time acceleration.
+	/// </summary>
+	/// <returns>Time acceleration (ms). </returns>
+	double GlobalStat::real_time_acceleration() const
+	{
+		std::chrono::duration<double> s = time_middle - time_before;
+		std::chrono::duration<double> v = time_after - time_middle;
+
+		return s.count() / v.count();
+	}
+
+	/// <summary>
 	/// Print statistics.
 	/// </summary>
 	void GlobalStat::print()
@@ -71,5 +107,6 @@ namespace fv
 		std::cout << "  effective vector width : " << (static_cast<double>(scalar_opers_count)
 													  / static_cast<double>(vector_opers_count)) << std::endl;
 		std::cout << "  mean masks density     : " << mean_masks_density() << std::endl;
+		std::cout << "  real time acceleration : " << std::fixed << real_time_acceleration() << std::endl;
 	}
 }

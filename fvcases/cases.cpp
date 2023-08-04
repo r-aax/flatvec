@@ -142,12 +142,21 @@ namespace fv
         a.generate_random(random_lo, random_hi);
         b.generate_random(random_lo, random_hi);
 
-        scase_arith_f32(n, a.get_data(), b.get_data(), sc.get_data());
+        GS.fix_time_before();
 
+        for (int i = 0; i < repeats; i++)
+        {
+            scase_arith_f32(n, a.get_data(), b.get_data(), sc.get_data());
+        }
+        
+        GS.fix_time_middle();
+        
         for (int i = 0; i < repeats; i++)
         {
             vcase_arith_f32(n, a.get_data(), b.get_data(), vc.get_data());
         }
+        
+        GS.fix_time_after();
 
         bool res = (vc.max_diff(sc) == 0.0);
 
@@ -271,12 +280,21 @@ namespace fv
         a.generate_random(random_lo, random_hi);
         b.generate_random(random_lo, random_hi);
 
-        scase_blend_f32(n, a.get_data(), b.get_data(), sc.get_data());
+        GS.fix_time_before();
+
+        for (int i = 0; i < repeats; i++)
+        {
+            scase_blend_f32(n, a.get_data(), b.get_data(), sc.get_data());
+        }
+
+        GS.fix_time_middle();
 
         for (int i = 0; i < repeats; i++)
         {
             vcase_blend_f32(n, a.get_data(), b.get_data(), vc.get_data());
         }
+
+        GS.fix_time_after();
 
         bool res = (vc.max_diff(sc) == 0.0);
 
@@ -637,10 +655,17 @@ namespace fv
         pr.generate_random(random_lo, random_hi);
         cr.generate_random(random_lo, random_hi);
 
-        scase_guessp(n,
-                     dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
-                     dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
-                     spm.get_data());
+        GS.fix_time_before();
+
+        for (int i = 0; i < repeats; i++)
+        {
+            scase_guessp(n,
+                         dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
+                         dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
+                         spm.get_data());
+        }
+
+        GS.fix_time_middle();
 
         for (int i = 0; i < repeats; i++)
         {
@@ -649,6 +674,8 @@ namespace fv
                          dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
                          vpm.get_data());
         }
+
+        GS.fix_time_after();
 
         bool res = (vpm.max_diff(spm) < eps);
 
@@ -847,9 +874,16 @@ namespace fv
         pk.generate_random(random_lo, random_hi);
         ck.generate_random(random_lo, random_hi);
 
-        scase_prefun(n,
-                     sf.get_data(), sfd.get_data(), p.get_data(),
-                     dk.get_data(), pk.get_data(), ck.get_data());
+        GS.fix_time_before();
+
+        for (int i = 0; i < repeats; i++)
+        {
+            scase_prefun(n,
+                         sf.get_data(), sfd.get_data(), p.get_data(),
+                         dk.get_data(), pk.get_data(), ck.get_data());
+        }
+
+        GS.fix_time_middle();
 
         for (int i = 0; i < repeats; i++)
         {
@@ -857,6 +891,8 @@ namespace fv
                          vf.get_data(), vfd.get_data(), p.get_data(),
                          dk.get_data(), pk.get_data(), ck.get_data());
         }
+
+        GS.fix_time_after();
 
         bool res = (vf.max_diff(sf) + vfd.max_diff(sfd) < eps);
 
@@ -1318,11 +1354,18 @@ namespace fv
         pm.generate_random(random_lo, random_hi);
         um.generate_random(random_lo, random_hi);
 
-        scase_sample(n,
-                     dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(), cl.get_data(),
-                     dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(), cr.get_data(),
-                     pm.get_data(), um.get_data(),
-                     sd.get_data(), su.get_data(), sv.get_data(), sw.get_data(), sp.get_data());
+        GS.fix_time_before();
+
+        for (int i = 0; i < repeats; i++)
+        {
+            scase_sample(n,
+                         dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(), cl.get_data(),
+                         dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(), cr.get_data(),
+                         pm.get_data(), um.get_data(),
+                         sd.get_data(), su.get_data(), sv.get_data(), sw.get_data(), sp.get_data());
+        }
+
+        GS.fix_time_middle();
 
         for (int i = 0; i < repeats; i++)
         {
@@ -1332,6 +1375,8 @@ namespace fv
                          pm.get_data(), um.get_data(),
                          vd.get_data(), vu.get_data(), vv.get_data(), vw.get_data(), vp.get_data());
         }
+
+        GS.fix_time_after();
 
         bool res = (vd.max_diff(sd) + vu.max_diff(su) + vv.max_diff(sv) + vw.max_diff(sw) + vp.max_diff(sp) < eps);
 
@@ -1599,10 +1644,17 @@ namespace fv
         pr.generate_random(random_lo, random_hi);
         cr.generate_random(random_lo, random_hi);
 
-        scase_starpu(n,
-                     dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
-                     dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
-                     sp.get_data(), su.get_data());
+        GS.fix_time_before();
+
+        for (int i = 0; i < repeats; i++)
+        {
+            scase_starpu(n,
+                         dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
+                         dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
+                         sp.get_data(), su.get_data());
+        }
+
+        GS.fix_time_middle();
 
         for (int i = 0; i < repeats; i++)
         {
@@ -1611,6 +1663,8 @@ namespace fv
                          dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
                          vp.get_data(), vu.get_data());
         }
+
+        GS.fix_time_after();
 
         bool res = (vp.max_diff(sp) + vu.max_diff(su) < eps);
 
@@ -1883,10 +1937,17 @@ namespace fv
         ArrayManager<float> vw(n);
         ArrayManager<float> vp(n);
 
-        scase_riemann(n,
-                      dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(),
-                      dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(),
-                      sd.get_data(), su.get_data(), sv.get_data(), sw.get_data(), sp.get_data());
+        GS.fix_time_before();
+
+        for (int i = 0; i < repeats; i++)
+        {
+            scase_riemann(n,
+                          dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(),
+                          dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(),
+                          sd.get_data(), su.get_data(), sv.get_data(), sw.get_data(), sp.get_data());
+        }
+
+        GS.fix_time_middle();
 
         for (int i = 0; i < repeats; i++)
         {
@@ -1895,6 +1956,8 @@ namespace fv
                           dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(),
                           vd.get_data(), vu.get_data(), vv.get_data(), vw.get_data(), vp.get_data());
         }
+
+        GS.fix_time_after();
 
         bool res = (vd.max_diff(sd) + vu.max_diff(su) + vv.max_diff(sv) + vw.max_diff(sw) + vp.max_diff(sp) < eps);
 

@@ -25,6 +25,15 @@ namespace fv
 		// Vector operations mask total density.
 		double vector_opers_masks_total_density;
 
+		// Time point before calc.
+		std::chrono::steady_clock::time_point time_before;
+
+		// Time point in the middle.
+		std::chrono::steady_clock::time_point time_middle;
+
+		// Time point after.
+		std::chrono::steady_clock::time_point time_after;
+
 	public:
 
 		// Constructor.
@@ -41,6 +50,18 @@ namespace fv
 
 		// Mean masks density.
 		double mean_masks_density() const;
+
+		// Fix time before.
+		void fix_time_before();
+
+		// Fix time in the middle.
+		void fix_time_middle();
+
+		// Fix time in the end.
+		void fix_time_after();
+
+		// Time acceleration.
+		double real_time_acceleration() const;
 
 		// Print statistics.
 		void print();

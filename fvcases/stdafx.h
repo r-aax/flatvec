@@ -15,5 +15,6 @@
 #include <cassert>
 #include <random>
 #include <functional>
+#include <chrono>
 
 // TODO: reference additional headers your program requires here
