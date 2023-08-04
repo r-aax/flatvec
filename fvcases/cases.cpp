@@ -5,6 +5,21 @@
 #include "array_manager.h"
 #include "global_stat.h"
 
+#ifndef LINUX_ICC_BUILD
+#include "fv.h"
+#endif
+
+#ifdef LINUX_ICC_BUILD
+#define ZMM __m512
+#define Mask __mmask16
+#endif
+
+#ifdef LINUX_ICC_BUILD
+#define CNT_FLOAT 16
+#else
+#define CNT_FLOAT ZMM::count<float>()
+#endif
+
 namespace fv
 {
     // Some constants
@@ -100,12 +115,12 @@ namespace fv
                          float* b_p,
                          float* c_p)
     {
-        assert(n % ZMM::count<float>() == 0);
-        int vn = n / ZMM::count<float>();
+        assert(n % CNT_FLOAT == 0);
+        int vn = n / CNT_FLOAT;
 
         for (int vi = 0; vi < vn; vi++)
         {
-            int sh = vi * ZMM::count<float>();
+            int sh = vi * CNT_FLOAT;
             ZMM c;
 
             vcase_arith_f32_1(_mm512_load_ps(a_p + sh),
@@ -132,7 +147,7 @@ namespace fv
                         float random_lo,
                         float random_hi)
     {
-        int n = len * ZMM::count<float>();
+        int n = len * CNT_FLOAT;
 
         ArrayManager<float> a(n);
         ArrayManager<float> b(n);
@@ -238,12 +253,12 @@ namespace fv
                          float* b_p,
                          float* c_p)
     {
-        assert(n % ZMM::count<float>() == 0);
-        int vn = n / ZMM::count<float>();
+        assert(n % CNT_FLOAT == 0);
+        int vn = n / CNT_FLOAT;
 
         for (int vi = 0; vi < vn; vi++)
         {
-            int sh = vi * ZMM::count<float>();
+            int sh = vi * CNT_FLOAT;
             ZMM c;
 
             vcase_blend_f32_1(_mm512_load_ps(a_p + sh),
@@ -270,7 +285,7 @@ namespace fv
                         float random_lo,
                         float random_hi)
     {
-        int n = len * ZMM::count<float>();
+        int n = len * CNT_FLOAT;
 
         ArrayManager<float> a(n);
         ArrayManager<float> b(n);
@@ -406,7 +421,7 @@ namespace fv
 
     // Riemann solver
     // guessp function
-    
+
     /// <summary>
     /// Case guessp scalar.
     /// </summary>
@@ -542,7 +557,11 @@ namespace fv
         pm = _mm512_mask_mov_ps(pm, cond_pvrs, ppv);
 
         // The second branch.
+#ifdef LINUX_ICC_BUILD
+	if (cond_ppv != 0x0)
+#else
         if (!cond_ppv.is_empty())
+#endif
         {
             pq = _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mask_div_ps(zero, cond_ppv, pl, pr), riemann::g1);
             pqcr = _mm512_mul_ps(pq, cr);
@@ -557,7 +576,11 @@ namespace fv
         }
 
         // The third branch.
+#ifdef LINUX_ICC_BUILD
+	if (ncond_ppv != 0x0)
+#else
         if (!ncond_ppv.is_empty())
+#endif
         {
             gel = _mm512_sqrt_ps(_mm512_mask_div_ps(zero, ncond_ppv, riemann::g5,
                                                     _mm512_mul_ps(_mm512_fmadd_ps(riemann::g6, pl, ppv), dl)));
@@ -593,12 +616,12 @@ namespace fv
                       float* cr_p,
                       float* pm_p)
     {
-        assert(n % ZMM::count<float>() == 0);
-        int vn = n / ZMM::count<float>();
+        assert(n % CNT_FLOAT == 0);
+        int vn = n / CNT_FLOAT;
 
         for (int vi = 0; vi < vn; vi++)
         {
-            int sh = vi * ZMM::count<float>();
+            int sh = vi * CNT_FLOAT;
             ZMM pm;
 
             vcase_guessp_1(_mm512_load_ps(dl_p + sh),
@@ -633,7 +656,7 @@ namespace fv
                      float random_hi,
                      float eps)
     {
-        int n = len * ZMM::count<float>();
+        int n = len * CNT_FLOAT;
 
         ArrayManager<float> dl(n);
         ArrayManager<float> ul(n);
@@ -776,7 +799,11 @@ namespace fv
         ncond = _mm512_kand(_mm512_knot(cond), m);
 
         // The first branch.
+#ifdef LINUX_ICC_BUILD
+	if (cond != 0x0)
+#else
         if (!cond.is_empty())
+#endif
         {
             pratio = _mm512_mask_div_ps(zero, cond, p, pk);
             f = _mm512_mask_mul_ps(f, cond,
@@ -788,7 +815,11 @@ namespace fv
         }
 
         // The second branch.
+#ifdef LINUX_ICC_BUILD
+	if (ncond != 0x0)
+#else
         if (!ncond.is_empty())
+#endif
         {
             ak = _mm512_mask_div_ps(zero, ncond, riemann::g5, dk);
             bkp = _mm512_fmadd_ps(riemann::g6, pk, p);
@@ -820,12 +851,12 @@ namespace fv
                       float* pk_p,
                       float* ck_p)
     {
-        assert(n % ZMM::count<float>() == 0);
-        int vn = n / ZMM::count<float>();
+        assert(n % CNT_FLOAT == 0);
+        int vn = n / CNT_FLOAT;
 
         for (int vi = 0; vi < vn; vi++)
         {
-            int sh = vi * ZMM::count<float>();
+            int sh = vi * CNT_FLOAT;
             ZMM f, fd;
 
             vcase_prefun_1(f, fd,
@@ -833,7 +864,11 @@ namespace fv
                            _mm512_load_ps(dk_p + sh),
                            _mm512_load_ps(pk_p + sh),
                            _mm512_load_ps(ck_p + sh),
+#ifdef LINUX_ICC_BUILD
+			   0xffff);
+#else
                            Mask::full());
+#endif
 
             _mm512_store_ps(f_p + sh, f);
             _mm512_store_ps(fd_p + sh, fd);
@@ -858,7 +893,7 @@ namespace fv
                      float random_hi,
                      float eps)
     {
-        int n = len * ZMM::count<float>();
+        int n = len * CNT_FLOAT;
 
         ArrayManager<float> sf(n);
         ArrayManager<float> vf(n);
@@ -1206,7 +1241,11 @@ namespace fv
 
         // Low prob - ignnore it.
         cond_sh_st = _mm512_kand(cond_sh, _mm512_knot(cond_st));
+#ifdef LINUX_ICC_BUILD
+	if (cond_sh_st != 0x0)
+#else
         if (!cond_sh_st.is_empty())
+#endif
         {
             u = _mm512_mask_mov_ps(u, cond_sh_st, _mm512_mul_ps(riemann::g5, _mm512_fmadd_ps(riemann::g7, u, c)));
             uc = _mm512_div_ps(u, c);
@@ -1262,12 +1301,12 @@ namespace fv
                       float* w_p,
                       float* p_p)
     {
-        assert(n % ZMM::count<float>() == 0);
-        int vn = n / ZMM::count<float>();
+        assert(n % CNT_FLOAT == 0);
+        int vn = n / CNT_FLOAT;
 
         for (int vi = 0; vi < vn; vi++)
         {
-            int sh = vi * ZMM::count<float>();
+            int sh = vi * CNT_FLOAT;
             ZMM d, u, v, w, p;
 
             vcase_sample_1(_mm512_load_ps(dl_p + sh),
@@ -1312,7 +1351,7 @@ namespace fv
                      float random_hi,
                      float eps)
     {
-        int n = len * ZMM::count<float>();
+        int n = len * CNT_FLOAT;
 
         ArrayManager<float> dl(n);
         ArrayManager<float> ul(n);
@@ -1525,9 +1564,17 @@ namespace fv
         vcase_guessp_1(dl, ul, pl, cl, dr, ur, pr, cr, pold);
 
         // Start with full mask.
-        m = Mask::full_tail(ZMM::count<float>());
+#ifdef LINUX_ICC_BUILD
+	m = 0xffff;
+#else
+        m = Mask::full_tail(CNT_FLOAT);
+#endif
 
-        for (; (iter <= nriter) && (!m.is_empty_tail(ZMM::count<float>())); iter++)
+#ifdef LINUX_ICC_BUILD
+	for (; (iter <= nriter) && (m != 0x0); iter++)
+#else
+        for (; (iter <= nriter) && (!m.is_empty_tail(CNT_FLOAT)); iter++)
+#endif
         {
             vcase_prefun_1(fl, fld, pold, dl, pl, cl, m);
             vcase_prefun_1(fr, frd, pold, dr, pr, cr, m);
@@ -1579,12 +1626,12 @@ namespace fv
                       float* p_p,
                       float* u_p)
     {
-        assert(n % ZMM::count<float>() == 0);
-        int vn = n / ZMM::count<float>();
+        assert(n % CNT_FLOAT == 0);
+        int vn = n / CNT_FLOAT;
 
         for (int vi = 0; vi < vn; vi++)
         {
-            int sh = vi * ZMM::count<float>();
+            int sh = vi * CNT_FLOAT;
             ZMM p, u;
 
             vcase_starpu_1(_mm512_load_ps(dl_p + sh),
@@ -1620,7 +1667,7 @@ namespace fv
                      float random_hi,
                      float eps)
     {
-        int n = len * ZMM::count<float>();
+        int n = len * CNT_FLOAT;
 
         ArrayManager<float> dl(n);
         ArrayManager<float> ul(n);
@@ -1820,7 +1867,11 @@ namespace fv
                                            _mm512_sub_ps(ur, ul));
 
         // Vacuum check.
-        if (!vacuum_mask.is_empty_tail(ZMM::count<float>()))
+#ifdef LINUX_ICC_BUILD
+	if (vacuum_mask != 0x0)
+#else
+        if (!vacuum_mask.is_empty_tail(CNT_FLOAT))
+#endif
         {
             std::cout << "VACUUM" << std::endl;
             exit(1);
@@ -1868,12 +1919,12 @@ namespace fv
                        float* w_p,
                        float* p_p)
     {
-        assert(n % ZMM::count<float>() == 0);
-        int vn = n / ZMM::count<float>();
+        assert(n % CNT_FLOAT == 0);
+        int vn = n / CNT_FLOAT;
 
         for (int vi = 0; vi < vn; vi++)
         {
-            int sh = vi * ZMM::count<float>();
+            int sh = vi * CNT_FLOAT;
             ZMM d, u, v, w, p;
 
             vcase_riemann_1(_mm512_load_ps(dl_p + sh),
@@ -1910,7 +1961,7 @@ namespace fv
                       int repeats,
                       float eps)
     {
-        int n = len * ZMM::count<float>();
+        int n = len * CNT_FLOAT;
 
         // Files ../fvcases/data/case_riemann_{dl,ul,pl,dr,ur,pr}.txt
         // contain 419997 float elements.

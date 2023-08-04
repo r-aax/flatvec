@@ -3,8 +3,6 @@
 #ifndef CASES_H
 #define CASES_H
 
-#include "fv.h"
-
 namespace fv
 {
     // arith_f32

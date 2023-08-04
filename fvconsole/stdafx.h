@@ -5,7 +5,7 @@
 
 #pragma once
 
-#ifndef LINUX_GCC_BUILD
+#if !defined(LINUX_GCC_BUILD) && !defined(LINUX_ICC_BUILD)
 #include "targetver.h"
 #include <tchar.h>
 #endif
@@ -13,7 +13,10 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+
+#ifndef LINUX_ICC_BUILD
 #include <filesystem>
+#endif
 
 #ifdef LINUX_GCC_BUILD
 #include <math.h>

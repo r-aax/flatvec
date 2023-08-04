@@ -5,14 +5,18 @@
 
 #pragma once
 
-#ifndef LINUX_GCC_BUILD
+#if !defined(LINUX_GCC_BUILD) && !defined(LINUX_ICC_BUILD)
 #include "targetver.h"
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #endif
 
 #include <iostream>
 #include <fstream>
+
+#ifndef LINUX_ICC_BUILD
 #include <filesystem>
+#endif
+
 #include <cassert>
 #include <random>
 #include <functional>
