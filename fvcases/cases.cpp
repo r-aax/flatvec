@@ -120,6 +120,7 @@ namespace fv
     /// Case arithmetic.
     /// </summary>
     /// <param name="len">Vectors count.</param>
+    /// <param name="repeats">Repeats count.</param>
     /// <param name="random_lo">Lo value for random generation.</param>
     /// <param name="random_hi">Hi value for random generation.</param>
     /// <returns>
@@ -127,6 +128,7 @@ namespace fv
     /// false - ERROR result.
     /// </returns>
     bool case_arith_f32(int len,
+                        int repeats,
                         float random_lo,
                         float random_hi)
     {
@@ -141,7 +143,11 @@ namespace fv
         b.generate_random(random_lo, random_hi);
 
         scase_arith_f32(n, a.get_data(), b.get_data(), sc.get_data());
-        vcase_arith_f32(n, a.get_data(), b.get_data(), vc.get_data());
+
+        for (int i = 0; i < repeats; i++)
+        {
+            vcase_arith_f32(n, a.get_data(), b.get_data(), vc.get_data());
+        }
 
         bool res = (vc.max_diff(sc) == 0.0);
 
@@ -243,6 +249,7 @@ namespace fv
     /// Case blend.
     /// </summary>
     /// <param name="len">Vectors count.</param>
+    /// <param name="repeats">Repeats count.</param>
     /// <param name="random_lo">Lo value for random generation.</param>
     /// <param name="random_hi">Hi value for random generation.</param>
     /// <returns>
@@ -250,6 +257,7 @@ namespace fv
     /// false - ERROR result.
     /// </returns>
     bool case_blend_f32(int len,
+                        int repeats,
                         float random_lo,
                         float random_hi)
     {
@@ -264,7 +272,11 @@ namespace fv
         b.generate_random(random_lo, random_hi);
 
         scase_blend_f32(n, a.get_data(), b.get_data(), sc.get_data());
-        vcase_blend_f32(n, a.get_data(), b.get_data(), vc.get_data());
+
+        for (int i = 0; i < repeats; i++)
+        {
+            vcase_blend_f32(n, a.get_data(), b.get_data(), vc.get_data());
+        }
 
         bool res = (vc.max_diff(sc) == 0.0);
 
@@ -589,6 +601,7 @@ namespace fv
     /// Case guessp.
     /// </summary>
     /// <param name="len">Vectors count.</param>
+    /// <param name="repeats">Repeats count.</param>
     /// <param name="random_lo">Lo value for random generation.</param>
     /// <param name="random_hi">Hi value for random generation.</param>
     /// <param name="eps">Max deviation.</param>
@@ -597,6 +610,7 @@ namespace fv
     /// false - ERROR result.
     /// </returns>
     bool case_guessp(int len,
+                     int repeats,
                      float random_lo,
                      float random_hi,
                      float eps)
@@ -627,10 +641,14 @@ namespace fv
                      dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
                      dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
                      spm.get_data());
-        vcase_guessp(n,
-                     dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
-                     dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
-                     vpm.get_data());
+
+        for (int i = 0; i < repeats; i++)
+        {
+            vcase_guessp(n,
+                         dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
+                         dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
+                         vpm.get_data());
+        }
 
         bool res = (vpm.max_diff(spm) < eps);
 
@@ -799,6 +817,7 @@ namespace fv
     /// Case prefun.
     /// </summary>
     /// <param name="len">Vectors count.</param>
+    /// <param name="repeats">Repeats count.</param>
     /// <param name="random_lo">Lo value for random generation.</param>
     /// <param name="random_hi">Hi value for random generation.</param>
     /// <param name="eps">Max deviation.</param>
@@ -807,6 +826,7 @@ namespace fv
     /// false - ERROR result.
     /// </returns>
     bool case_prefun(int len,
+                     int repeats,
                      float random_lo,
                      float random_hi,
                      float eps)
@@ -830,9 +850,13 @@ namespace fv
         scase_prefun(n,
                      sf.get_data(), sfd.get_data(), p.get_data(),
                      dk.get_data(), pk.get_data(), ck.get_data());
-        vcase_prefun(n,
-                     vf.get_data(), vfd.get_data(), p.get_data(),
-                     dk.get_data(), pk.get_data(), ck.get_data());
+
+        for (int i = 0; i < repeats; i++)
+        {
+            vcase_prefun(n,
+                         vf.get_data(), vfd.get_data(), p.get_data(),
+                         dk.get_data(), pk.get_data(), ck.get_data());
+        }
 
         bool res = (vf.max_diff(sf) + vfd.max_diff(sfd) < eps);
 
@@ -1238,6 +1262,7 @@ namespace fv
     /// Case sample.
     /// </summary>
     /// <param name="len">Vectors count.</param>
+    /// <param name="repeats">Repeats count.</param>
     /// <param name="random_lo">Lo bound for random.</param>
     /// <param name="random_hi">Hi bound for random.</param>
     /// <param name="eps">Max deviation.</param>
@@ -1246,6 +1271,7 @@ namespace fv
     /// false - ERROR result.
     /// </returns>
     bool case_sample(int len,
+                     int repeats,
                      float random_lo,
                      float random_hi,
                      float eps)
@@ -1297,12 +1323,15 @@ namespace fv
                      dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(), cr.get_data(),
                      pm.get_data(), um.get_data(),
                      sd.get_data(), su.get_data(), sv.get_data(), sw.get_data(), sp.get_data());
-                     
-        vcase_sample(n,
-                     dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(), cl.get_data(),
-                     dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(), cr.get_data(),
-                     pm.get_data(), um.get_data(),
-                     vd.get_data(), vu.get_data(), vv.get_data(), vw.get_data(), vp.get_data());
+
+        for (int i = 0; i < repeats; i++)
+        {
+            vcase_sample(n,
+                         dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(), cl.get_data(),
+                         dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(), cr.get_data(),
+                         pm.get_data(), um.get_data(),
+                         vd.get_data(), vu.get_data(), vv.get_data(), vw.get_data(), vp.get_data());
+        }
 
         bool res = (vd.max_diff(sd) + vu.max_diff(su) + vv.max_diff(sv) + vw.max_diff(sw) + vp.max_diff(sp) < eps);
 
@@ -1532,6 +1561,7 @@ namespace fv
     /// Case starpu.
     /// </summary>
     /// <param name="len">Count of vectors.</param>
+    /// <param name="repeats">Repeats count.</param>
     /// <param name="random_lo">Lo bound for random.</param>
     /// <param name="random_hi">Hi bound for random.</param>
     /// <param name="eps">Max deviation.</param>
@@ -1540,6 +1570,7 @@ namespace fv
     /// false - ERROR result.
     /// </returns>
     bool case_starpu(int len,
+                     int repeats,
                      float random_lo,
                      float random_hi,
                      float eps)
@@ -1573,10 +1604,13 @@ namespace fv
                      dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
                      sp.get_data(), su.get_data());
 
-        vcase_starpu(n,
-                     dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
-                     dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
-                     vp.get_data(), vu.get_data());
+        for (int i = 0; i < repeats; i++)
+        {
+            vcase_starpu(n,
+                         dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
+                         dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
+                         vp.get_data(), vu.get_data());
+        }
 
         bool res = (vp.max_diff(sp) + vu.max_diff(su) < eps);
 
@@ -1812,12 +1846,14 @@ namespace fv
     /// Case riemann.
     /// </summary>
     /// <param name="len">Vectors count.</param>
+    /// <param name="repeats">Repeats count.</param>
     /// <param name="eps">Max deviation.</param>
     /// <returns>
     /// true - OK result,
     /// false - ERROR result.
     /// </returns>
     bool case_riemann(int len,
+                      int repeats,
                       float eps)
     {
         int n = len * ZMM::count<float>();
@@ -1852,10 +1888,13 @@ namespace fv
                       dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(),
                       sd.get_data(), su.get_data(), sv.get_data(), sw.get_data(), sp.get_data());
 
-        vcase_riemann(n,
-                      dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(),
-                      dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(),
-                      vd.get_data(), vu.get_data(), vv.get_data(), vw.get_data(), vp.get_data());
+        for (int i = 0; i < repeats; i++)
+        {
+            vcase_riemann(n,
+                          dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(),
+                          dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(),
+                          vd.get_data(), vu.get_data(), vv.get_data(), vw.get_data(), vp.get_data());
+        }
 
         bool res = (vd.max_diff(sd) + vu.max_diff(su) + vv.max_diff(sv) + vw.max_diff(sw) + vp.max_diff(sp) < eps);
 
@@ -1878,12 +1917,14 @@ namespace fv
     /// <param name="name">Name.</param>
     /// <param name="fun">Function.</param>
     /// <param name="count">Count.</param>
+    /// <param name="repeats">Repeats count.</param>
     void test_case(std::string name,
-                   std::function<bool(int)> fun,
-                   int count)
+                   std::function<bool(int, int)> fun,
+                   int count,
+                   int repeats)
     {
         GS.clean();
-        std::cout << name << " : " << (fun(count) ? "OK" : "ERROR") << std::endl;
+        std::cout << name << " : " << (fun(count, repeats) ? "OK" : "ERROR") << std::endl;
         GS.print();
     }
 }

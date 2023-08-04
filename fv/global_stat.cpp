@@ -68,7 +68,8 @@ namespace fv
 		std::cout << "  vector opers           : " << vector_opers_count << std::endl;
 		std::cout << "  scalar opers           : " << scalar_opers_count << std::endl;
 		std::cout << "  mask opers             : " << mask_opers_count << std::endl;
-		std::cout << "  effective vector width : " << (static_cast<double>(scalar_opers_count) / static_cast<double>(vector_opers_count)) << std::endl;
+		std::cout << "  effective vector width : " << (static_cast<double>(scalar_opers_count)
+													  / static_cast<double>(vector_opers_count)) << std::endl;
 		std::cout << "  mean masks density     : " << mean_masks_density() << std::endl;
 	}
 }

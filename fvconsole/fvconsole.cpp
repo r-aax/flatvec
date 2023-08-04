@@ -13,13 +13,13 @@ using namespace fv;
 /// <returns>Return code.</returns>
 int main()
 {
-    test_case("arith_f32", [] (int n) { return case_arith_f32(n); }, 10);
-    test_case("blend_f32", [] (int n) { return case_blend_f32(n); }, 10);
-    test_case("guessp   ", [] (int n) { return case_guessp(n); }, 10);
-    test_case("prefun   ", [] (int n) { return case_prefun(n); }, 10);
-    test_case("sample   ", [] (int n) { return case_sample(n); }, 10);
-    test_case("starpu   ", [] (int n) { return case_starpu(n); }, 10);
-    test_case("riemann  ", [] (int n) { return case_riemann(n); }, 10);
+    test_case("arith_f32", [] (int n, int r) { return case_arith_f32(n, r); }, 10, 1);
+    test_case("blend_f32", [] (int n, int r) { return case_blend_f32(n, r); }, 10, 1);
+    test_case("guessp   ", [] (int n, int r) { return case_guessp(n, r); },    10, 1);
+    test_case("prefun   ", [] (int n, int r) { return case_prefun(n, r); },    10, 1);
+    test_case("sample   ", [] (int n, int r) { return case_sample(n, r); },    10, 1);
+    test_case("starpu   ", [] (int n, int r) { return case_starpu(n, r); },    10, 1);
+    test_case("riemann  ", [] (int n, int r) { return case_riemann(n, r); },   10, 1);
 
     return 0;
 }
