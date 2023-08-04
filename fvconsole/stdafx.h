@@ -5,13 +5,18 @@
 
 #pragma once
 
+#ifndef LINUX_GCC_BUILD
 #include "targetver.h"
+#include <tchar.h>
+#endif
 
 #include <stdio.h>
-#include <tchar.h>
-
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+
+#ifdef LINUX_GCC_BUILD
+#include <math.h>
+#endif
 
 // TODO: reference additional headers your program requires here

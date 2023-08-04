@@ -9,6 +9,9 @@ namespace fv
     /// </summary>
     /// <param name="lo">Lo value.</param>
     /// <param name="hi">Hi value.</param>
+#ifdef LINUX_GCC_BUILD
+    template<>
+#endif
     void ArrayManager<float>::generate_random(float lo,
                                               float hi)
     {
