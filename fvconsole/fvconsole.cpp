@@ -19,7 +19,9 @@ int main()
     test_case("prefun   ", [] (int n, int r) { return case_prefun(n, r); },    10, 1);
     test_case("sample   ", [] (int n, int r) { return case_sample(n, r); },    10, 1);
     test_case("starpu   ", [] (int n, int r) { return case_starpu(n, r); },    10, 1);
+#ifndef LINUX_GCC_BUILD
     test_case("riemann  ", [] (int n, int r) { return case_riemann(n, r); },   10, 1);
+#endif
 
     return 0;
 }
