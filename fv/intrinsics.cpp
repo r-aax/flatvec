@@ -156,17 +156,15 @@ namespace fv
     /// <summary>
     /// Semantic for add.
     /// </summary>
-    /// <param name="src">Source.</param>
     /// <param name="k">Mask.</param>
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_add_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_add_ps(Mask k,
                             ZMM a,
                             ZMM b)
     {
-        return maskz_arith2<float>(src, k, a, b, std::plus<float>());
+        return maskz_arith2<float>(k, a, b, std::plus<float>());
     }
 
     //
@@ -202,17 +200,15 @@ namespace fv
     /// <summary>
     /// Semantic for sub.
     /// </summary>
-    /// <param name="src">Source.</param>
     /// <param name="k">Mask.</param>
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_sub_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_sub_ps(Mask k,
                             ZMM a,
                             ZMM b)
     {
-        return maskz_arith2<float>(src, k, a, b, std::minus<float>());
+        return maskz_arith2<float>(k, a, b, std::minus<float>());
     }
 
     //
@@ -248,17 +244,15 @@ namespace fv
     /// <summary>
     /// Semantic for mul.
     /// </summary>
-    /// <param name="src">Source.</param>
     /// <param name="k">Mask.</param>
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_mul_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_mul_ps(Mask k,
                             ZMM a,
                             ZMM b)
     {
-        return maskz_arith2<float>(src, k, a, b, std::multiplies<float>());
+        return maskz_arith2<float>(k, a, b, std::multiplies<float>());
     }
 
     //
@@ -294,17 +288,15 @@ namespace fv
     /// <summary>
     /// Semantic for div.
     /// </summary>
-    /// <param name="src">Source.</param>
     /// <param name="k">Mask.</param>
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_div_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_div_ps(Mask k,
                             ZMM a,
                             ZMM b)
     {
-        return maskz_arith2<float>(src, k, a, b, std::divides<float>());
+        return maskz_arith2<float>(k, a, b, std::divides<float>());
     }
 
     //
@@ -340,17 +332,15 @@ namespace fv
     /// <summary>
     /// Semantic for min.
     /// </summary>
-    /// <param name="src">Source.</param>
     /// <param name="k">Mask.</param>
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_min_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_min_ps(Mask k,
                             ZMM a,
                             ZMM b)
     {
-        return maskz_arith2<float>(src, k, a, b, [] (float x, float y) { return std::min(x, y); });
+        return maskz_arith2<float>(k, a, b, [] (float x, float y) { return std::min(x, y); });
     }
 
     //
@@ -386,17 +376,15 @@ namespace fv
     /// <summary>
     /// Semantic for max.
     /// </summary>
-    /// <param name="src">Source.</param>
     /// <param name="k">Mask.</param>
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_max_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_max_ps(Mask k,
                             ZMM a,
                             ZMM b)
     {
-        return maskz_arith2<float>(src, k, a, b, [] (float x, float y) { return std::max(x, y); });
+        return maskz_arith2<float>(k, a, b, [] (float x, float y) { return std::max(x, y); });
     }
 
     //
@@ -432,17 +420,15 @@ namespace fv
     /// <summary>
     /// Semantic for pow.
     /// </summary>
-    /// <param name="src">Source.</param>
     /// <param name="k">Mask.</param>
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_pow_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_pow_ps(Mask k,
                             ZMM a,
                             ZMM b)
     {
-        return maskz_arith2<float>(src, k, a, b, [] (float x, float y) { return pow(x, y); });
+        return maskz_arith2<float>(k, a, b, [] (float x, float y) { return pow(x, y); });
     }
 
     // Arithmetic operations with 3 arguments.

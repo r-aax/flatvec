@@ -141,20 +141,18 @@ namespace fv
     /// Mask operation with 2 arguments.
     /// </summary>
     /// <typeparam name="T">Type.</typeparam>
-    /// <param name="src">Source.</param>
     /// <param name="k">Mask.</param>
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <param name="op">Operation.</param>
     /// <returns>Result ZMM register.</returns>
     template <typename T>
-    ZMM maskz_arith2(ZMM src,
-                     Mask k,
+    ZMM maskz_arith2(Mask k,
                      ZMM a,
                      ZMM b,
                      std::function<T(T, T)> op)
     {
-        return mask_arith2<T>(src, k, a, b, op, true);
+        return mask_arith2<T>(ZMM(), k, a, b, op, true);
     }
 
     /// <summary>
@@ -183,8 +181,7 @@ namespace fv
                            ZMM a,
                            ZMM b);
 
-    ZMM _mm512_maskz_add_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_add_ps(Mask k,
                             ZMM a,
                             ZMM b);
 
@@ -198,8 +195,7 @@ namespace fv
                            ZMM a,
                            ZMM b);
 
-    ZMM _mm512_maskz_sub_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_sub_ps(Mask k,
                             ZMM a,
                             ZMM b);
 
@@ -213,8 +209,7 @@ namespace fv
                            ZMM a,
                            ZMM b);
 
-    ZMM _mm512_maskz_mul_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_mul_ps(Mask k,
                             ZMM a,
                             ZMM b);
 
@@ -228,8 +223,7 @@ namespace fv
                            ZMM a,
                            ZMM b);
 
-    ZMM _mm512_maskz_div_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_div_ps(Mask k,
                             ZMM a,
                             ZMM b);
 
@@ -243,8 +237,7 @@ namespace fv
                            ZMM a,
                            ZMM b);
 
-    ZMM _mm512_maskz_min_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_min_ps(Mask k,
                             ZMM a,
                             ZMM b);
 
@@ -258,8 +251,7 @@ namespace fv
                            ZMM a,
                            ZMM b);
 
-    ZMM _mm512_maskz_max_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_max_ps(Mask k,
                             ZMM a,
                             ZMM b);
 
@@ -273,8 +265,7 @@ namespace fv
                            ZMM a,
                            ZMM b);
 
-    ZMM _mm512_maskz_pow_ps(ZMM src,
-                            Mask k,
+    ZMM _mm512_maskz_pow_ps(Mask k,
                             ZMM a,
                             ZMM b);
 
