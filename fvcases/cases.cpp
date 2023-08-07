@@ -557,11 +557,7 @@ namespace fv
         pm = _mm512_mask_mov_ps(pm, cond_pvrs, ppv);
 
         // The second branch.
-#ifdef LINUX_ICC_BUILD
-	if (cond_ppv != 0x0)
-#else
-        if (!cond_ppv.is_empty())
-#endif
+	    if (cond_ppv != 0x0)
         {
             pq = _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mask_div_ps(zero, cond_ppv, pl, pr), riemann::g1);
             pqcr = _mm512_mul_ps(pq, cr);
@@ -576,11 +572,7 @@ namespace fv
         }
 
         // The third branch.
-#ifdef LINUX_ICC_BUILD
-	if (ncond_ppv != 0x0)
-#else
-        if (!ncond_ppv.is_empty())
-#endif
+	    if (ncond_ppv != 0x0)
         {
             gel = _mm512_sqrt_ps(_mm512_mask_div_ps(zero, ncond_ppv, riemann::g5,
                                                     _mm512_mul_ps(_mm512_fmadd_ps(riemann::g6, pl, ppv), dl)));
@@ -799,11 +791,7 @@ namespace fv
         ncond = _mm512_kand(_mm512_knot(cond), m);
 
         // The first branch.
-#ifdef LINUX_ICC_BUILD
-	if (cond != 0x0)
-#else
-        if (!cond.is_empty())
-#endif
+	    if (cond != 0x0)
         {
             pratio = _mm512_mask_div_ps(zero, cond, p, pk);
             f = _mm512_mask_mul_ps(f, cond,
@@ -815,11 +803,7 @@ namespace fv
         }
 
         // The second branch.
-#ifdef LINUX_ICC_BUILD
-	if (ncond != 0x0)
-#else
-        if (!ncond.is_empty())
-#endif
+	    if (ncond != 0x0)
         {
             ak = _mm512_mask_div_ps(zero, ncond, riemann::g5, dk);
             bkp = _mm512_fmadd_ps(riemann::g6, pk, p);
@@ -1241,11 +1225,7 @@ namespace fv
 
         // Low prob - ignnore it.
         cond_sh_st = _mm512_kand(cond_sh, _mm512_knot(cond_st));
-#ifdef LINUX_ICC_BUILD
-	if (cond_sh_st != 0x0)
-#else
-        if (!cond_sh_st.is_empty())
-#endif
+	    if (cond_sh_st != 0x0)
         {
             u = _mm512_mask_mov_ps(u, cond_sh_st, _mm512_mul_ps(riemann::g5, _mm512_fmadd_ps(riemann::g7, u, c)));
             uc = _mm512_div_ps(u, c);
@@ -1570,11 +1550,7 @@ namespace fv
         m = Mask::full_tail(CNT_FLOAT);
 #endif
 
-#ifdef LINUX_ICC_BUILD
-	for (; (iter <= nriter) && (m != 0x0); iter++)
-#else
-        for (; (iter <= nriter) && (!m.is_empty_tail(CNT_FLOAT)); iter++)
-#endif
+	    for (; (iter <= nriter) && (m != 0x0); iter++)
         {
             vcase_prefun_1(fl, fld, pold, dl, pl, cl, m);
             vcase_prefun_1(fr, frd, pold, dr, pr, cr, m);
@@ -1867,11 +1843,7 @@ namespace fv
                                            _mm512_sub_ps(ur, ul));
 
         // Vacuum check.
-#ifdef LINUX_ICC_BUILD
-	if (vacuum_mask != 0x0)
-#else
-        if (!vacuum_mask.is_empty_tail(CNT_FLOAT))
-#endif
+	    if (vacuum_mask != 0x0)
         {
             std::cout << "VACUUM" << std::endl;
             exit(1);

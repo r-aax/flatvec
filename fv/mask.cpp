@@ -47,6 +47,42 @@ namespace fv
         data[i] = v;
     }
 
+    /// <summary>
+    /// Mask in binary representation.
+    /// </summary>
+    /// <returns>Mask binary representation.</returns>
+    int Mask::binary_mask() const
+    {
+        int bm = 0x0;
+
+        for (int i = 0; i < Mask::bits; i++)
+        {
+            bm |= (data[i] << i);
+        }
+
+        return bm;
+    }
+
+    /// <summary>
+    /// Check equality.
+    /// </summary>
+    /// <param name="bm">Mask binary representation.</param>
+    /// <returns>true - if mask matches given binary representation. false - otherwise.</returns>
+    bool Mask::operator==(int bm) const
+    {
+        return binary_mask() == bm;
+    }
+
+    /// <summary>
+    /// Check inequality.
+    /// </summary>
+    /// <param name="bm">Mask binary representation.</param>
+    /// <returns>true - if mask does not match binary representation. false - otherwise.</returns>
+    bool Mask::operator!=(int bm) const
+    {
+        return !(*this == bm);
+    }
+
     // Generate masks.
 
     /// <summary>

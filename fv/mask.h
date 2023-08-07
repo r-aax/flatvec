@@ -17,8 +17,9 @@ namespace fv
 
         /// <summary>
         /// Bits count.
+        /// Now we do not need long masks.
         /// </summary>
-        static const int bits = 64;
+        static const int bits = 16;
 
     private:
 
@@ -41,6 +42,12 @@ namespace fv
 
         void set(int i,
                  bool v);
+
+        int binary_mask() const;
+
+        bool operator==(int bm) const;
+
+        bool operator!=(int bm) const;
 
         // Generate masks.
 
