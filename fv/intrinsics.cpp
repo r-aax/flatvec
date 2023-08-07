@@ -503,6 +503,20 @@ namespace fv
         return compare<float>(a, b, [] (float x, float y) { return x == y; });
     }
 
+    /// <summary>
+    /// Semantic for cmpeq.
+    /// </summary>
+    /// <param name="k">Mask.</param>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <returns>Return mask.</returns>
+    Mask _mm512_mask_cmpeq_ps_mask(Mask k,
+                                   ZMM a,
+                                   ZMM b)
+    {
+        return mask_compare<float>(k, a, b, [] (float x, float y) { return x == y; });
+    }
+
     //
 
     /// <summary>
@@ -573,10 +587,24 @@ namespace fv
         return compare<float>(a, b, [] (float x, float y) { return x != y; });
     }
 
+    /// <summary>
+    /// Semantic for cmpneq.
+    /// </summary>
+    /// <param name="k">Mask.</param>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <returns>Return mask.</returns>
+    Mask _mm512_mask_cmpneq_ps_mask(Mask k,
+                                    ZMM a,
+                                    ZMM b)
+    {
+        return mask_compare<float>(k, a, b, [] (float x, float y) { return x != y; });
+    }
+
     //
 
     /// <summary>
-    /// Semantic for cmple.
+    /// Semantic for cmpnle.
     /// </summary>
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
@@ -585,6 +613,20 @@ namespace fv
                                ZMM b)
     {
         return compare<float>(a, b, [] (float x, float y) { return !(x <= y); });
+    }
+
+    /// <summary>
+    /// Semantic for cmpnle.
+    /// </summary>
+    /// <param name="k">Mask.</param>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <returns>Result mask.</returns>
+    Mask _mm512_mask_cmpnle_ps_mask(Mask k,
+                                    ZMM a,
+                                    ZMM b)
+    {
+        return mask_compare<float>(k, a, b, [] (float x, float y) { return !(x <= y); });
     }
 
     //
@@ -599,6 +641,20 @@ namespace fv
                                ZMM b)
     {
         return compare<float>(a, b, [] (float x, float y) { return !(x < y); });
+    }
+
+    /// <summary>
+    /// Semantic for cmpnlt.
+    /// </summary>
+    /// <param name="k">Mask.</param>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <returns>Result mask.</returns>
+    Mask _mm512_mask_cmpnlt_ps_mask(Mask k,
+                                    ZMM a,
+                                    ZMM b)
+    {
+        return mask_compare<float>(k, a, b, [] (float x, float y) { return !(x < y); });
     }
 
     //

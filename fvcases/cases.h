@@ -55,6 +55,12 @@ namespace fv
                       int repeats,
                       float eps = 1.0e-3f);
 
+    // Find minimal positive root of square equation.
+    bool case_square_equation(int len,
+                              int repeats,
+                              float random_lo = -10.0f,
+                              float random_hi = 10.0f);
+
     //
 
     // Check general case.

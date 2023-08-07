@@ -108,5 +108,6 @@ namespace fv
 													  / static_cast<double>(vector_opers_count)) << std::endl;
 		std::cout << "  mean masks density     : " << mean_masks_density() << std::endl;
 		std::cout << "  real time acceleration : " << std::fixed << real_time_acceleration() << std::endl;
+		std::cout << "--------------------------" << std::endl;
 	}
 }

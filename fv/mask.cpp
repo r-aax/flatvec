@@ -80,7 +80,10 @@ namespace fv
     /// Check equality.
     /// </summary>
     /// <param name="bm">Mask binary representation.</param>
-    /// <returns>true - if mask matches given binary representation. false - otherwise.</returns>
+    /// <returns>
+    /// true - if mask matches given binary representation,
+    /// false - otherwise.
+    /// </returns>
     bool Mask::operator==(int bm) const
     {
         return binary_mask() == bm;
@@ -90,7 +93,10 @@ namespace fv
     /// Check inequality.
     /// </summary>
     /// <param name="bm">Mask binary representation.</param>
-    /// <returns>true - if mask does not match binary representation. false - otherwise.</returns>
+    /// <returns>
+    /// true - if mask does not match binary representation,
+    /// false - otherwise.
+    /// </returns>
     bool Mask::operator!=(int bm) const
     {
         return !(*this == bm);
