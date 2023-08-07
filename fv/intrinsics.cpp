@@ -461,6 +461,34 @@ namespace fv
         return arith3<float>(a, b, c, [] (float x, float y, float z) { return -(x * y) + z; });
     }
 
+    /// <summary>
+    /// Semantic for fmsub.
+    /// </summary>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <param name="c">Third argument.</param>
+    /// <returns>Result ZMM register.</returns>
+    ZMM _mm512_fmsub_ps(ZMM a,
+                        ZMM b,
+                        ZMM c)
+    {
+        return arith3<float>(a, b, c, [] (float x, float y, float z) { return x * y - z; });
+    }
+
+    /// <summary>
+    /// Semantic for fnmsub.
+    /// </summary>
+    /// <param name="a">First argument.</param>
+    /// <param name="b">Second argument.</param>
+    /// <param name="c">Third argument.</param>
+    /// <returns>Result ZMM register.</returns>
+    ZMM _mm512_fnmsub(ZMM a,
+                      ZMM b,
+                      ZMM c)
+    {
+        return arith3<float>(a, b, c, [] (float x, float y, float z) { return -(x * y) - z; });
+    }
+
     // Compare operations.
 
     /// <summary>

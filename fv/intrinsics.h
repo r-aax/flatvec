@@ -309,6 +309,16 @@ namespace fv
                          ZMM b,
                          ZMM c);
 
+    //
+
+    ZMM _mm512_fmsub_ps(ZMM a,
+                        ZMM b,
+                        ZMM c);
+
+    ZMM _mm512_fnmsub(ZMM a,
+                      ZMM b,
+                      ZMM c);
+
     // Compare operations.
 
     /// <summary>
