@@ -30,9 +30,11 @@ namespace fv
 
     public:
 
-        // Constructor.
+        // Constructors.
 
         Mask();
+
+        Mask(int bm);
 
         // Access to data.
 

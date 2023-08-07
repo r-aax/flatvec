@@ -14,6 +14,19 @@ namespace fv
         clear();
     }
 
+    /// <summary>
+    /// Constructor from int.
+    /// </summary>
+    /// <param name="bm">Binary representation.</param>
+    Mask::Mask(int bm)
+        : Mask()
+    {
+        for (int i = 0; i < Mask::bits; i++)
+        {
+            data[i] = ((1 << i) != 0x0);
+        }
+    }
+
     // Access to data.
 
     /// <summary>

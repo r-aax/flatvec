@@ -848,11 +848,7 @@ namespace fv
                            _mm512_load_ps(dk_p + sh),
                            _mm512_load_ps(pk_p + sh),
                            _mm512_load_ps(ck_p + sh),
-#ifdef LINUX_ICC_BUILD
-			   0xffff);
-#else
-                           Mask::full());
-#endif
+                           0xffff);
 
             _mm512_store_ps(f_p + sh, f);
             _mm512_store_ps(fd_p + sh, fd);
@@ -1544,11 +1540,7 @@ namespace fv
         vcase_guessp_1(dl, ul, pl, cl, dr, ur, pr, cr, pold);
 
         // Start with full mask.
-#ifdef LINUX_ICC_BUILD
-	m = 0xffff;
-#else
-        m = Mask::full_tail(CNT_FLOAT);
-#endif
+	    m = 0xffff;
 
 	    for (; (iter <= nriter) && (m != 0x0); iter++)
         {
