@@ -2004,13 +2004,20 @@ namespace fv
                                  float c,
                                  float& h)
     {
-        h = 0.0f;
-
         if (a == 0.0f)
         {
-            if (b != 0.0f)
+            if (b == 0.0f)
             {
-                h = std::max(-c / b, 0.0f);
+                h = 0.0f;
+            }
+            else
+            {
+                h = -c / b;
+
+                if (h < 0.0f);
+                {
+                    h = 0.0f;
+                }
             }
         }
         else
@@ -2020,10 +2027,14 @@ namespace fv
 
             float d = b * b - 4.0f * c;
 
-            if (d >= 0.0)
+            if (d < 0.0f)
+            {
+                h = 0.0f;
+            }
+            else
             {
                 float sd = sqrt(d);
-                float h1 = 0.5f * (-b - sd);
+                float h1 = 0.5 * (-b - sd);
 
                 if (h1 > 0.0f)
                 {
@@ -2031,9 +2042,16 @@ namespace fv
                 }
                 else
                 {
-                    float h2 = 0.5f * (-b + sd);
+                    float h2 = 0.5 * (-b + sd);
 
-                    h = std::max(h2, 0.0f);
+                    if (h2 > 0.0f)
+                    {
+                        h = h2;
+                    }
+                    else
+                    {
+                        h = 0.0f;
+                    }
                 }
             }
         }
@@ -2071,27 +2089,19 @@ namespace fv
                                  ZMM c,
                                  ZMM& h)
     {
-        // a = 0.0
-        h = _mm512_set1_ps(0.0f);
-        Mask a_zero_cnd = _mm512_cmpeq_ps_mask(a, zero);
-        Mask b_not_zero_cnd = _mm512_mask_cmpneq_ps_mask(a_zero_cnd, b, zero);
-        h = _mm512_mask_max_ps(h, b_not_zero_cnd,
-                               _mm512_mask_div_ps(h, b_not_zero_cnd, _mm512_sub_ps(zero, c), b),
-                               zero);
-
-        // a != 0.0
-        Mask a_not_zero_cnd = _mm512_knot(a_zero_cnd);
-        b = _mm512_mask_div_ps(b, a_not_zero_cnd, b, a);
-        c = _mm512_mask_div_ps(c, a_not_zero_cnd, c, a);
+        h = zero;
+        Mask p1 = _mm512_cmpeq_ps_mask(a, zero);
+        Mask p2 = _mm512_mask_cmpneq_ps_mask(p1, b, zero);
+        h = _mm512_maskz_max_ps(p2, _mm512_maskz_div_ps(p2, _mm512_sub_ps(zero, c), b), zero);
+        Mask np1 = _mm512_knot(p1);
+        b = _mm512_mask_div_ps(b, np1, b, a);
+        c = _mm512_mask_div_ps(c, np1, c, a);
         ZMM d = _mm512_sub_ps(_mm512_mul_ps(b, b), _mm512_mul_ps(four, c));
-        Mask d_pos_cnd = _mm512_mask_cmpge_ps_mask(a_not_zero_cnd, d, zero);
-        ZMM sd = _mm512_mask_sqrt_ps(zero, d_pos_cnd, d);
+        Mask p4 = _mm512_mask_cmpge_ps_mask(np1, d, zero);
+        ZMM sd = _mm512_mask_sqrt_ps(sd, p4, d);
         ZMM h1 = _mm512_mul_ps(half, _mm512_sub_ps(zero, _mm512_add_ps(b, sd)));
-        Mask h1_pos_cnd = _mm512_mask_cmpgt_ps_mask(d_pos_cnd, h1, zero);
-        h = _mm512_mask_mov_ps(h, h1_pos_cnd, h1);
-        Mask h1_not_pos_cnd = _mm512_kand(d_pos_cnd, _mm512_knot(h1_pos_cnd));
-        ZMM h2 = _mm512_mul_ps(half, _mm512_sub_ps(sd, b));
-        h = _mm512_mask_max_ps(h, h1_not_pos_cnd, h2, zero);
+        h = _mm512_mask_mov_ps(h, p4, _mm512_mask_blend_ps(_mm512_cmpgt_ps_mask(h1, zero),
+                                                           _mm512_max_ps(_mm512_mul_ps(half, _mm512_sub_ps(sd, b)), zero), h1));
     }
 
     /// <summary>
