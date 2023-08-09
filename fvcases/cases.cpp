@@ -241,8 +241,8 @@ namespace fv
         Mask k = _mm512_cmple_ps_mask(b, a);
         ZMM add, mul;
 
-        add = _mm512_maskz_add_ps(k, a, b);
-        mul = _mm512_maskz_mul_ps(_mm512_knot(k), a, b);
+        add = _mm512_add_ps(a, b);
+        mul = _mm512_mul_ps(a, b);
         c = _mm512_mask_blend_ps(k, mul, add);
     }
 

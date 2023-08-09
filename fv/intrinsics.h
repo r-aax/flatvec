@@ -351,7 +351,7 @@ namespace fv
             }
         }
 
-        GS.append_vector_oper(w, k.tail_1_bits_count(w));
+        GS.append_vector_oper(w, k1.tail_1_bits_count(w));
 
         return k;
     }

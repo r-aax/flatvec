@@ -47,6 +47,8 @@ namespace fv
 
         int binary_mask() const;
 
+        std::string view() const;
+
         bool operator==(int bm) const;
 
         bool operator!=(int bm) const;

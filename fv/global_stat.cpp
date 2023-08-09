@@ -101,13 +101,13 @@ namespace fv
 	void GlobalStat::print()
 	{
 		std::cout << "Global stat:" << std::endl;
-		std::cout << "  vector opers           : " << vector_opers_count << std::endl;
-		std::cout << "  scalar opers           : " << scalar_opers_count << std::endl;
-		std::cout << "  mask opers             : " << mask_opers_count << std::endl;
-		std::cout << "  effective vector width : " << (static_cast<double>(scalar_opers_count)
+		std::cout << "  vector opers             : " << vector_opers_count << std::endl;
+		std::cout << "  scalar opers             : " << scalar_opers_count << std::endl;
+		std::cout << "  mask opers               : " << mask_opers_count << std::endl;
+		std::cout << "  theoretical acceleration : " << (static_cast<double>(scalar_opers_count)
 													  / static_cast<double>(vector_opers_count)) << std::endl;
-		std::cout << "  mean masks density     : " << mean_masks_density() << std::endl;
-		std::cout << "  real time acceleration : " << std::fixed << real_time_acceleration() << std::endl;
+		std::cout << "  mean masks density       : " << mean_masks_density() << std::endl;
+		std::cout << "  real time acceleration   : " << std::fixed << real_time_acceleration() << std::endl;
 		std::cout << "--------------------------" << std::endl;
 	}
 }

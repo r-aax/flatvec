@@ -77,6 +77,22 @@ namespace fv
     }
 
     /// <summary>
+    /// String view.
+    /// </summary>
+    /// <returns>String.</returns>
+    std::string Mask::view() const
+    {
+        std::string s = "";
+
+        for (int i = 0; i < Mask::bits; i++)
+        {
+            s = (data[i] ? "1" : "0") + s;
+        }
+
+        return "[" + s + "]";
+    }
+
+    /// <summary>
     /// Check equality.
     /// </summary>
     /// <param name="bm">Mask binary representation.</param>
