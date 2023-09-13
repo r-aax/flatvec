@@ -19,6 +19,9 @@ namespace fv
 		// Vectors copied.
 		int vectors_copied;
 
+		// Vectors assigned.
+		int vectors_assigned;
+
 		// Vector operations.
 		int vector_opers_count;
 
@@ -53,6 +56,9 @@ namespace fv
 
 		// Copy vecror.
 		void copy_vector();
+
+		// Assign vector.
+		void assign_vector();
 
 		// Append vector operation information.
 		void append_vector_oper(int width, int scalar_opers);

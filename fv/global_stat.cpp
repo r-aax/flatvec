@@ -13,6 +13,7 @@ namespace fv
 	GlobalStat::GlobalStat()
 		: vectors_created(0),
 		  vectors_copied(0),
+		  vectors_assigned(0),
 		  vector_opers_count(0),
 		  scalar_opers_count(0),
 		  mask_opers_count(0),
@@ -27,6 +28,7 @@ namespace fv
 	{
 		vectors_created = 0;
 		vectors_copied = 0;
+		vectors_assigned = 0;
 		vector_opers_count = 0;
 		scalar_opers_count = 0;
 		mask_opers_count = 0;
@@ -47,6 +49,14 @@ namespace fv
 	void GlobalStat::copy_vector()
 	{
 		++vectors_copied;
+	}
+
+	/// <summary>
+	/// Assign vector.
+	/// </summary>
+	void GlobalStat::assign_vector()
+	{
+		++vectors_assigned;
 	}
 
 	/// <summary>
@@ -123,6 +133,7 @@ namespace fv
 		std::cout << "Global stat:" << std::endl;
 		std::cout << "  vectors created          : " << vectors_created << std::endl;
 		std::cout << "  vectors copied           : " << vectors_copied << std::endl;
+		std::cout << "  vectors assigned         : " << vectors_assigned << std::endl;
 		std::cout << "  vector opers             : " << vector_opers_count << std::endl;
 		std::cout << "  scalar opers             : " << scalar_opers_count << std::endl;
 		std::cout << "  mask opers               : " << mask_opers_count << std::endl;

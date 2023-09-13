@@ -53,6 +53,10 @@ namespace fv
 
         ZMM(const ZMM& z);
 
+        ZMM& operator=(const ZMM& z);
+
+        ~ZMM();
+
         // Access.
 
         /// <summary>
