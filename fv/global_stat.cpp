@@ -24,7 +24,7 @@ namespace fv
 	/// <summary>
 	/// Clean stat.
 	/// </summary>
-	void GlobalStat::clean()
+	void GlobalStat::clear()
 	{
 		vectors_created = 0;
 		vectors_copied = 0;

@@ -4,6 +4,7 @@
 
 #include "array_manager.h"
 #include "global_stat.h"
+#include "control_graph.h"
 
 #ifndef LINUX_ICC_BUILD
 
@@ -102,11 +103,11 @@ namespace fv
         _m512 min = _mm512_min_ps(a, b);
         _m512 max = _mm512_max_ps(a, b);
 
-        c = _mm512_add_ps(add, sub);
-        c = _mm512_add_ps(c, mul);
-        c = _mm512_add_ps(c, div);
-        c = _mm512_add_ps(c, min);
-        c = _mm512_add_ps(c, max);
+        _m512 v0 = _mm512_add_ps(add, sub);
+        _m512 v1 = _mm512_add_ps(v0, mul);
+        _m512 v2 = _mm512_add_ps(v1, div);
+        _m512 v3 = _mm512_add_ps(v2, min);
+        c = _mm512_add_ps(v3, max);
     }
 
     /// <summary>
@@ -2035,7 +2036,7 @@ namespace fv
             else
             {
                 float sd = sqrt(d);
-                float h1 = 0.5 * (-b - sd);
+                float h1 = 0.5f * (-b - sd);
 
                 if (h1 > 0.0f)
                 {
@@ -2210,7 +2211,8 @@ namespace fv
         repeats = 1;
 #endif
 
-        GS.clean();
+        GS.clear();
+        CG.clear();
         std::cout << name << " : " << (fun(count, repeats) ? "OK" : "ERROR") << std::endl;
         GS.print();
     }

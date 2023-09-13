@@ -3,8 +3,6 @@
 #ifndef ZMM_H
 #define ZMM_H
 
-#include "global_stat.h"
-
 namespace fv
 {
     /// <summary>
@@ -39,6 +37,9 @@ namespace fv
         }
 
     private:
+
+        // Id.
+        int id;
 
         /// <summary>
         /// Data.

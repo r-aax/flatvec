@@ -7,7 +7,7 @@ namespace fv
 {
     // Stub vector for mask operations.
 
-    extern ZMM stub = ZMM();
+    ZMM stub = ZMM();
 
     // Init operations.
 

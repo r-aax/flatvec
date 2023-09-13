@@ -2,6 +2,9 @@
 
 #include "zmm.h"
 
+#include "global_stat.h"
+#include "control_graph.h"
+
 namespace fv
 {
     // Constructors.
@@ -11,7 +14,9 @@ namespace fv
     /// </summary>
     ZMM::ZMM()
     {
+        id = CG.zmm_id();
         data = new int8_t[bytes];
+
         clear();
 
         GS.create_vector();
@@ -23,6 +28,7 @@ namespace fv
     /// <param name="z">Another ZMM register.</param>
     ZMM::ZMM(const ZMM& z)
     {
+        id = CG.zmm_id();
         data = new int8_t[bytes];
 
         for (int i = 0; i < count<int32_t>(); ++i)
@@ -40,14 +46,18 @@ namespace fv
     /// <returns>ZMM register.</returns>
     ZMM& ZMM::operator=(const ZMM& z)
     {
-        data = new int8_t[bytes];
-
-        for (int i = 0; i < count<int32_t>(); ++i)
+        if (this != &z)
         {
-            set<int32_t>(i, z.get<int32_t>(i));
-        }
+            id = CG.zmm_id();
+            data = new int8_t[bytes];
 
-        GS.copy_vector();
+            for (int i = 0; i < count<int32_t>(); ++i)
+            {
+                set<int32_t>(i, z.get<int32_t>(i));
+            }
+
+            GS.copy_vector();
+        }
 
         return *this;
     }
@@ -58,6 +68,8 @@ namespace fv
     /// <param name="z">ZMM register.</param>
     ZMM::ZMM(ZMM&& z)
     {
+        id = CG.zmm_id();
+
         data = z.data;
         z.data = nullptr;
 
@@ -73,12 +85,14 @@ namespace fv
     {
         if (this != &z)
         {
+            id = CG.zmm_id();
+
             delete[] data;
             data = z.data;
             z.data = nullptr;
-        }
 
-        GS.move_vector();
+            GS.move_vector();
+        }
 
         return *this;
     }

@@ -11,7 +11,7 @@ namespace fv
 	class GlobalStat
 	{
 
-	public:
+	private:
 
 		// Vectors created.
 		int vectors_created;
@@ -49,7 +49,7 @@ namespace fv
 		GlobalStat();
 
 		// Clean.
-		void clean();
+		void clear();
 
 		// Create vector.
 		void create_vector();
