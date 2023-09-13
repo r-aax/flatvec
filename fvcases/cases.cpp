@@ -2016,7 +2016,7 @@ namespace fv
             {
                 h = -c / b;
 
-                if (h < 0.0f);
+                if (h < 0.0f)
                 {
                     h = 0.0f;
                 }
@@ -2044,7 +2044,7 @@ namespace fv
                 }
                 else
                 {
-                    float h2 = 0.5 * (-b + sd);
+                    float h2 = 0.5f * (-b + sd);
 
                     if (h2 > 0.0f)
                     {
@@ -2215,5 +2215,6 @@ namespace fv
         CG.clear();
         std::cout << name << " : " << (fun(count, repeats) ? "OK" : "ERROR") << std::endl;
         GS.print();
+        CG.print();
     }
 }

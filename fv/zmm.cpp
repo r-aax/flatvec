@@ -37,6 +37,7 @@ namespace fv
         }
 
         GS.copy_vector();
+        CG.add_link(z.get_id(), id);
     }
 
     /// <summary>
@@ -57,6 +58,7 @@ namespace fv
             }
 
             GS.copy_vector();
+            CG.add_link(z.get_id(), id);
         }
 
         return *this;
@@ -74,6 +76,7 @@ namespace fv
         z.data = nullptr;
 
         GS.move_vector();
+        CG.add_link(z.get_id(), id);
     }
 
     /// <summary>
@@ -92,6 +95,7 @@ namespace fv
             z.data = nullptr;
 
             GS.move_vector();
+            CG.add_link(z.get_id(), id);
         }
 
         return *this;

@@ -131,18 +131,18 @@ namespace fv
 	void GlobalStat::print()
 	{
 		std::cout << "Global stat:" << std::endl;
-		std::cout << "  vectors created          : " << vectors_created << std::endl;
-		std::cout << "  vectors copied           : " << vectors_copied << std::endl;
-		std::cout << "  vectors moved            : " << vectors_moved << std::endl;
-		std::cout << "  vector opers             : " << vector_opers_count << std::endl;
-		std::cout << "  scalar opers             : " << scalar_opers_count << std::endl;
-		std::cout << "  mask opers               : " << mask_opers_count << std::endl;
-		std::cout << "  theoretical acceleration : " << (static_cast<double>(scalar_opers_count)
+		std::cout << "\tvectors created          : " << vectors_created << std::endl;
+		std::cout << "\tvectors copied           : " << vectors_copied << std::endl;
+		std::cout << "\tvectors moved            : " << vectors_moved << std::endl;
+		std::cout << "\tvector opers             : " << vector_opers_count << std::endl;
+		std::cout << "\tscalar opers             : " << scalar_opers_count << std::endl;
+		std::cout << "\tmask opers               : " << mask_opers_count << std::endl;
+		std::cout << "\ttheoretical acceleration : " << (static_cast<double>(scalar_opers_count)
 													  / static_cast<double>(vector_opers_count)) << std::endl;
-		std::cout << "  mean masks density       : " << mean_masks_density() << std::endl;
+		std::cout << "\tmean masks density       : " << mean_masks_density() << std::endl;
 
 #ifdef LINUX_ICC_BUILD
-		std::cout << "  real time acceleration   : " << std::fixed << real_time_acceleration() << std::endl;
+		std::cout << "\treal time acceleration   : " << std::fixed << real_time_acceleration() << std::endl;
 #endif
 
 		std::cout << "--------------------------" << std::endl;

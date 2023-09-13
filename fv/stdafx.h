@@ -14,6 +14,10 @@
 #include <sstream>
 #include <iostream>
 #include <iomanip>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <list>
 #include <algorithm>
 #include <functional>
 #include <chrono>

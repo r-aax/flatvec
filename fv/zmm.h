@@ -65,6 +65,15 @@ namespace fv
         // Access.
 
         /// <summary>
+        /// Get id.
+        /// </summary>
+        /// <returns>Id.</returns>
+        inline int get_id() const
+        {
+            return id;
+        }
+
+        /// <summary>
         /// Get element of data.
         /// </summary>
         /// <typeparam name="T">Type.</typeparam>
