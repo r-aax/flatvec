@@ -34,7 +34,7 @@ namespace fv
 
         Mask();
 
-        Mask(int bm);
+        Mask(uint64_t bm);
 
         // Access to data.
 
@@ -45,13 +45,13 @@ namespace fv
         void set(int i,
                  bool v);
 
-        int binary_mask() const;
+        uint64_t binary_mask() const;
 
         std::string view() const;
 
-        bool operator==(int bm) const;
+        bool operator==(uint64_t bm) const;
 
-        bool operator!=(int bm) const;
+        bool operator!=(uint64_t bm) const;
 
         // Generate masks.
 

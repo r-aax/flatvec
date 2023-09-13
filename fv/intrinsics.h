@@ -444,8 +444,7 @@ namespace fv
 
     // Operations with masks.
 
-    Mask koperation(int count,
-                    Mask& a,
+    Mask koperation(Mask& a,
                     Mask& b,
                     std::function<bool(bool, bool)> op);
 

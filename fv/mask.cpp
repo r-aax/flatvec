@@ -18,12 +18,12 @@ namespace fv
     /// Constructor from int.
     /// </summary>
     /// <param name="bm">Binary representation.</param>
-    Mask::Mask(int bm)
+    Mask::Mask(uint64_t bm)
         : Mask()
     {
         for (int i = 0; i < Mask::bits; i++)
         {
-            data[i] = ((1 << i) != 0x0);
+            data[i] = ((bm & (static_cast<uint64_t>(1) << i)) != 0x0);
         }
     }
 
@@ -64,13 +64,13 @@ namespace fv
     /// Mask in binary representation.
     /// </summary>
     /// <returns>Mask binary representation.</returns>
-    int Mask::binary_mask() const
+    uint64_t Mask::binary_mask() const
     {
-        int bm = 0x0;
+        uint64_t bm = 0x0;
 
         for (int i = 0; i < Mask::bits; i++)
         {
-            bm |= (data[i] << i);
+            bm |= (static_cast<uint64_t>(data[i]) << i);
         }
 
         return bm;
@@ -100,7 +100,7 @@ namespace fv
     /// true - if mask matches given binary representation,
     /// false - otherwise.
     /// </returns>
-    bool Mask::operator==(int bm) const
+    bool Mask::operator==(uint64_t bm) const
     {
         return binary_mask() == bm;
     }
@@ -113,7 +113,7 @@ namespace fv
     /// true - if mask does not match binary representation,
     /// false - otherwise.
     /// </returns>
-    bool Mask::operator!=(int bm) const
+    bool Mask::operator!=(uint64_t bm) const
     {
         return !(*this == bm);
     }

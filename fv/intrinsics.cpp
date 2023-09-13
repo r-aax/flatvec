@@ -716,13 +716,11 @@ namespace fv
     /// <summary>
     /// Logical operation.
     /// </summary>
-    /// <param name="count">Count of bits.</param>
     /// <param name="a">First mask.</param>
     /// <param name="b">Second mask.</param>
     /// <param name="op">Operation.</param>
     /// <returns>Result mask.</returns>
-    Mask koperation(int count,
-                    Mask& a,
+    Mask koperation(Mask& a,
                     Mask& b,
                     std::function<bool(bool, bool)> op)
     {
@@ -730,14 +728,7 @@ namespace fv
 
         for (int i = 0; i < Mask::bits; i++)
         {
-            if (i < count)
-            {
-                k.set(i, op(a.get(i), b.get(i)));
-            }
-            else
-            {
-                k.set(i, false);
-            }
+            k.set(i, op(a.get(i), b.get(i)));
         }
 
         GS.append_mask_oper();
@@ -752,7 +743,7 @@ namespace fv
     /// <returns>Result mask.</returns>
     Mask _mm512_kmov(Mask& a)
     {
-        return koperation(ZMM::count<float>(), a, a, [] (bool x, bool y) { return x; });
+        return koperation(a, a, [] (bool x, bool y) { return x; });
     }
 
     /// <summary>
@@ -762,7 +753,7 @@ namespace fv
     /// <returns>Result mask.</returns>
     Mask _mm512_knot(Mask& a)
     {
-        return koperation(ZMM::count<float>(), a, a, [] (bool x, bool y) { return !x; });
+        return koperation(a, a, [] (bool x, bool y) { return !x; });
     }
 
     /// <summary>
@@ -774,7 +765,7 @@ namespace fv
     Mask _mm512_kand(Mask& a,
                      Mask& b)
     {
-        return koperation(ZMM::count<float>(), a, b, std::bit_and<bool>());
+        return koperation(a, b, std::bit_and<bool>());
     }
 
     /// <summary>
@@ -786,7 +777,7 @@ namespace fv
     Mask _mm512_kandn(Mask& a,
                       Mask& b)
     {
-        return koperation(ZMM::count<float>(), a, b, [] (bool x, bool y) { return !x & y; });
+        return koperation(a, b, [] (bool x, bool y) { return !x & y; });
     }
 
     /// <summary>
@@ -798,7 +789,7 @@ namespace fv
     Mask _mm512_kor(Mask& a,
                     Mask& b)
     {
-        return koperation(ZMM::count<float>(), a, b, std::bit_or<bool>());
+        return koperation(a, b, std::bit_or<bool>());
     }
 
     /// <summary>
@@ -810,7 +801,7 @@ namespace fv
     Mask _mm512_kxor(Mask& a,
                      Mask& b)
     {
-        return koperation(ZMM::count<float>(), a, b, std::bit_xor<bool>());
+        return koperation(a, b, std::bit_xor<bool>());
     }
 
     /// <summary>
@@ -822,6 +813,6 @@ namespace fv
     Mask _mm512_kxnor(Mask& a,
                       Mask& b)
     {
-        return koperation(ZMM::count<float>(), a, b, [] (bool x, bool y) { return !(x ^ y); });
+        return koperation(a, b, [] (bool x, bool y) { return !(x ^ y); });
     }
 }
