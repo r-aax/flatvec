@@ -91,8 +91,8 @@ namespace fv
     /// <param name="a">Input.</param>
     /// <param name="b">Input.</param>
     /// <param name="c">Output.</param>
-    void vcase_arith_f32_1(_m512 a,
-                           _m512 b,
+    void vcase_arith_f32_1(_m512& a,
+                           _m512& b,
                            _m512& c)
     {
         _m512 add = _mm512_add_ps(a, b);
@@ -235,8 +235,8 @@ namespace fv
     /// <param name="a">Input.</param>
     /// <param name="b">Input.</param>
     /// <param name="c">Output.</param>
-    void vcase_blend_f32_1(_m512 a,
-                           _m512 b,
+    void vcase_blend_f32_1(_m512& a,
+                           _m512& b,
                            _m512& c)
     {
         __mmask16 k = _mm512_cmple_ps_mask(b, a);
@@ -530,14 +530,14 @@ namespace fv
     /// <param name="pr">Input.</param>
     /// <param name="cr">Input.</param>
     /// <param name="pm">Output.</param>
-    void vcase_guessp_1(_m512 dl,
-                        _m512 ul,
-                        _m512 pl,
-                        _m512 cl,
-                        _m512 dr,
-                        _m512 ur,
-                        _m512 pr,
-                        _m512 cr,
+    void vcase_guessp_1(_m512& dl,
+                        _m512& ul,
+                        _m512& pl,
+                        _m512& cl,
+                        _m512& dr,
+                        _m512& ur,
+                        _m512& pr,
+                        _m512& cr,
                         _m512& pm)
     {
         // Begin of calculation part.
@@ -783,10 +783,10 @@ namespace fv
     /// <param name="m">Mask.</param>
     void vcase_prefun_1(_m512& f,
                         _m512& fd,
-                        _m512 p,
-                        _m512 dk,
-                        _m512 pk,
-                        _m512 ck,
+                        _m512& p,
+                        _m512& dk,
+                        _m512& pk,
+                        _m512& ck,
                         __mmask16 m)
     {
         _m512 pratio, ak, bkp, ppk, qrt;
@@ -1171,20 +1171,20 @@ namespace fv
     /// <param name="v">Output.</param>
     /// <param name="w">Output.</param>
     /// <param name="p">Output.</param>
-    void vcase_sample_1(_m512 dl,
-                        _m512 ul,
-                        _m512 vl,
-                        _m512 wl,
-                        _m512 pl,
-                        _m512 cl,
-                        _m512 dr,
-                        _m512 ur,
-                        _m512 vr,
-                        _m512 wr,
-                        _m512 pr,
-                        _m512 cr,
-                        _m512 pm,
-                        _m512 um,
+    void vcase_sample_1(_m512& dl,
+                        _m512& ul,
+                        _m512& vl,
+                        _m512& wl,
+                        _m512& pl,
+                        _m512& cl,
+                        _m512& dr,
+                        _m512& ur,
+                        _m512& vr,
+                        _m512& wr,
+                        _m512& pr,
+                        _m512& cr,
+                        _m512& pm,
+                        _m512& um,
                         _m512& d,
                         _m512& u,
                         _m512& v,
@@ -1523,14 +1523,14 @@ namespace fv
     /// <param name="cr">Input.</param>
     /// <param name="p">Output.</param>
     /// <param name="u">Output.</param>
-    void vcase_starpu_1(_m512 dl,
-                        _m512 ul,
-                        _m512 pl,
-                        _m512 cl,
-                        _m512 dr,
-                        _m512 ur,
-                        _m512 pr,
-                        _m512 cr,
+    void vcase_starpu_1(_m512& dl,
+                        _m512& ul,
+                        _m512& pl,
+                        _m512& cl,
+                        _m512& dr,
+                        _m512& ur,
+                        _m512& pr,
+                        _m512& cr,
                         _m512& p,
                         _m512& u)
     {
@@ -1816,16 +1816,16 @@ namespace fv
     /// <param name="v">Output.</param>
     /// <param name="w">Output.</param>
     /// <param name="p">Output.</param>
-    void vcase_riemann_1(_m512 dl,
-                         _m512 ul,
-                         _m512 vl,
-                         _m512 wl,
-                         _m512 pl,
-                         _m512 dr,
-                         _m512 ur,
-                         _m512 vr,
-                         _m512 wr,
-                         _m512 pr,
+    void vcase_riemann_1(_m512& dl,
+                         _m512& ul,
+                         _m512& vl,
+                         _m512& wl,
+                         _m512& pl,
+                         _m512& dr,
+                         _m512& ur,
+                         _m512& vr,
+                         _m512& wr,
+                         _m512& pr,
                          _m512& d,
                          _m512& u,
                          _m512& v,
@@ -2085,9 +2085,9 @@ namespace fv
     /// <param name="b">Input.</param>
     /// <param name="c">Input.</param>
     /// <param name="h">Output.</param>
-    void vcase_square_equation_1(_m512 a,
-                                 _m512 b,
-                                 _m512 c,
+    void vcase_square_equation_1(_m512& a,
+                                 _m512& b,
+                                 _m512& c,
                                  _m512& h)
     {
         h = zero;

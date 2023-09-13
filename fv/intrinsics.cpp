@@ -56,7 +56,7 @@ namespace fv
     /// <param name="mem_addr">Address.</param>
     /// <param name="a">Stored register.</param>
     void _mm512_store_ps(void* mem_addr,
-                         ZMM a)
+                         ZMM& a)
     {
         int w = ZMM::count<float>();
         float* faddr = static_cast<float*>(mem_addr);
@@ -78,9 +78,9 @@ namespace fv
     /// <param name="k">Mask.</param>
     /// <param name="a">Argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_mask_mov_ps(ZMM src,
-                           Mask k,
-                           ZMM a)
+    ZMM _mm512_mask_mov_ps(ZMM& src,
+                           Mask& k,
+                           ZMM& a)
     {
         return mask_arith1<float>(src, k, a, [] (float x) { return x; });
     }
@@ -92,7 +92,7 @@ namespace fv
     /// </summary>
     /// <param name="a">Argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_abs_ps(ZMM a)
+    ZMM _mm512_abs_ps(ZMM& a)
     {
         return arith1<float>(a, [] (float x) { return abs(x); });
     }
@@ -104,7 +104,7 @@ namespace fv
     /// </summary>
     /// <param name="a">Argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_sqrt_ps(ZMM a)
+    ZMM _mm512_sqrt_ps(ZMM& a)
     {
         return arith1<float>(a, [] (float x) { return sqrt(x); });
     }
@@ -116,9 +116,9 @@ namespace fv
     /// <param name="k">Mask.</param>
     /// <param name="a">Argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_mask_sqrt_ps(ZMM src,
-                            Mask k,
-                            ZMM a)
+    ZMM _mm512_mask_sqrt_ps(ZMM& src,
+                            Mask& k,
+                            ZMM& a)
     {
         return mask_arith1<float>(src, k, a, [] (float x) { return sqrt(x); });
     }
@@ -131,8 +131,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_add_ps(ZMM a,
-                      ZMM b)
+    ZMM _mm512_add_ps(ZMM& a,
+                      ZMM& b)
     {
         return arith2<float>(a, b, std::plus<float>());
     }
@@ -145,10 +145,10 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_mask_add_ps(ZMM src,
-                           Mask k,
-                           ZMM a,
-                           ZMM b)
+    ZMM _mm512_mask_add_ps(ZMM& src,
+                           Mask& k,
+                           ZMM& a,
+                           ZMM& b)
     {
         return mask_arith2<float>(src, k, a, b, std::plus<float>());
     }
@@ -160,9 +160,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_add_ps(Mask k,
-                            ZMM a,
-                            ZMM b)
+    ZMM _mm512_maskz_add_ps(Mask& k,
+                            ZMM& a,
+                            ZMM& b)
     {
         return maskz_arith2<float>(k, a, b, std::plus<float>());
     }
@@ -175,8 +175,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_sub_ps(ZMM a,
-                      ZMM b)
+    ZMM _mm512_sub_ps(ZMM& a,
+                      ZMM& b)
     {
         return arith2<float>(a, b, std::minus<float>());
     }
@@ -189,10 +189,10 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_mask_sub_ps(ZMM src,
-                           Mask k,
-                           ZMM a,
-                           ZMM b)
+    ZMM _mm512_mask_sub_ps(ZMM& src,
+                           Mask& k,
+                           ZMM& a,
+                           ZMM& b)
     {
         return mask_arith2<float>(src, k, a, b, std::minus<float>());
     }
@@ -204,9 +204,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_sub_ps(Mask k,
-                            ZMM a,
-                            ZMM b)
+    ZMM _mm512_maskz_sub_ps(Mask& k,
+                            ZMM& a,
+                            ZMM& b)
     {
         return maskz_arith2<float>(k, a, b, std::minus<float>());
     }
@@ -219,8 +219,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_mul_ps(ZMM a,
-                      ZMM b)
+    ZMM _mm512_mul_ps(ZMM& a,
+                      ZMM& b)
     {
         return arith2<float>(a, b, std::multiplies<float>());
     }
@@ -233,10 +233,10 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_mask_mul_ps(ZMM src,
-                           Mask k,
-                           ZMM a,
-                           ZMM b)
+    ZMM _mm512_mask_mul_ps(ZMM& src,
+                           Mask& k,
+                           ZMM& a,
+                           ZMM& b)
     {
         return mask_arith2<float>(src, k, a, b, std::multiplies<float>());
     }
@@ -248,9 +248,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_mul_ps(Mask k,
-                            ZMM a,
-                            ZMM b)
+    ZMM _mm512_maskz_mul_ps(Mask& k,
+                            ZMM& a,
+                            ZMM& b)
     {
         return maskz_arith2<float>(k, a, b, std::multiplies<float>());
     }
@@ -263,8 +263,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_div_ps(ZMM a,
-                      ZMM b)
+    ZMM _mm512_div_ps(ZMM& a,
+                      ZMM& b)
     {
         return arith2<float>(a, b, std::divides<float>());
     }
@@ -277,10 +277,10 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_mask_div_ps(ZMM src,
-                           Mask k,
-                           ZMM a,
-                           ZMM b)
+    ZMM _mm512_mask_div_ps(ZMM& src,
+                           Mask& k,
+                           ZMM& a,
+                           ZMM& b)
     {
         return mask_arith2<float>(src, k, a, b, std::divides<float>());
     }
@@ -292,9 +292,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_div_ps(Mask k,
-                            ZMM a,
-                            ZMM b)
+    ZMM _mm512_maskz_div_ps(Mask& k,
+                            ZMM& a,
+                            ZMM& b)
     {
         return maskz_arith2<float>(k, a, b, std::divides<float>());
     }
@@ -307,8 +307,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_min_ps(ZMM a,
-                      ZMM b)
+    ZMM _mm512_min_ps(ZMM& a,
+                      ZMM& b)
     {
         return arith2<float>(a, b, [] (float x, float y) { return std::min(x, y); });
     }
@@ -321,10 +321,10 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_mask_min_ps(ZMM src,
-                           Mask k,
-                           ZMM a,
-                           ZMM b)
+    ZMM _mm512_mask_min_ps(ZMM& src,
+                           Mask& k,
+                           ZMM& a,
+                           ZMM& b)
     {
         return mask_arith2<float>(src, k, a, b, [] (float x, float y) { return std::min(x, y); });
     }
@@ -336,9 +336,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_min_ps(Mask k,
-                            ZMM a,
-                            ZMM b)
+    ZMM _mm512_maskz_min_ps(Mask& k,
+                            ZMM& a,
+                            ZMM& b)
     {
         return maskz_arith2<float>(k, a, b, [] (float x, float y) { return std::min(x, y); });
     }
@@ -351,8 +351,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_max_ps(ZMM a,
-                      ZMM b)
+    ZMM _mm512_max_ps(ZMM& a,
+                      ZMM& b)
     {
         return arith2<float>(a, b, [] (float x, float y) { return std::max(x, y); });
     }
@@ -365,10 +365,10 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_mask_max_ps(ZMM src,
-                           Mask k,
-                           ZMM a,
-                           ZMM b)
+    ZMM _mm512_mask_max_ps(ZMM& src,
+                           Mask& k,
+                           ZMM& a,
+                           ZMM& b)
     {
         return mask_arith2<float>(src, k, a, b, [] (float x, float y) { return std::max(x, y); });
     }
@@ -380,9 +380,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_max_ps(Mask k,
-                            ZMM a,
-                            ZMM b)
+    ZMM _mm512_maskz_max_ps(Mask& k,
+                            ZMM& a,
+                            ZMM& b)
     {
         return maskz_arith2<float>(k, a, b, [] (float x, float y) { return std::max(x, y); });
     }
@@ -395,8 +395,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_pow_ps(ZMM a,
-                      ZMM b)
+    ZMM _mm512_pow_ps(ZMM& a,
+                      ZMM& b)
     {
         return arith2<float>(a, b, [] (float x, float y) { return pow(x, y); });
     }
@@ -409,10 +409,10 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_mask_pow_ps(ZMM src,
-                           Mask k,
-                           ZMM a,
-                           ZMM b)
+    ZMM _mm512_mask_pow_ps(ZMM& src,
+                           Mask& k,
+                           ZMM& a,
+                           ZMM& b)
     {
         return mask_arith2<float>(src, k, a, b, [] (float x, float y) { return pow(x, y); });
     }
@@ -424,9 +424,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_maskz_pow_ps(Mask k,
-                            ZMM a,
-                            ZMM b)
+    ZMM _mm512_maskz_pow_ps(Mask& k,
+                            ZMM& a,
+                            ZMM& b)
     {
         return maskz_arith2<float>(k, a, b, [] (float x, float y) { return pow(x, y); });
     }
@@ -440,9 +440,9 @@ namespace fv
     /// <param name="b">Second argument.</param>
     /// <param name="c">Third argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_fmadd_ps(ZMM a,
-                        ZMM b,
-                        ZMM c)
+    ZMM _mm512_fmadd_ps(ZMM& a,
+                        ZMM& b,
+                        ZMM& c)
     {
         return arith3<float>(a, b, c, [] (float x, float y, float z) { return x * y + z; });
     }
@@ -454,9 +454,9 @@ namespace fv
     /// <param name="b">Second argument.</param>
     /// <param name="c">Third argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_fnmadd_ps(ZMM a,
-                         ZMM b,
-                         ZMM c)
+    ZMM _mm512_fnmadd_ps(ZMM& a,
+                         ZMM& b,
+                         ZMM& c)
     {
         return arith3<float>(a, b, c, [] (float x, float y, float z) { return -(x * y) + z; });
     }
@@ -468,9 +468,9 @@ namespace fv
     /// <param name="b">Second argument.</param>
     /// <param name="c">Third argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_fmsub_ps(ZMM a,
-                        ZMM b,
-                        ZMM c)
+    ZMM _mm512_fmsub_ps(ZMM& a,
+                        ZMM& b,
+                        ZMM& c)
     {
         return arith3<float>(a, b, c, [] (float x, float y, float z) { return x * y - z; });
     }
@@ -482,9 +482,9 @@ namespace fv
     /// <param name="b">Second argument.</param>
     /// <param name="c">Third argument.</param>
     /// <returns>Result ZMM register.</returns>
-    ZMM _mm512_fnmsub(ZMM a,
-                      ZMM b,
-                      ZMM c)
+    ZMM _mm512_fnmsub(ZMM& a,
+                      ZMM& b,
+                      ZMM& c)
     {
         return arith3<float>(a, b, c, [] (float x, float y, float z) { return -(x * y) - z; });
     }
@@ -497,8 +497,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_cmpeq_ps_mask(ZMM a,
-                              ZMM b)
+    Mask _mm512_cmpeq_ps_mask(ZMM& a,
+                              ZMM& b)
     {
         return compare<float>(a, b, [] (float x, float y) { return x == y; });
     }
@@ -510,9 +510,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Return mask.</returns>
-    Mask _mm512_mask_cmpeq_ps_mask(Mask k,
-                                   ZMM a,
-                                   ZMM b)
+    Mask _mm512_mask_cmpeq_ps_mask(Mask& k,
+                                   ZMM& a,
+                                   ZMM& b)
     {
         return mask_compare<float>(k, a, b, [] (float x, float y) { return x == y; });
     }
@@ -525,8 +525,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_cmple_ps_mask(ZMM a,
-                              ZMM b)
+    Mask _mm512_cmple_ps_mask(ZMM& a,
+                              ZMM& b)
     {
         return compare<float>(a, b, [] (float x, float y) { return x <= y; });
     }
@@ -538,9 +538,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_mask_cmple_ps_mask(Mask k,
-                                   ZMM a,
-                                   ZMM b)
+    Mask _mm512_mask_cmple_ps_mask(Mask& k,
+                                   ZMM& a,
+                                   ZMM& b)
     {
         return mask_compare<float>(k, a, b, [] (float x, float y) { return x <= y; });
     }
@@ -553,8 +553,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_cmplt_ps_mask(ZMM a,
-                              ZMM b)
+    Mask _mm512_cmplt_ps_mask(ZMM& a,
+                              ZMM& b)
     {
         return compare<float>(a, b, [] (float x, float y) { return x < y; });
     }
@@ -566,9 +566,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_mask_cmplt_ps_mask(Mask k,
-                                   ZMM a,
-                                   ZMM b)
+    Mask _mm512_mask_cmplt_ps_mask(Mask& k,
+                                   ZMM& a,
+                                   ZMM& b)
     {
         return mask_compare<float>(k, a, b, [] (float x, float y) { return x < y; });
     }
@@ -581,8 +581,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_cmpneq_ps_mask(ZMM a,
-                               ZMM b)
+    Mask _mm512_cmpneq_ps_mask(ZMM& a,
+                               ZMM& b)
     {
         return compare<float>(a, b, [] (float x, float y) { return x != y; });
     }
@@ -594,9 +594,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Return mask.</returns>
-    Mask _mm512_mask_cmpneq_ps_mask(Mask k,
-                                    ZMM a,
-                                    ZMM b)
+    Mask _mm512_mask_cmpneq_ps_mask(Mask& k,
+                                    ZMM& a,
+                                    ZMM& b)
     {
         return mask_compare<float>(k, a, b, [] (float x, float y) { return x != y; });
     }
@@ -609,8 +609,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_cmpnle_ps_mask(ZMM a,
-                               ZMM b)
+    Mask _mm512_cmpnle_ps_mask(ZMM& a,
+                               ZMM& b)
     {
         return compare<float>(a, b, [] (float x, float y) { return !(x <= y); });
     }
@@ -622,9 +622,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_mask_cmpnle_ps_mask(Mask k,
-                                    ZMM a,
-                                    ZMM b)
+    Mask _mm512_mask_cmpnle_ps_mask(Mask& k,
+                                    ZMM& a,
+                                    ZMM& b)
     {
         return mask_compare<float>(k, a, b, [] (float x, float y) { return !(x <= y); });
     }
@@ -637,8 +637,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_cmpnlt_ps_mask(ZMM a,
-                               ZMM b)
+    Mask _mm512_cmpnlt_ps_mask(ZMM& a,
+                               ZMM& b)
     {
         return compare<float>(a, b, [] (float x, float y) { return !(x < y); });
     }
@@ -650,9 +650,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_mask_cmpnlt_ps_mask(Mask k,
-                                    ZMM a,
-                                    ZMM b)
+    Mask _mm512_mask_cmpnlt_ps_mask(Mask& k,
+                                    ZMM& a,
+                                    ZMM& b)
     {
         return mask_compare<float>(k, a, b, [] (float x, float y) { return !(x < y); });
     }
@@ -665,8 +665,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_cmpord_ps_mask(ZMM a,
-                               ZMM b)
+    Mask _mm512_cmpord_ps_mask(ZMM& a,
+                               ZMM& b)
     {
         return compare<float>(a, b, [] (float x, float y) { return !std::isnan(x) && !std::isnan(y); });
     }
@@ -679,8 +679,8 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_cmpunord_ps_mask(ZMM a,
-                                 ZMM b)
+    Mask _mm512_cmpunord_ps_mask(ZMM& a,
+                                 ZMM& b)
     {
         return compare<float>(a, b, [] (float x, float y) { return std::isnan(x) || std::isnan(y); });
     }
@@ -694,9 +694,9 @@ namespace fv
     /// <param name="a">First argument.</param>
     /// <param name="b">Second argument.</param>
     /// <returns>Result mask.</returns>
-    ZMM _mm512_mask_blend_ps(Mask k,
-                             ZMM a,
-                             ZMM b)
+    ZMM _mm512_mask_blend_ps(Mask& k,
+                             ZMM& a,
+                             ZMM& b)
     {
         int w = ZMM::count<float>();
         ZMM r;
@@ -722,8 +722,8 @@ namespace fv
     /// <param name="op">Operation.</param>
     /// <returns>Result mask.</returns>
     Mask koperation(int count,
-                    Mask a,
-                    Mask b,
+                    Mask& a,
+                    Mask& b,
                     std::function<bool(bool, bool)> op)
     {
         Mask k;
@@ -750,7 +750,7 @@ namespace fv
     /// </summary>
     /// <param name="a">Mask.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_kmov(Mask a)
+    Mask _mm512_kmov(Mask& a)
     {
         return koperation(ZMM::count<float>(), a, a, [] (bool x, bool y) { return x; });
     }
@@ -760,7 +760,7 @@ namespace fv
     /// </summary>
     /// <param name="a">Mask.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_knot(Mask a)
+    Mask _mm512_knot(Mask& a)
     {
         return koperation(ZMM::count<float>(), a, a, [] (bool x, bool y) { return !x; });
     }
@@ -771,8 +771,8 @@ namespace fv
     /// <param name="a">First mask.</param>
     /// <param name="b">Second mask.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_kand(Mask a,
-                     Mask b)
+    Mask _mm512_kand(Mask& a,
+                     Mask& b)
     {
         return koperation(ZMM::count<float>(), a, b, std::bit_and<bool>());
     }
@@ -783,8 +783,8 @@ namespace fv
     /// <param name="a">First mask.</param>
     /// <param name="b">Second mask.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_kandn(Mask a,
-                      Mask b)
+    Mask _mm512_kandn(Mask& a,
+                      Mask& b)
     {
         return koperation(ZMM::count<float>(), a, b, [] (bool x, bool y) { return !x & y; });
     }
@@ -795,8 +795,8 @@ namespace fv
     /// <param name="a">First mask.</param>
     /// <param name="b">Second mask.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_kor(Mask a,
-                    Mask b)
+    Mask _mm512_kor(Mask& a,
+                    Mask& b)
     {
         return koperation(ZMM::count<float>(), a, b, std::bit_or<bool>());
     }
@@ -807,8 +807,8 @@ namespace fv
     /// <param name="a">First mask.</param>
     /// <param name="b">Second mask.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_kxor(Mask a,
-                     Mask b)
+    Mask _mm512_kxor(Mask& a,
+                     Mask& b)
     {
         return koperation(ZMM::count<float>(), a, b, std::bit_xor<bool>());
     }
@@ -819,8 +819,8 @@ namespace fv
     /// <param name="a">First mask.</param>
     /// <param name="b">Second mask.</param>
     /// <returns>Result mask.</returns>
-    Mask _mm512_kxnor(Mask a,
-                      Mask b)
+    Mask _mm512_kxnor(Mask& a,
+                      Mask& b)
     {
         return koperation(ZMM::count<float>(), a, b, [] (bool x, bool y) { return !(x ^ y); });
     }
