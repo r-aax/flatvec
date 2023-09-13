@@ -52,7 +52,7 @@ namespace fv
             }
         }
 
-        GS.append_vector_oper(w, k.tail_1_bits_count(w));
+        GS.append_vector_oper(w, k.popcnt_tail(w));
 
         return dst;
     }
@@ -132,7 +132,7 @@ namespace fv
             }
         }
 
-        GS.append_vector_oper(w, k.tail_1_bits_count(w));
+        GS.append_vector_oper(w, k.popcnt_tail(w));
 
         return dst;
     }
@@ -351,7 +351,7 @@ namespace fv
             }
         }
 
-        GS.append_vector_oper(w, k1.tail_1_bits_count(w));
+        GS.append_vector_oper(w, k1.popcnt_tail(w));
 
         return k;
     }

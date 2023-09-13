@@ -17,9 +17,9 @@ namespace fv
 
         /// <summary>
         /// Bits count.
-        /// Now we do not need long masks.
+        /// Use here the most possible length of masks.
         /// </summary>
-        static const int bits = 16;
+        static const int bits = 64;
 
     private:
 
@@ -126,7 +126,7 @@ namespace fv
         /// </summary>
         /// <param name="tail_len">Tail length.</param>
         /// <returns>Count of 1 bits count in the tail.</returns>
-        int tail_1_bits_count(int tail_len);
+        int popcnt_tail(int tail_len);
 
         /// <summary>
         /// Mask density.

@@ -178,7 +178,7 @@ namespace fv
     /// </summary>
     /// <param name="tail_len">Tail length.</param>
     /// <returns>Count of 1 bits count in the tail.</returns>
-    int Mask::tail_1_bits_count(int tail_len)
+    int Mask::popcnt_tail(int tail_len)
     {
         int cnt = 0;
 
@@ -200,7 +200,7 @@ namespace fv
     /// <returns>Density.</returns>
     double Mask::density(int tail_len)
     {
-        double b1 = static_cast<double>(tail_1_bits_count(tail_len));
+        double b1 = static_cast<double>(popcnt_tail(tail_len));
         double b = static_cast<double>(tail_len);
 
         return b1 / b;
