@@ -13,6 +13,12 @@ namespace fv
 
 	private:
 
+		// Vectors created.
+		int vectors_created;
+
+		// Vectors copied.
+		int vectors_copied;
+
 		// Vector operations.
 		int vector_opers_count;
 
@@ -41,6 +47,12 @@ namespace fv
 
 		// Clean.
 		void clean();
+
+		// Create vector.
+		void create_vector();
+
+		// Copy vecror.
+		void copy_vector();
 
 		// Append vector operation information.
 		void append_vector_oper(int width, int scalar_opers);

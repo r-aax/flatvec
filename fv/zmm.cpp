@@ -12,6 +12,8 @@ namespace fv
     ZMM::ZMM()
     {
         clear();
+
+        GS.create_vector();
     }
 
     /// <summary>
@@ -24,6 +26,8 @@ namespace fv
         {
             set<int32_t>(i, z.get<int32_t>(i));
         }
+
+        GS.copy_vector();
     }
 
     /// <summary>

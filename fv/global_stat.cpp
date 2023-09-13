@@ -11,7 +11,9 @@ namespace fv
 	/// Default constructor.
 	/// </summary>
 	GlobalStat::GlobalStat()
-		: vector_opers_count(0),
+		: vectors_created(0),
+		  vectors_copied(0),
+		  vector_opers_count(0),
 		  scalar_opers_count(0),
 		  mask_opers_count(0),
 		  vector_opers_masks_total_density(0.0)
@@ -23,10 +25,28 @@ namespace fv
 	/// </summary>
 	void GlobalStat::clean()
 	{
+		vectors_created = 0;
+		vectors_copied = 0;
 		vector_opers_count = 0;
 		scalar_opers_count = 0;
 		mask_opers_count = 0;
 		vector_opers_masks_total_density = 0.0;
+	}
+
+	/// <summary>
+	/// Create vector.
+	/// </summary>
+	void GlobalStat::create_vector()
+	{
+		++vectors_created;
+	}
+
+	/// <summary>
+	/// Copy vector.
+	/// </summary>
+	void GlobalStat::copy_vector()
+	{
+		++vectors_copied;
 	}
 
 	/// <summary>
@@ -101,6 +121,8 @@ namespace fv
 	void GlobalStat::print()
 	{
 		std::cout << "Global stat:" << std::endl;
+		std::cout << "  vectors created          : " << vectors_created << std::endl;
+		std::cout << "  vectors copied           : " << vectors_copied << std::endl;
 		std::cout << "  vector opers             : " << vector_opers_count << std::endl;
 		std::cout << "  scalar opers             : " << scalar_opers_count << std::endl;
 		std::cout << "  mask opers               : " << mask_opers_count << std::endl;
