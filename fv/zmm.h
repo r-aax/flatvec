@@ -43,7 +43,7 @@ namespace fv
         /// <summary>
         /// Data.
         /// </summary>
-        int8_t data[bits];
+        int8_t* data;
 
     public:
 

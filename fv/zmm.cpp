@@ -11,6 +11,7 @@ namespace fv
     /// </summary>
     ZMM::ZMM()
     {
+        data = new int8_t[bytes];
         clear();
 
         GS.create_vector();
@@ -22,6 +23,8 @@ namespace fv
     /// <param name="z">Another ZMM register.</param>
     ZMM::ZMM(const ZMM& z)
     {
+        data = new int8_t[bytes];
+
         for (int i = 0; i < count<int32_t>(); ++i)
         {
             set<int32_t>(i, z.get<int32_t>(i));
@@ -37,6 +40,8 @@ namespace fv
     /// <returns>ZMM register.</returns>
     ZMM& ZMM::operator=(const ZMM& z)
     {
+        data = new int8_t[bytes];
+
         for (int i = 0; i < count<int32_t>(); ++i)
         {
             set<int32_t>(i, z.get<int32_t>(i));
@@ -52,6 +57,7 @@ namespace fv
     /// </summary>
     ZMM::~ZMM()
     {
+        delete[] data;
     }
 
     /// <summary>
