@@ -47,7 +47,38 @@ namespace fv
             set<int32_t>(i, z.get<int32_t>(i));
         }
 
-        GS.assign_vector();
+        GS.copy_vector();
+
+        return *this;
+    }
+
+    /// <summary>
+    /// Move constructor.
+    /// </summary>
+    /// <param name="z">ZMM register.</param>
+    ZMM::ZMM(ZMM&& z)
+    {
+        data = z.data;
+        z.data = nullptr;
+
+        GS.move_vector();
+    }
+
+    /// <summary>
+    /// Move assignment.
+    /// </summary>
+    /// <param name="z">ZMM register.</param>
+    /// <returns>Result ZMM register.</returns>
+    ZMM& ZMM::operator=(ZMM&& z)
+    {
+        if (this != &z)
+        {
+            delete[] data;
+            data = z.data;
+            z.data = nullptr;
+        }
+
+        GS.move_vector();
 
         return *this;
     }
