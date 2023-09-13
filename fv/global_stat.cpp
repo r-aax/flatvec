@@ -107,7 +107,11 @@ namespace fv
 		std::cout << "  theoretical acceleration : " << (static_cast<double>(scalar_opers_count)
 													  / static_cast<double>(vector_opers_count)) << std::endl;
 		std::cout << "  mean masks density       : " << mean_masks_density() << std::endl;
+
+#ifdef LINUX_ICC_BUILD
 		std::cout << "  real time acceleration   : " << std::fixed << real_time_acceleration() << std::endl;
+#endif
+
 		std::cout << "--------------------------" << std::endl;
 	}
 }

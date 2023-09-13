@@ -2204,6 +2204,12 @@ namespace fv
                    int count,
                    int repeats)
     {
+
+#ifndef LINUX_ICC_BUILD
+        // We need only one repeat for emulation mode.
+        repeats = 1;
+#endif
+
         GS.clean();
         std::cout << name << " : " << (fun(count, repeats) ? "OK" : "ERROR") << std::endl;
         GS.print();
