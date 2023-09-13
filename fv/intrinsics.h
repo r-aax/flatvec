@@ -9,6 +9,10 @@
 
 namespace fv
 {
+    // Stub vector for mask operations.
+
+    extern ZMM stub;
+
     // Init operations.
 
     ZMM _mm512_set1_ps(float a);
@@ -68,7 +72,7 @@ namespace fv
     ZMM arith1(ZMM& a,
                std::function<T(T)> op)
     {
-        return mask_arith1<T>(ZMM(), Mask::full(), a, op);
+        return mask_arith1<T>(stub, Mask::full(), a, op);
     }
 
     //
@@ -152,7 +156,7 @@ namespace fv
                      ZMM& b,
                      std::function<T(T, T)> op)
     {
-        return mask_arith2<T>(ZMM(), k, a, b, op, true);
+        return mask_arith2<T>(stub, k, a, b, op, true);
     }
 
     /// <summary>
@@ -168,7 +172,7 @@ namespace fv
                ZMM& b,
                std::function<T(T, T)> op)
     {
-        return mask_arith2<T>(ZMM(), Mask::full(), a, b, op);
+        return mask_arith2<T>(stub, Mask::full(), a, b, op);
     }
 
     //
