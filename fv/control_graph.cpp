@@ -40,7 +40,7 @@ namespace fv
 	/// <param name="to">Index of to register.</param>
 	void ControlGraph::add_link(int from, int to)
 	{
-		std::cout << from << " -> " << to << std::endl;
+		// std::cout << from << " -> " << to << std::endl;
 	}
 
 	/// <summary>

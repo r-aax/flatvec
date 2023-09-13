@@ -2100,7 +2100,7 @@ namespace fv
         c = _mm512_mask_div_ps(c, np1, c, a);
         _m512 d = _mm512_sub_ps(_mm512_mul_ps(b, b), _mm512_mul_ps(four, c));
         __mmask16 p4 = _mm512_mask_cmpge_ps_mask(np1, d, zero);
-        _m512 sd = _mm512_mask_sqrt_ps(sd, p4, d);
+        _m512 sd = _mm512_mask_sqrt_ps(h, p4, d);
         _m512 h1 = _mm512_mul_ps(half, _mm512_sub_ps(zero, _mm512_add_ps(b, sd)));
         h = _mm512_mask_mov_ps(h, p4, _mm512_mask_blend_ps(_mm512_cmpgt_ps_mask(h1, zero),
                                                            _mm512_max_ps(_mm512_mul_ps(half, _mm512_sub_ps(sd, b)), zero), h1));
