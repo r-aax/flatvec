@@ -19,7 +19,7 @@ namespace fv
 
         clear();
 
-        CG.register_zmm(id, "constructor");
+        CG.register_zmm(id, "new");
         GS.create_vector();
     }
 
@@ -38,7 +38,7 @@ namespace fv
         }
 
         GS.copy_vector();
-        CG.register_zmm(id, "copy constructor");
+        CG.register_zmm(id, "copy");
         CG.add_link(z.get_id(), id);
     }
 
@@ -73,14 +73,14 @@ namespace fv
     /// <param name="z">ZMM register.</param>
     ZMM::ZMM(ZMM&& z)
     {
-        id = CG.zmm_id();
+        // We do not need new number for move constructor.
+        // It is single use of z register.
+        id = z.get_id();
         data = z.data;
 
         z.data = nullptr;
 
         GS.move_vector();
-        CG.register_zmm(id, "move constructor");
-        CG.add_link(z.get_id(), id);
     }
 
     /// <summary>
@@ -92,15 +92,19 @@ namespace fv
     {
         if (this != &z)
         {
-            id = CG.zmm_id();
+            // Before this operation we had some register,
+            // and now we rewrite it.
+            CG.register_zmm(id, "rewrite with " + std::to_string(z.get_id()));
+
+            // We do not need new number for move assignment.
+            // It is single use of z register.
+            id = z.get_id();
 
             delete[] data;
             data = z.data;
             z.data = nullptr;
 
             GS.move_vector();
-            CG.register_zmm(id, "move assignment");
-            CG.add_link(z.get_id(), id);
         }
 
         return *this;

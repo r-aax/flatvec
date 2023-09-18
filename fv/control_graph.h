@@ -60,6 +60,9 @@ namespace fv
 
 		// Print.
 		void print();
+
+		// Analyze graph.
+		void analyze();
 	};
 
 	/// <summary>

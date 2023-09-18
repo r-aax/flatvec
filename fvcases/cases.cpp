@@ -241,10 +241,8 @@ namespace fv
                            _m512& c)
     {
         __mmask16 k = _mm512_cmple_ps_mask(b, a);
-        _m512 add, mul;
-
-        add = _mm512_add_ps(a, b);
-        mul = _mm512_mul_ps(a, b);
+        _m512 add = _mm512_add_ps(a, b);
+        _m512 mul = _mm512_mul_ps(a, b);
         c = _mm512_mask_blend_ps(k, mul, add);
     }
 
@@ -2223,7 +2221,7 @@ namespace fv
         std::cout << name << " : " << (fun(count, repeats) ? "OK" : "ERROR") << std::endl;
 
         GS.print();
-        CG.print();
+        CG.analyze();
         CG.switch_off();
     }
 }

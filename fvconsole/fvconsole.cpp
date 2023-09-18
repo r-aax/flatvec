@@ -13,9 +13,9 @@ using namespace fv;
 /// <returns>Return code.</returns>
 int main()
 {
-    test_case("arith_f32", [] (int n, int r) { return case_arith_f32(n, r); },       1, 1, true);
+    test_case("arith_f32", [] (int n, int r) { return case_arith_f32(n, r); },       10, 1, false);
     
-    test_case("blend_f32", [] (int n, int r) { return case_blend_f32(n, r); },       10, 1, false);
+    test_case("blend_f32", [] (int n, int r) { return case_blend_f32(n, r); },       1, 1, true);
     test_case("guessp   ", [] (int n, int r) { return case_guessp(n, r); },          10, 1, false);
     test_case("prefun   ", [] (int n, int r) { return case_prefun(n, r); },          10, 1, false);
     test_case("sample   ", [] (int n, int r) { return case_sample(n, r); },          10, 1, false);

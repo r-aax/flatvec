@@ -73,6 +73,7 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
+        CG.register_zmm(a.get_id(), "store");
     }
 
     // Arithmetic operations with 1 argument.

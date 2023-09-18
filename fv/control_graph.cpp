@@ -73,7 +73,14 @@ namespace fv
 				srcs.push_back("");
 			}
 
-			srcs[i] = src;
+			if (srcs[i] == "")
+			{
+				srcs[i] = src;
+			}
+			else
+			{
+				srcs[i] = srcs[i] + " | " + src;
+			}
 		}
 	}
 
@@ -103,14 +110,35 @@ namespace fv
 
 		std::cout << "Control graph:" << std::endl;
 
+		std::cout << "\tsrcs:" << std::endl;
+		for (int i = 0; i < srcs.size(); ++i)
+		{
+			std::cout << "\t\t" << std::setw(5) << i << " : " << srcs[i] << std::endl;
+		}
+
 		std::cout << "\tlinks:" << std::endl;
 		for (int i = 0; i < links.size(); ++i)
 		{
 			int from = links[i][0];
+			std::string from_str = (from == -1) ? "GLOB" : std::to_string(from);
 			int to = links[i][1];
 
-			std::cout << "\t\t[" << std::setw(5) << from << " -> " << std::setw(5) << to
+			std::cout << "\t\t[" << std::setw(5) << from_str << " -> " << std::setw(5) << to
 				      << "] // " << srcs[to] << std::endl;
 		}
+	}
+
+	/// <summary>
+	/// Analyze control graph.
+	/// </summary>
+	void ControlGraph::analyze()
+	{
+		if (!is_active)
+		{
+			// Analyze only in active mode.
+			return;
+		}
+
+		print();
 	}
 }
