@@ -42,6 +42,7 @@ namespace fv
 	{
 		free_zmm_id = 0;
 		srcs.clear();
+		links.clear();
 	}
 
 	/// <summary>
