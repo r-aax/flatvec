@@ -41,9 +41,10 @@ namespace fv
 	void ControlGraph::clear()
 	{
 		free_zmm_id = 0;
-		srcs.clear();
 		links.clear();
 		nodes.clear();
+		inputs.clear();
+		outputs.clear();
 	}
 
 	/// <summary>
@@ -65,24 +66,17 @@ namespace fv
 	/// Register new ZMM.
 	/// </summary>
 	/// <param name="i">ZMM number.</param>
-	/// <param name="src">Source.</param>
-	void ControlGraph::register_zmm(int i, std::string src)
+	/// <param name="act">Act.</param>
+	void ControlGraph::register_zmm(int i, std::string act)
 	{
 		if (i >= 0)
 		{
-			while (srcs.size() <= i)
+			while (nodes.size() <= i)
 			{
-				srcs.push_back("");
+				nodes.push_back(NetNode(i));
 			}
 
-			if (srcs[i] == "")
-			{
-				srcs[i] = src;
-			}
-			else
-			{
-				srcs[i] = srcs[i] + " | " + src;
-			}
+			nodes[i].acts.push_back(act);
 		}
 	}
 
@@ -110,42 +104,59 @@ namespace fv
 			return;
 		}
 
-		std::cout << "Control graph:" << std::endl;
+		std::cout << "Control graph :" << std::endl;
 
-		std::cout << "\tsrcs:" << std::endl;
-		for (int i = 0; i < srcs.size(); ++i)
-		{
-			std::cout << "\t\t" << std::setw(5) << i << " : " << srcs[i] << std::endl;
-		}
-
-		std::cout << "\tlinks:" << std::endl;
+		std::cout << "\tlinks :" << std::endl;
 		for (int i = 0; i < links.size(); ++i)
 		{
 			int from = links[i][0];
 			std::string from_str = (from == -1) ? "GLOB" : std::to_string(from);
 			int to = links[i][1];
 
-			std::cout << "\t\t[" << std::setw(5) << from_str << " -> " << std::setw(5) << to
-				      << "] // " << srcs[to] << std::endl;
+			std::cout << "\t\t[" << std::setw(5) << from_str << " -> " << std::setw(5) << to << "]" << std::endl;
 		}
 
-		std::cout << "\tgraph:" << std::endl;
+		std::cout << "\tgraph :" << std::endl;
+		std::cout << "\tinputs : ";
+
+		for (int i = 0; i < inputs.size(); ++i)
+		{
+			std::cout << inputs[i].get_id() << " ";
+		}
+
+		std::cout << std::endl;
+		std::cout << "\toutputs : ";
+
+		for (int i = 0; i < outputs.size(); ++i)
+		{
+			std::cout << outputs[i].get_id() << " ";
+		}
+
+		std::cout << std::endl;
+
 		for (int i = 0; i < nodes.size(); ++i)
 		{
-			std::cout << "\t\t" << std::setw(5) << nodes[i].get_id() << ") " << nodes[i].get_name() << std::endl;
-			std::cout << "\t\t\tpred : ";
+			std::cout << "\t\t" << std::setw(5) << nodes[i].get_id() << ") ";
 
-			for (int j = 0; j < nodes[i].pred.size(); ++j)
+			for (int j = 0; j < nodes[i].acts.size(); ++j)
 			{
-				std::cout << nodes[i].pred[j] << " ";
+				std::cout << "[" << nodes[i].acts[j] << "] ";
 			}
 
 			std::cout << std::endl;
-			std::cout << "\t\t\tsucc : ";
+			std::cout << "\t\t\tpreds : ";
 
-			for (int j = 0; j < nodes[i].succ.size(); ++j)
+			for (int j = 0; j < nodes[i].preds.size(); ++j)
 			{
-				std::cout << nodes[i].succ[j] << " ";
+				std::cout << nodes[i].preds[j] << " ";
+			}
+
+			std::cout << std::endl;
+			std::cout << "\t\t\tsuccs : ";
+
+			for (int j = 0; j < nodes[i].succs.size(); ++j)
+			{
+				std::cout << nodes[i].succs[j] << " ";
 			}
 				
 			std::cout << std::endl;
@@ -157,11 +168,6 @@ namespace fv
 	/// </summary>
 	void ControlGraph::construct_graph()
 	{
-		for (int i = 0; i < srcs.size(); ++i)
-		{
-			nodes.push_back(NetNode(i, srcs[i]));
-		}
-
 		for (int i = 0; i < links.size(); ++i)
 		{
 			int from = links[i][0];
@@ -171,10 +177,48 @@ namespace fv
 			{
 				// Node can refer to global variable,
 				// it must not be included in the graph.
-				nodes[from].succ.push_back(to);
+				nodes[from].succs.push_back(to);
 			}
 
-			nodes[to].pred.push_back(from);
+			nodes[to].preds.push_back(from);
+		}
+
+		for (int i = 0; i < nodes.size(); ++i)
+		{
+			NetNode& n = nodes[i];
+
+			if (n.preds.size() == 0)
+			{
+				if (n.succs.size() == 0)
+				{
+					// It may be register that was created and rewritten in the end.
+					// Example:
+					// _mm512 a;            // created
+					// void fun(_mm512 &r); // declaration with reference
+					// fun(a);              // call function by reference
+					// r = <result>;        // write information into register (rewrite it with move semantic).
+					if ((n.acts.size() == 2)
+						&& (n.acts[0] == "new")
+						&& (n.acts[1].find("rewrite", 0) == 0))
+					{
+						; // ok
+					}
+					else
+					{
+						throw std::runtime_error("unexpected node");
+					}
+				}
+				else
+				{
+					// Input.
+					inputs.push_back(n);
+				}
+			}
+			else if (n.succs.size() == 0)
+			{
+				// Output.
+				outputs.push_back(n);
+			}
 		}
 	}
 

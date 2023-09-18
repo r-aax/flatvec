@@ -18,27 +18,26 @@ namespace fv
 		/// </summary>
 		int id;
 
-		/// <summary>
-		/// Name.
-		/// </summary>
-		std::string name;
-
 	public:
+
+		/// <summary>
+		/// Vector of actions.
+		/// </summary>
+		std::vector<std::string> acts;
 
 		/// <summary>
 		/// Predeccessors vector.
 		/// </summary>
-		std::vector<int> pred;
+		std::vector<int> preds;
 
 		/// <summary>
 		/// Successors vector.
 		/// </summary>
-		std::vector<int> succ;
+		std::vector<int> succs;
 
 	public:
 
-		NetNode(int id_par,
-				std::string name_par);
+		NetNode(int id_par);
 
 		/// <summary>
 		/// Get identifier.
@@ -47,15 +46,6 @@ namespace fv
 		inline int get_id() const
 		{
 			return id;
-		}
-
-		/// <summary>
-		/// Get name.
-		/// </summary>
-		/// <returns>Name.</returns>
-		inline std::string get_name() const
-		{
-			return name;
 		}
 	};
 }

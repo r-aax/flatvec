@@ -27,11 +27,6 @@ namespace fv
 		int free_zmm_id;
 
 		/// <summary>
-		/// Sources of zmm registers.
-		/// </summary>
-		std::vector<std::string> srcs;
-
-		/// <summary>
 		/// Links between vector registers.
 		/// </summary>
 		std::vector<std::vector<int>> links;
@@ -40,6 +35,16 @@ namespace fv
 		/// Nodes of graph.
 		/// </summary>
 		std::vector<NetNode> nodes;
+
+		/// <summary>
+		/// Inputs vector.
+		/// </summary>
+		std::vector<NetNode> inputs;
+
+		/// <summary>
+		/// Outputs vector.
+		/// </summary>
+		std::vector<NetNode> outputs;
 
 	public:
 
@@ -59,7 +64,7 @@ namespace fv
 		int zmm_id();
 
 		// Register new ZMM.
-		void register_zmm(int i, std::string src);
+		void register_zmm(int i, std::string act);
 
 		// Add link.
 		void add_link(int from, int to);
