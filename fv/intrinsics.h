@@ -6,6 +6,7 @@
 #include "zmm.h"
 #include "mask.h"
 #include "global_stat.h"
+#include "control_graph.h"
 
 namespace fv
 {
@@ -57,6 +58,9 @@ namespace fv
         }
 
         GS.append_vector_oper(w, k.popcnt_tail(w));
+        CG.register_zmm(dst.get_id(), "arith1");
+        CG.add_link(src.get_id(), dst.get_id());
+        CG.add_link(a.get_id(), dst.get_id());
 
         return dst;
     }
@@ -137,6 +141,10 @@ namespace fv
         }
 
         GS.append_vector_oper(w, k.popcnt_tail(w));
+        CG.register_zmm(dst.get_id(), "arith2");
+        CG.add_link(src.get_id(), dst.get_id());
+        CG.add_link(a.get_id(), dst.get_id());
+        CG.add_link(b.get_id(), dst.get_id());
 
         return dst;
     }
@@ -299,6 +307,10 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
+        CG.register_zmm(dst.get_id(), "arith3");
+        CG.add_link(a.get_id(), dst.get_id());
+        CG.add_link(b.get_id(), dst.get_id());
+        CG.add_link(c.get_id(), dst.get_id());
 
         return dst;
     }

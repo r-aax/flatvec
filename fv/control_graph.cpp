@@ -41,6 +41,7 @@ namespace fv
 	void ControlGraph::clear()
 	{
 		free_zmm_id = 0;
+		srcs.clear();
 	}
 
 	/// <summary>
@@ -55,6 +56,24 @@ namespace fv
 		else
 		{
 			return -1;
+		}
+	}
+
+	/// <summary>
+	/// Register new ZMM.
+	/// </summary>
+	/// <param name="i">ZMM number.</param>
+	/// <param name="src">Source.</param>
+	void ControlGraph::register_zmm(int i, std::string src)
+	{
+		if (i >= 0)
+		{
+			while (srcs.size() <= i)
+			{
+				srcs.push_back("");
+			}
+
+			srcs[i] = src;
 		}
 	}
 
@@ -87,7 +106,11 @@ namespace fv
 		std::cout << "\tlinks:" << std::endl;
 		for (int i = 0; i < links.size(); ++i)
 		{
-			std::cout << "\t\t[" << links[i][0] << " -> " << links[i][1] << "]" << std::endl;
+			int from = links[i][0];
+			int to = links[i][1];
+
+			std::cout << "\t\t[" << std::setw(5) << from << " -> " << std::setw(5) << to
+				      << "] // " << srcs[to] << std::endl;
 		}
 	}
 }

@@ -25,6 +25,14 @@ namespace fv
 		/// </summary>
 		int free_zmm_id;
 
+		/// <summary>
+		/// Sources of zmm registers.
+		/// </summary>
+		std::vector<std::string> srcs;
+
+		/// <summary>
+		/// Links between vector registers.
+		/// </summary>
 		std::vector<std::vector<int>> links;
 
 	public:
@@ -43,6 +51,9 @@ namespace fv
 
 		// Get ZMM id.
 		int zmm_id();
+
+		// Register new ZMM.
+		void register_zmm(int i, std::string src);
 
 		// Add link.
 		void add_link(int from, int to);

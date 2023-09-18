@@ -38,7 +38,9 @@ namespace fv
 
     private:
 
-        // Id.
+        /// <summary>
+        /// Identifier.
+        /// </summary>
         int id;
 
         /// <summary>

@@ -19,6 +19,7 @@ namespace fv
 
         clear();
 
+        CG.register_zmm(id, "constructor");
         GS.create_vector();
     }
 
@@ -37,6 +38,7 @@ namespace fv
         }
 
         GS.copy_vector();
+        CG.register_zmm(id, "copy constructor");
         CG.add_link(z.get_id(), id);
     }
 
@@ -58,6 +60,7 @@ namespace fv
             }
 
             GS.copy_vector();
+            CG.register_zmm(id, "assignment");
             CG.add_link(z.get_id(), id);
         }
 
@@ -71,11 +74,12 @@ namespace fv
     ZMM::ZMM(ZMM&& z)
     {
         id = CG.zmm_id();
-
         data = z.data;
+
         z.data = nullptr;
 
         GS.move_vector();
+        CG.register_zmm(id, "move constructor");
         CG.add_link(z.get_id(), id);
     }
 
@@ -95,6 +99,7 @@ namespace fv
             z.data = nullptr;
 
             GS.move_vector();
+            CG.register_zmm(id, "move assignment");
             CG.add_link(z.get_id(), id);
         }
 

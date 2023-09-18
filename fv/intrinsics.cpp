@@ -27,6 +27,7 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
+        CG.register_zmm(dst.get_id(), "set1");
 
         return dst;
     }
@@ -41,17 +42,18 @@ namespace fv
     ZMM _mm512_load_ps(void const* mem_addr)
     {
         int w = ZMM::count<float>();
-        ZMM r;
+        ZMM dst;
         float const* faddr = static_cast<float const*>(mem_addr);
 
         for (int i = 0; i < w; i++)
         {
-            r.set<float>(i, faddr[i]);
+            dst.set<float>(i, faddr[i]);
         }
 
         GS.append_vector_oper(w, w);
+        CG.register_zmm(dst.get_id(), "load");
 
-        return r;
+        return dst;
     }
 
     /// <summary>
@@ -703,16 +705,19 @@ namespace fv
                              ZMM& b)
     {
         int w = ZMM::count<float>();
-        ZMM r;
+        ZMM dst;
 
         for (int i = 0; i < w; i++)
         {
-            r.set<float>(i, k.is_true(i) ? b.get<float>(i) : a.get<float>(i));
+            dst.set<float>(i, k.is_true(i) ? b.get<float>(i) : a.get<float>(i));
         }
 
         GS.append_vector_oper(w, w);
+        CG.register_zmm(dst.get_id(), "blend");
+        CG.add_link(a.get_id(), dst.get_id());
+        CG.add_link(b.get_id(), dst.get_id());
 
-        return r;
+        return dst;
     }
 
     // Operations with masks.
