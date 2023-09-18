@@ -216,8 +216,15 @@ namespace fv
 			}
 			else if (n.succs.size() == 0)
 			{
-				// Output.
-				outputs.push_back(n);
+				if (n.acts.back() == "store")
+				{
+					// Output.
+					outputs.push_back(n);
+				}
+				else
+				{
+					throw std::runtime_error("output node must has store as its last act");
+				}
 			}
 		}
 	}
