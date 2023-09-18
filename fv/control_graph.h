@@ -4,6 +4,7 @@
 #define CONTROL_GRAPH_H
 
 #include "zmm.h"
+#include "net_node.h"
 
 namespace fv
 {
@@ -35,6 +36,11 @@ namespace fv
 		/// </summary>
 		std::vector<std::vector<int>> links;
 
+		/// <summary>
+		/// Nodes of graph.
+		/// </summary>
+		std::vector<NetNode> nodes;
+
 	public:
 
 		// Constructor.
@@ -60,6 +66,9 @@ namespace fv
 
 		// Print.
 		void print();
+
+		// Construct graph.
+		void construct_graph();
 
 		// Analyze graph.
 		void analyze();

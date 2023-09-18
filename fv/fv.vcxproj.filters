@@ -48,6 +48,9 @@
     <ClInclude Include="control_graph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="net_node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="control_graph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net_node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

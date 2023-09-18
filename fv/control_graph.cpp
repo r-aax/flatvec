@@ -43,6 +43,7 @@ namespace fv
 		free_zmm_id = 0;
 		srcs.clear();
 		links.clear();
+		nodes.clear();
 	}
 
 	/// <summary>
@@ -127,6 +128,54 @@ namespace fv
 			std::cout << "\t\t[" << std::setw(5) << from_str << " -> " << std::setw(5) << to
 				      << "] // " << srcs[to] << std::endl;
 		}
+
+		std::cout << "\tgraph:" << std::endl;
+		for (int i = 0; i < nodes.size(); ++i)
+		{
+			std::cout << "\t\t" << std::setw(5) << nodes[i].get_id() << ") " << nodes[i].get_name() << std::endl;
+			std::cout << "\t\t\tpred : ";
+
+			for (int j = 0; j < nodes[i].pred.size(); ++j)
+			{
+				std::cout << nodes[i].pred[j] << " ";
+			}
+
+			std::cout << std::endl;
+			std::cout << "\t\t\tsucc : ";
+
+			for (int j = 0; j < nodes[i].succ.size(); ++j)
+			{
+				std::cout << nodes[i].succ[j] << " ";
+			}
+				
+			std::cout << std::endl;
+		}
+	}
+
+	/// <summary>
+	/// Construct graph.
+	/// </summary>
+	void ControlGraph::construct_graph()
+	{
+		for (int i = 0; i < srcs.size(); ++i)
+		{
+			nodes.push_back(NetNode(i, srcs[i]));
+		}
+
+		for (int i = 0; i < links.size(); ++i)
+		{
+			int from = links[i][0];
+			int to = links[i][1];
+
+			if (from != -1)
+			{
+				// Node can refer to global variable,
+				// it must not be included in the graph.
+				nodes[from].succ.push_back(to);
+			}
+
+			nodes[to].pred.push_back(from);
+		}
 	}
 
 	/// <summary>
@@ -140,6 +189,7 @@ namespace fv
 			return;
 		}
 
+		construct_graph();
 		print();
 	}
 }
