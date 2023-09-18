@@ -16,14 +16,27 @@ namespace fv
 	private:
 
 		/// <summary>
+		/// Active flag.
+		/// </summary>
+		bool is_active;
+
+		/// <summary>
 		/// Free ZMM register id.
 		/// </summary>
 		int free_zmm_id;
+
+		std::vector<std::vector<int>> links;
 
 	public:
 
 		// Constructor.
 		ControlGraph();
+
+		// Switch on for create graph.
+		void switch_on();
+
+		// Switch off.
+		void switch_off();
 
 		// Clear.
 		void clear();

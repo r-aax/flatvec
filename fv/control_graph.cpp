@@ -13,8 +13,26 @@ namespace fv
 	/// Default constructor.
 	/// </summary>
 	ControlGraph::ControlGraph()
-		: free_zmm_id(0)
+		: is_active(false),
+		  free_zmm_id(0)
 	{
+	}
+
+	/// <summary>
+	/// Switch on.
+	/// </summary>
+	void ControlGraph::switch_on()
+	{
+		is_active = true;
+		clear();
+	}
+
+	/// <summary>
+	/// Switch off.
+	/// </summary>
+	void ControlGraph::switch_off()
+	{
+		is_active = false;
 	}
 
 	/// <summary>
@@ -30,7 +48,14 @@ namespace fv
 	/// </summary>
 	int ControlGraph::zmm_id()
 	{
-		return free_zmm_id++;
+		if (is_active)
+		{
+			return free_zmm_id++;
+		}
+		else
+		{
+			return -1;
+		}
 	}
 
 	/// <summary>
@@ -40,7 +65,10 @@ namespace fv
 	/// <param name="to">Index of to register.</param>
 	void ControlGraph::add_link(int from, int to)
 	{
-		// std::cout << from << " -> " << to << std::endl;
+		if (is_active)
+		{
+			links.push_back(std::vector<int> { from, to });
+		}
 	}
 
 	/// <summary>
@@ -48,8 +76,18 @@ namespace fv
 	/// </summary>
 	void ControlGraph::print()
 	{
+		if (!is_active)
+		{
+			// Print information only in active mode.
+			return;
+		}
+
 		std::cout << "Control graph:" << std::endl;
 
 		std::cout << "\tlinks:" << std::endl;
+		for (int i = 0; i < links.size(); ++i)
+		{
+			std::cout << "\t\t[" << links[i][0] << " -> " << links[i][1] << "]" << std::endl;
+		}
 	}
 }

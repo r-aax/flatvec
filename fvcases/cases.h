@@ -67,7 +67,8 @@ namespace fv
     void test_case(std::string name,
                    std::function<bool(int, int)> fun,
                    int count,
-                   int repeats);
+                   int repeats,
+                   bool is_analyze_control_graph);
 }
 
 #endif
