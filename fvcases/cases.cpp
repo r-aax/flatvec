@@ -868,22 +868,41 @@ namespace fv
     {
         // Begin of calculation part.
 
-        __m512 cup, ppv, pmin, pmax, qmax, pq, um, ptl, ptr, gel, ger, pqcr;
-        __mmask16 cond_pvrs, cond_ppv, ncond_ppv;
-
-        cup = _mm512_mul_ps(_mm512_set1_ps(0.25), _mm512_mul_ps(_mm512_add_ps(dl, dr), _mm512_add_ps(cl, cr)));
-        ppv = _mm512_mul_ps(half, _mm512_fmadd_ps(_mm512_sub_ps(ul, ur), cup, _mm512_add_ps(pl, pr)));
+        __m512 cup =
+            _mm512_mul_ps(
+                _mm512_set1_ps(0.25),
+                _mm512_mul_ps(
+                    _mm512_add_ps(dl, dr),
+                    _mm512_add_ps(cl, cr)));
+        __m512 ppv =
+            _mm512_mul_ps(
+                half,
+                _mm512_fmadd_ps(
+                    _mm512_sub_ps(ul, ur),
+                    cup,
+                    _mm512_add_ps(pl, pr)));
+        
         ppv = _mm512_max_ps(ppv, zero);
-        pmin = _mm512_min_ps(pl, pr);
-        pmax = _mm512_max_ps(pl, pr);
-        qmax = _mm512_div_ps(pmax, pmin);
+        
+        __m512 pmin = _mm512_min_ps(pl, pr);
+        __m512 pmax = _mm512_max_ps(pl, pr);
+        __m512 qmax = _mm512_div_ps(pmax, pmin);
 
         // Conditions.
-        cond_pvrs = _mm512_kand(_mm512_kand(_mm512_cmple_ps_mask(qmax, two),
-                                            _mm512_cmple_ps_mask(pmin, ppv)),
-                                _mm512_cmple_ps_mask(ppv, pmax));
-        cond_ppv = _mm512_mask_cmplt_ps_mask(_mm512_knot(cond_pvrs), ppv, pmin);
-        ncond_ppv = _mm512_kand(_mm512_knot(cond_pvrs), _mm512_knot(cond_ppv));
+        __mmask16 cond_pvrs =
+            _mm512_kand(
+                _mm512_kand(
+                    _mm512_cmple_ps_mask(qmax, two),
+                    _mm512_cmple_ps_mask(pmin, ppv)),
+                _mm512_cmple_ps_mask(ppv, pmax));
+        __mmask16 cond_ppv =
+            _mm512_mask_cmplt_ps_mask(
+                _mm512_knot(cond_pvrs),
+                ppv, pmin);
+        __mmask16 ncond_ppv =
+            _mm512_kand(
+                _mm512_knot(cond_pvrs),
+                _mm512_knot(cond_ppv));
 
         // The first branch.
         pm = _mm512_mask_mov_ps(pm, cond_pvrs, ppv);
@@ -891,28 +910,74 @@ namespace fv
         // The second branch.
 	    if (cond_ppv != 0x0)
         {
-            pq = _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mask_div_ps(zero, cond_ppv, pl, pr), riemann::g1);
-            pqcr = _mm512_mul_ps(pq, cr);
-            um = _mm512_mask_div_ps(zero, cond_ppv,
-                                    _mm512_fmadd_ps(_mm512_fmadd_ps(_mm512_sub_ps(pqcr, cr), riemann::g4, ur), cl, _mm512_mul_ps(pqcr, ul)),
-                                    _mm512_add_ps(pqcr, cl));
-            ptl = _mm512_fmadd_ps(_mm512_mask_div_ps(zero, cond_ppv, _mm512_sub_ps(ul, um), cl), riemann::g7, one);
-            ptr = _mm512_fmadd_ps(_mm512_mask_div_ps(zero, cond_ppv, _mm512_sub_ps(um, ur), cr), riemann::g7, one);
-            pm = _mm512_mask_mul_ps(pm, cond_ppv, half,
-                                    _mm512_add_ps(_mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pl, ptl), riemann::g3),
-                                    _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pr, ptr), riemann::g3)));
+            __m512 pq =
+                _mm512_mask_pow_ps(
+                    zero, cond_ppv,
+                    _mm512_mask_div_ps(zero, cond_ppv, pl, pr),
+                    riemann::g1);
+            __m512 pqcr = _mm512_mul_ps(pq, cr);
+            __m512 um =
+                _mm512_mask_div_ps(
+                    zero, cond_ppv,
+                    _mm512_fmadd_ps(
+                        _mm512_fmadd_ps(
+                            _mm512_sub_ps(pqcr, cr),
+                            riemann::g4, ur),
+                        cl,
+                        _mm512_mul_ps(pqcr, ul)),
+                    _mm512_add_ps(pqcr, cl));
+            __m512 ptl =
+                _mm512_fmadd_ps(
+                    _mm512_mask_div_ps(
+                        zero, cond_ppv,
+                        _mm512_sub_ps(ul, um),
+                        cl),
+                    riemann::g7, one);
+            __m512 ptr =
+                    _mm512_fmadd_ps(
+                        _mm512_mask_div_ps(
+                            zero, cond_ppv,
+                            _mm512_sub_ps(um, ur),
+                            cr),
+                        riemann::g7, one);
+            pm =
+                _mm512_mask_mul_ps(
+                    pm, cond_ppv, half,
+                    _mm512_add_ps(
+                        _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pl, ptl), riemann::g3),
+                        _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pr, ptr), riemann::g3)));
         }
 
         // The third branch.
 	    if (ncond_ppv != 0x0)
         {
-            gel = _mm512_sqrt_ps(_mm512_mask_div_ps(zero, ncond_ppv, riemann::g5,
-                                                    _mm512_mul_ps(_mm512_fmadd_ps(riemann::g6, pl, ppv), dl)));
-            ger = _mm512_sqrt_ps(_mm512_mask_div_ps(zero, ncond_ppv, riemann::g5,
-                                                    _mm512_mul_ps(_mm512_fmadd_ps(riemann::g6, pr, ppv), dr)));
-            pm = _mm512_mask_div_ps(pm, ncond_ppv,
-                                    _mm512_fmadd_ps(gel, pl, _mm512_fmadd_ps(ger, pr, _mm512_sub_ps(ul, ur))),
-                                    _mm512_add_ps(gel, ger));
+            __m512 gel =
+                _mm512_sqrt_ps(
+                    _mm512_mask_div_ps(
+                        zero,
+                        ncond_ppv,
+                        riemann::g5,
+                        _mm512_mul_ps(
+                            _mm512_fmadd_ps(riemann::g6, pl, ppv),
+                            dl)));
+            __m512 ger =
+                _mm512_sqrt_ps(
+                    _mm512_mask_div_ps(
+                        zero,
+                        ncond_ppv,
+                        riemann::g5,
+                        _mm512_mul_ps(
+                            _mm512_fmadd_ps(riemann::g6, pr, ppv),
+                            dr)));
+            pm =
+                _mm512_mask_div_ps(
+                    pm,
+                    ncond_ppv,
+                    _mm512_fmadd_ps(
+                        gel,
+                        pl,
+                        _mm512_fmadd_ps(ger, pr, _mm512_sub_ps(ul, ur))),
+                    _mm512_add_ps(gel, ger));
         }
     }
 
@@ -1860,32 +1925,34 @@ namespace fv
                         __m512& p,
                         __m512& u)
     {
-        __m512 tolpre, tolpre2, udiff, pold, fl, fld, fr, frd, change;
-        __mmask16 cond_break, cond_neg, m;
+        __m512 pold, fl, fr;
         const int nriter = 20;
         int iter = 1;
 
-        tolpre = _mm512_set1_ps(1.0e-6f);
-        tolpre2 = _mm512_set1_ps(5.0e-7f);
-        udiff = _mm512_sub_ps(ur, ul);
+        __m512 tolpre = _mm512_set1_ps(1.0e-6f);
+        __m512 tolpre2 = _mm512_set1_ps(5.0e-7f);
+        __m512 udiff = _mm512_sub_ps(ur, ul);
 
         vcase_guessp_1(dl, ul, pl, cl, dr, ur, pr, cr, pold);
 
         // Start with full mask.
-	    m = 0xffff;
+	    __mmask16 m = 0xffff;
 
 	    for (; (iter <= nriter) && (m != 0x0); iter++)
         {
+            __m512 fld, frd;
+
             vcase_prefun_1(fl, fld, pold, dl, pl, cl, m);
             vcase_prefun_1(fr, frd, pold, dr, pr, cr, m);
             p = _mm512_mask_sub_ps(p, m, pold,
                                    _mm512_mask_div_ps(zero, m,
                                                       _mm512_add_ps(_mm512_add_ps(fl, fr), udiff),
                                                       _mm512_add_ps(fld, frd)));
-            change = _mm512_abs_ps(_mm512_mask_div_ps(zero, m, _mm512_sub_ps(p, pold), _mm512_add_ps(p, pold)));
-            cond_break = _mm512_mask_cmple_ps_mask(m, change, tolpre2);
+            
+            __m512 change = _mm512_abs_ps(_mm512_mask_div_ps(zero, m, _mm512_sub_ps(p, pold), _mm512_add_ps(p, pold)));
+            __mmask16 cond_break = _mm512_mask_cmple_ps_mask(m, change, tolpre2);
             m = _mm512_kand(m, _mm512_knot(cond_break));
-            cond_neg = _mm512_mask_cmplt_ps_mask(m, p, zero);
+            __mmask16 cond_neg = _mm512_mask_cmplt_ps_mask(m, p, zero);
             p = _mm512_mask_mov_ps(p, cond_neg, tolpre);
             pold = _mm512_mask_mov_ps(pold, m, p);
         }
