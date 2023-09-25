@@ -92,6 +92,7 @@ namespace fv
     void vcase_warn_hang_1(__m512& a,
                            __m512& b)
     {
+        // Dummy register for hanging register warning generating.
         __m512 dummy = _mm512_add_ps(zero, one);
 
         b = a;
@@ -1955,17 +1956,31 @@ namespace fv
 
             vcase_prefun_1(fl, fld, pold, dl, pl, cl, m);
             vcase_prefun_1(fr, frd, pold, dr, pr, cr, m);
-            p = _mm512_mask_sub_ps(p, m, pold,
-                                   _mm512_mask_div_ps(zero, m,
-                                                      _mm512_add_ps(_mm512_add_ps(fl, fr), udiff),
-                                                      _mm512_add_ps(fld, frd)));
+            p =
+                _mm512_mask_sub_ps(
+                    p, m, pold,
+                    _mm512_mask_div_ps(
+                        zero, m,
+                        _mm512_add_ps(_mm512_add_ps(fl, fr), udiff),
+                        _mm512_add_ps(fld, frd)));
             
-            __m512 change = _mm512_abs_ps(_mm512_mask_div_ps(zero, m, _mm512_sub_ps(p, pold), _mm512_add_ps(p, pold)));
+            __m512 change =
+                _mm512_abs_ps(
+                    _mm512_mask_div_ps(
+                        zero, m,
+                        _mm512_sub_ps(p, pold),
+                        _mm512_add_ps(p, pold)));
             __mmask16 cond_break = _mm512_mask_cmple_ps_mask(m, change, tolpre2);
             m = _mm512_kand(m, _mm512_knot(cond_break));
             __mmask16 cond_neg = _mm512_mask_cmplt_ps_mask(m, p, zero);
             p = _mm512_mask_mov_ps(p, cond_neg, tolpre);
-            pold = _mm512_mask_mov_ps(pold, m, p);
+
+            // This check is needed for eliminating hanging register in arithmetic
+            // operation on the last iteration of the loop.
+            if (m != 0x0)
+            {
+                pold = _mm512_mask_mov_ps(pold, m, p);
+            }
         }
 
         // Check for divergence.
@@ -1975,7 +1990,12 @@ namespace fv
             exit(1);
         }
 
-        u = _mm512_mul_ps(half, _mm512_add_ps(_mm512_add_ps(ul, ur), _mm512_sub_ps(fr, fl)));
+        u =
+            _mm512_mul_ps(
+                half,
+                _mm512_add_ps(
+                    _mm512_add_ps(ul, ur),
+                    _mm512_sub_ps(fr, fl)));
     }
 
     /// <summary>
