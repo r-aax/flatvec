@@ -36,6 +36,14 @@ namespace fv
 
         Mask(uint64_t bm);
 
+        Mask(const Mask& m);
+
+        Mask& operator=(const Mask& m);
+
+        Mask(Mask&& m);
+
+        Mask& operator=(Mask&& m);
+
         // Access to data.
 
         bool get(int i) const;

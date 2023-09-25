@@ -21,10 +21,64 @@ namespace fv
     Mask::Mask(uint64_t bm)
         : Mask()
     {
-        for (int i = 0; i < Mask::bits; i++)
+        for (int i = 0; i < Mask::bits; ++i)
         {
             data[i] = ((bm & (static_cast<uint64_t>(1) << i)) != 0x0);
         }
+    }
+
+    /// <summary>
+    /// Copy constructor.
+    /// </summary>
+    /// <param name="m">Another mask.</param>
+    Mask::Mask(const Mask& m)
+    {
+        for (int i = 0; i < Mask::bits; ++i)
+        {
+            data[i] = m.data[i];
+        }
+    }
+
+    /// <summary>
+    /// Assigmnent operator.
+    /// </summary>
+    /// <param name="m">Another mask.</param>
+    /// <returns>Result mask.</returns>
+    Mask& Mask::operator=(const Mask& m)
+    {
+        for (int i = 0; i < Mask::bits; ++i)
+        {
+            data[i] = m.data[i];
+        }
+
+        return *this;
+    }
+
+    /// <summary>
+    /// Move constructor.
+    /// </summary>
+    /// <param name="m">Source mask.</param>
+    Mask::Mask(Mask&& m)
+    {
+        for (int i = 0; i < Mask::bits; ++i)
+        {
+            data[i] = m.data[i];
+        }
+    }
+
+    /// <summary>
+    /// Move assignment.
+    /// </summary>
+    /// <param name="m">Another mask.</param>
+    /// <returns>Result mask.</returns>
+    Mask& Mask::operator=(Mask&& m)
+    {
+        for (int i = 0; i < Mask::bits; ++i)
+        {
+            data[i] = m.data[i];
+        }
+
+        return *this;
     }
 
     // Access to data.
