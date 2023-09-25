@@ -1517,7 +1517,7 @@ namespace fv
                         _m512& w,
                         _m512& p)
     {
-        _m512 c, ums, pms, sh, st, s, uc;
+        _m512 c, ums, pms, sh, st, s;
         __mmask16 cond_um, cond_pm, cond_sh, cond_st, cond_s, cond_sh_st;
 
         // d/u/p/c/ums
@@ -1556,7 +1556,7 @@ namespace fv
 	    if (cond_sh_st != 0x0)
         {
             u = _mm512_mask_mov_ps(u, cond_sh_st, _mm512_mul_ps(riemann::g5, _mm512_fmadd_ps(riemann::g7, u, c)));
-            uc = _mm512_div_ps(u, c);
+            _m512 uc = _mm512_div_ps(u, c);
             d = _mm512_mask_mov_ps(d, cond_sh_st, _mm512_mul_ps(d, _mm512_pow_ps(uc, riemann::g4)));
             p = _mm512_mask_mov_ps(p, cond_sh_st, _mm512_mul_ps(p, _mm512_pow_ps(uc, riemann::g3)));
         }
