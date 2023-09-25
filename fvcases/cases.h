@@ -7,6 +7,12 @@ namespace fv
 {
     // Cases for detecting inefficiency in the vector code.
 
+    // warn_hang
+    bool case_warn_hang(int len,
+                        int repeats,
+                        float random_lo = 0.0f,
+                        float random_hi = 1.0f);
+
     // Trivial cases.
 
     // arith_f32

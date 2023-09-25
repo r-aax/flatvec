@@ -14,6 +14,7 @@ using namespace fv;
 int main()
 {
     // Cases for detecting some inefficiency in the vector code.
+    test_case("warn_hang", [] (int n, int r) { return case_warn_hang(n, r); },       1, 1, false);
 
     // Trivial cases.
     test_case("arith_f32", [] (int n, int r) { return case_arith_f32(n, r); },       1, 1, false);

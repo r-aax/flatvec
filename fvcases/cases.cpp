@@ -55,6 +55,122 @@ namespace fv
     // Cases for detecting inefficiency in the vector code.
     //
 
+    // warn_hang
+
+    /// <summary>
+    /// Test for warnning with hanging ZMM scalar.
+    /// </summary>
+    /// <param name="a">Input.</param>
+    /// <param name="b">Output.</param>
+    void scase_warn_hang_1(float a,
+                           float& b)
+    {
+        b = a;
+    }
+
+    /// <summary>
+    /// Test for warnning with hanging ZMM scalar.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="a">Input array.</param>
+    /// <param name="b">Output array.</param>
+    void scase_warn_hang(int n,
+                         float* a,
+                         float* b)
+    {
+        for (int i = 0; i < n; ++i)
+        {
+            scase_warn_hang_1(a[i], b[i]);
+        }
+    }
+
+    /// <summary>
+    /// Test for warnning with hanging ZMM vector.
+    /// </summary>
+    /// <param name="a">Input.</param>
+    /// <param name="b">Output.</param>
+    void vcase_warn_hang_1(_m512& a,
+                           _m512& b)
+    {
+        _m512 dummy = _mm512_add_ps(zero, one);
+
+        b = a;
+    }
+
+    /// <summary>
+    /// Test for warnning with hanging ZMM vector.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="a_p">Input array.</param>
+    /// <param name="b_p">Output array.</param>
+    void vcase_warn_hang(int n,
+                         float* a_p,
+                         float* b_p)
+    {
+        assert(n % CNT_FLOAT == 0);
+        int vn = n / CNT_FLOAT;
+
+        for (int vi = 0; vi < vn; ++vi)
+        {
+            int sh = vi * CNT_FLOAT;
+            _m512 b;
+
+            vcase_warn_hang_1(_mm512_load_ps(a_p + sh), b);
+
+            _mm512_store_ps(b_p + sh, b);
+        }
+    }
+
+    /// <summary>
+    /// Test for warnning with hanging ZMM.
+    /// </summary>
+    /// <param name="len">Vectors count.</param>
+    /// <param name="repeats">Repeats count.</param>
+    /// <param name="random_lo">Lo value for random generation.</param>
+    /// <param name="random_hi">Hi value for random generation.</param>
+    /// <returns>
+    /// true - OK result,
+    /// false - ERROR result.
+    /// </returns>
+    bool case_warn_hang(int len,
+                        int repeats,
+                        float random_lo,
+                        float random_hi)
+    {
+        int n = len * CNT_FLOAT;
+
+        ArrayManager<float> a(n);
+        ArrayManager<float> sb(n);
+        ArrayManager<float> vb(n);
+
+        a.generate_random(random_lo, random_hi);
+
+        GS.fix_time_before();
+
+        for (int i = 0; i < repeats; ++i)
+        {
+            scase_warn_hang(n, a.get_data(), sb.get_data());
+        }
+
+        GS.fix_time_middle();
+
+        for (int i = 0; i < repeats; ++i)
+        {
+            vcase_warn_hang(n, a.get_data(), vb.get_data());
+        }
+
+        GS.fix_time_after();
+
+        bool res = (vb.max_diff(sb) == 0.0);
+
+        if (!res)
+        {
+            std::cout << "max_diff : " << vb.max_diff(sb) << std::endl;
+        }
+
+        return res;
+    }
+
     //
     // Trivial cases.
     //

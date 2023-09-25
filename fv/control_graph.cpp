@@ -183,7 +183,7 @@ namespace fv
 			nodes[to].preds.push_back(from);
 		}
 
-		for (int i = 0; i < nodes.size(); )
+		for (int i = 0; i < nodes.size(); ++i)
 		{
 			NetNode& n = nodes[i];
 
@@ -201,11 +201,7 @@ namespace fv
 						&& (n.acts[0] == "new")
 						&& (n.acts[1].find("rewrite", 0) == 0))
 					{
-						// Delete this node.
-
-						nodes.erase(nodes.begin() + i);
-
-						continue;
+						; // ok
 					}
 					else
 					{
@@ -227,15 +223,7 @@ namespace fv
 					// Output.
 					outputs.push_back(n);
 				}
-				else
-				{
-					// Do not throw exception yet.
-
-					// throw std::runtime_error("output node must has store as its last act");
-				}
 			}
-
-			++i;
 		}
 	}
 
@@ -251,5 +239,29 @@ namespace fv
 		}
 
 		construct_graph();
+
+		bool is_finished = false;
+
+		// Warning for hanging nodes.
+		for (std::vector<NetNode>::iterator it = nodes.begin(); it != nodes.end(); ++it)
+		{
+			NetNode& n = *it;
+
+			if (n.succs.empty() && (n.acts.back() != "store") && (n.acts.back().find("rewrite") != 0))
+			{
+				// Hanging node detected.
+				std::cout << "! Warning ! : hanging node " << n.get_id() << " detected. "
+					      << "Last action : " << n.acts.back() << std::endl;
+
+				is_finished = true;
+			}
+		}
+
+		if (is_finished)
+		{
+			return;
+		}
+
+		// Continue analysis.
 	}
 }
