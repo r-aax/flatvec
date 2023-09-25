@@ -183,7 +183,7 @@ namespace fv
 			nodes[to].preds.push_back(from);
 		}
 
-		for (int i = 0; i < nodes.size(); ++i)
+		for (int i = 0; i < nodes.size(); )
 		{
 			NetNode& n = nodes[i];
 
@@ -201,11 +201,17 @@ namespace fv
 						&& (n.acts[0] == "new")
 						&& (n.acts[1].find("rewrite", 0) == 0))
 					{
-						; // ok
+						// Delete this node.
+
+						nodes.erase(nodes.begin() + i);
+
+						continue;
 					}
 					else
 					{
-						throw std::runtime_error("unexpected node");
+						// Do not throw exception yet.
+
+						// throw std::runtime_error("unexpected node");
 					}
 				}
 				else
@@ -223,9 +229,13 @@ namespace fv
 				}
 				else
 				{
-					throw std::runtime_error("output node must has store as its last act");
+					// Do not throw exception yet.
+
+					// throw std::runtime_error("output node must has store as its last act");
 				}
 			}
+
+			++i;
 		}
 	}
 

@@ -51,8 +51,8 @@ namespace fv
     {
         if (this != &z)
         {
-            id = CG.zmm_id();
-            data = new int8_t[bytes];
+            // We do not need new identifier.
+            // We do not need new data allocation.
 
             for (int i = 0; i < count<int32_t>(); ++i)
             {
@@ -60,7 +60,7 @@ namespace fv
             }
 
             GS.copy_vector();
-            CG.register_zmm(id, "assignment");
+            CG.register_zmm(id, "rewrite copy from " + std::to_string(z.get_id()));
             CG.add_link(z.get_id(), id);
         }
 
@@ -94,7 +94,7 @@ namespace fv
         {
             // Before this operation we had some register,
             // and now we rewrite it.
-            CG.register_zmm(id, "rewrite with " + std::to_string(z.get_id()));
+            CG.register_zmm(id, "rewrite move from " + std::to_string(z.get_id()));
 
             // We do not need new number for move assignment.
             // It is single use of z register.
