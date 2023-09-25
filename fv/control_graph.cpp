@@ -251,6 +251,5 @@ namespace fv
 		}
 
 		construct_graph();
-		print();
 	}
 }

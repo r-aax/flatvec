@@ -74,7 +74,7 @@ namespace fv
                    std::function<bool(int, int)> fun,
                    int count,
                    int repeats,
-                   bool is_analyze_control_graph);
+                   bool is_print_control_graph);
 }
 
 #endif

@@ -2215,12 +2215,12 @@ namespace fv
     /// <param name="fun">Function.</param>
     /// <param name="count">Count.</param>
     /// <param name="repeats">Repeats count.</param>
-    /// <param name="is_analyze_control_graph">Flag for control graph analyzing.</param>
+    /// <param name="is_print_control_graph">Flag for control graph printing.</param>
     void test_case(std::string name,
                    std::function<bool(int, int)> fun,
                    int count,
                    int repeats,
-                   bool is_analyze_control_graph)
+                   bool is_print_control_graph)
     {
 
 #ifndef LINUX_ICC_BUILD
@@ -2229,16 +2229,18 @@ namespace fv
 #endif
 
         GS.clear();
-
-        if (is_analyze_control_graph)
-        {
-            CG.switch_on();
-        }
+        CG.switch_on();
 
         std::cout << name << " : " << (fun(count, repeats) ? "OK" : "ERROR") << std::endl;
 
-        GS.print();
         CG.analyze();
+
+        if (is_print_control_graph)
+        {
+            CG.print();
+        }
+
+        GS.print();
         CG.switch_off();
     }
 }
