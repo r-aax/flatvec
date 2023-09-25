@@ -550,19 +550,36 @@ namespace fv
                                  __m512& c,
                                  __m512& h)
     {
-        h = zero;
         __mmask16 p1 = _mm512_cmpeq_ps_mask(a, zero);
         __mmask16 p2 = _mm512_mask_cmpneq_ps_mask(p1, b, zero);
-        h = _mm512_maskz_max_ps(p2, _mm512_maskz_div_ps(p2, _mm512_sub_ps(zero, c), b), zero);
+        __m512 h0 =
+            _mm512_maskz_max_ps(
+                p2,
+                _mm512_maskz_div_ps(p2, _mm512_sub_ps(zero, c), b),
+                zero);
         __mmask16 np1 = _mm512_knot(p1);
-        b = _mm512_mask_div_ps(b, np1, b, a);
-        c = _mm512_mask_div_ps(c, np1, c, a);
-        __m512 d = _mm512_sub_ps(_mm512_mul_ps(b, b), _mm512_mul_ps(four, c));
+        __m512 new_b = _mm512_mask_div_ps(b, np1, b, a);
+        __m512 new_c = _mm512_mask_div_ps(c, np1, c, a);
+        __m512 d =
+            _mm512_sub_ps(
+                _mm512_mul_ps(new_b, new_b),
+                _mm512_mul_ps(four, new_c));
         __mmask16 p4 = _mm512_mask_cmpge_ps_mask(np1, d, zero);
         __m512 sd = _mm512_mask_sqrt_ps(h, p4, d);
-        __m512 h1 = _mm512_mul_ps(half, _mm512_sub_ps(zero, _mm512_add_ps(b, sd)));
-        h = _mm512_mask_mov_ps(h, p4, _mm512_mask_blend_ps(_mm512_cmpgt_ps_mask(h1, zero),
-                               _mm512_max_ps(_mm512_mul_ps(half, _mm512_sub_ps(sd, b)), zero), h1));
+        __m512 h1 =
+            _mm512_mul_ps(
+                half,
+                _mm512_sub_ps(zero, _mm512_add_ps(new_b, sd)));
+
+        h =
+            _mm512_mask_mov_ps(
+                h0, p4,
+                _mm512_mask_blend_ps(
+                    _mm512_cmpgt_ps_mask(h1, zero),
+                    _mm512_max_ps(
+                        _mm512_mul_ps(half, _mm512_sub_ps(sd, new_b)),
+                        zero),
+                    h1));
     }
 
     /// <summary>
@@ -875,7 +892,7 @@ namespace fv
                 _mm512_mul_ps(
                     _mm512_add_ps(dl, dr),
                     _mm512_add_ps(cl, cr)));
-        __m512 ppv =
+        __m512 ppv0 =
             _mm512_mul_ps(
                 half,
                 _mm512_fmadd_ps(
@@ -883,7 +900,7 @@ namespace fv
                     cup,
                     _mm512_add_ps(pl, pr)));
         
-        ppv = _mm512_max_ps(ppv, zero);
+        __m512 ppv = _mm512_max_ps(ppv0, zero);
         
         __m512 pmin = _mm512_min_ps(pl, pr);
         __m512 pmax = _mm512_max_ps(pl, pr);
@@ -906,7 +923,9 @@ namespace fv
                 _mm512_knot(cond_ppv));
 
         // The first branch.
-        pm = _mm512_mask_mov_ps(pm, cond_pvrs, ppv);
+        __m512 pm0 = ppv;
+
+        __m512 pm1;
 
         // The second branch.
 	    if (cond_ppv != 0x0)
@@ -941,13 +960,17 @@ namespace fv
                             _mm512_sub_ps(um, ur),
                             cr),
                         riemann::g7, one);
-            pm =
+            pm1 =
                 _mm512_mask_mul_ps(
-                    pm, cond_ppv, half,
+                    pm0, cond_ppv, half,
                     _mm512_add_ps(
                         _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pl, ptl), riemann::g3),
                         _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pr, ptr), riemann::g3)));
         }
+
+        __m512 pm2 = _mm512_mask_blend_ps(cond_ppv, pm0, pm1);
+
+        __m512 pm3;
 
         // The third branch.
 	    if (ncond_ppv != 0x0)
@@ -970,9 +993,9 @@ namespace fv
                         _mm512_mul_ps(
                             _mm512_fmadd_ps(riemann::g6, pr, ppv),
                             dr)));
-            pm =
+            pm3 =
                 _mm512_mask_div_ps(
-                    pm,
+                    pm2,
                     ncond_ppv,
                     _mm512_fmadd_ps(
                         gel,
@@ -980,6 +1003,8 @@ namespace fv
                         _mm512_fmadd_ps(ger, pr, _mm512_sub_ps(ul, ur))),
                     _mm512_add_ps(gel, ger));
         }
+
+        pm = _mm512_mask_blend_ps(ncond_ppv, pm2, pm3);
     }
 
     /// <summary>

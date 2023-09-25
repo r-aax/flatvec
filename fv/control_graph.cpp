@@ -404,9 +404,53 @@ namespace fv
 			{
 				// Hanging node detected.
 				std::cout << "! Warning ! : hanging node " << n.get_id() << " detected. "
-					      << "Last action : " << n.acts.back() << std::endl;
+					<< "Last action : " << n.acts.back() << std::endl;
 
 				is_finished = true;
+			}
+		}
+
+		if (is_finished)
+		{
+			return;
+		}
+
+		// Warning for multiple rewriting.
+		for (std::vector<NetNode>::iterator it = nodes.begin(); it != nodes.end(); ++it)
+		{
+			NetNode& n = *it;
+			int cnt = 0;
+
+			for (std::vector<std::string>::iterator si = n.acts.begin(); si != n.acts.end(); ++si)
+			{
+				std::string s = *si;
+
+				if (s.find("rewrite") == 0)
+				{
+					++cnt;
+				}
+			}
+
+			if (cnt > 1)
+			{
+				// Multiple rewrite.
+				std::cout << "! Warning ! : mupliple rewrite for " << n.get_id() << " detected." << std::endl;
+
+				is_finished = true;
+			}
+			else if (cnt == 1)
+			{
+				if ((n.acts.size() == 2) && (n.acts[0].find("new") == 0))
+				{
+					; // ok
+				}
+				else
+				{
+					// Wrong rewrite template.
+					std::cout << "! Warning! : wrong rewrite template for " << n.get_id() << " detected." << std::endl;
+
+					is_finished = true;
+				}
 			}
 		}
 
