@@ -22,9 +22,9 @@ namespace fv
 		bool is_active;
 
 		/// <summary>
-		/// Free ZMM register id.
+		/// Free register id (ZMM or Mask).
 		/// </summary>
-		int free_zmm_id;
+		int free_id;
 
 		/// <summary>
 		/// Links between vector registers.
@@ -46,6 +46,9 @@ namespace fv
 		/// </summary>
 		std::vector<NetNode> outputs;
 
+		// Get new id.
+		int new_id();
+
 	public:
 
 		// Constructor.
@@ -62,6 +65,9 @@ namespace fv
 
 		// Get ZMM id.
 		int zmm_id();
+
+		// Get mask id.
+		int mask_id();
 
 		// Register new ZMM.
 		void register_zmm(int i, std::string act);

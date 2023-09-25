@@ -14,8 +14,24 @@ namespace fv
 	/// </summary>
 	ControlGraph::ControlGraph()
 		: is_active(false),
-		  free_zmm_id(0)
+		  free_id(0)
 	{
+	}
+
+	/// <summary>
+	/// Get new identificator.
+	/// </summary>
+	/// <returns>New register identifier.</returns>
+	int ControlGraph::new_id()
+	{
+		if (is_active)
+		{
+			return free_id++;
+		}
+		else
+		{
+			return -1;
+		}
 	}
 
 	/// <summary>
@@ -40,7 +56,7 @@ namespace fv
 	/// </summary>
 	void ControlGraph::clear()
 	{
-		free_zmm_id = 0;
+		free_id = 0;
 		links.clear();
 		nodes.clear();
 		inputs.clear();
@@ -50,16 +66,19 @@ namespace fv
 	/// <summary>
 	/// Get free zmm id and shift id.
 	/// </summary>
+	/// <returns>New ZMM identifier.</returns>
 	int ControlGraph::zmm_id()
 	{
-		if (is_active)
-		{
-			return free_zmm_id++;
-		}
-		else
-		{
-			return -1;
-		}
+		return new_id();
+	}
+
+	/// <summary>
+	/// Get new mask identifier.
+	/// </summary>
+	/// <returns>New mask identifier.</returns>
+	int ControlGraph::mask_id()
+	{
+		return new_id();
 	}
 
 	/// <summary>
