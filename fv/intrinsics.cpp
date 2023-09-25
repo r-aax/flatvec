@@ -6,8 +6,10 @@
 namespace fv
 {
     // Stub vector for mask operations.
-
     ZMM stub = ZMM();
+
+    // Full mask for vector operations.
+    Mask full = Mask::full();
 
     // Init operations.
 

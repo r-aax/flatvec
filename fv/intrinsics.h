@@ -10,9 +10,15 @@
 
 namespace fv
 {
-    // Stub vector for mask operations.
-
+    /// <summary>
+    /// Stub vector for vector operations.
+    /// </summary>
     extern ZMM stub;
+
+    /// <summary>
+    /// Full mask for vector operations.
+    /// </summary>
+    extern Mask full;
 
     // Init operations.
 
@@ -76,7 +82,7 @@ namespace fv
     ZMM arith1(ZMM& a,
                std::function<T(T)> op)
     {
-        return mask_arith1<T>(stub, Mask::full(), a, op);
+        return mask_arith1<T>(stub, full, a, op);
     }
 
     //
@@ -180,7 +186,7 @@ namespace fv
                ZMM& b,
                std::function<T(T, T)> op)
     {
-        return mask_arith2<T>(stub, Mask::full(), a, b, op);
+        return mask_arith2<T>(stub, full, a, b, op);
     }
 
     //
@@ -385,7 +391,7 @@ namespace fv
                  ZMM& b,
                  std::function<bool(T, T)> op)
     {
-        return mask_compare<T>(Mask::full(), a, b, op);
+        return mask_compare<T>(full, a, b, op);
     }
 
     //
