@@ -187,6 +187,9 @@ namespace fv
     /// </returns>
     bool Mask::operator==(uint64_t bm) const
     {
+        // Maybe it is the last use.
+        CG.reglink("control", get_id());
+
         return binary_mask() == bm;
     }
 

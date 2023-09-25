@@ -397,8 +397,10 @@ namespace fv
 		for (std::vector<NetNode>::iterator it = nodes.begin(); it != nodes.end(); ++it)
 		{
 			NetNode& n = *it;
+			std::string act = n.acts.back();
+			bool is_correct_last_use = (act == "store") || (act == "control") || (act.find("rewrite") == 0);
 
-			if (n.succs.empty() && (n.acts.back() != "store") && (n.acts.back().find("rewrite") != 0))
+			if (n.succs.empty() && !is_correct_last_use)
 			{
 				// Hanging node detected.
 				std::cout << "! Warning ! : hanging node " << n.get_id() << " detected. "
