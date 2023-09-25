@@ -70,10 +70,19 @@ namespace fv
 		int mask_id();
 
 		// Register new ZMM.
-		void register_zmm(int i, std::string act);
+		void reg(int i, std::string act);
 
 		// Add link.
-		void add_link(int from, int to);
+		void link(int from, int to);
+
+		// Add links for 2 sources.
+		void link2(int from1, int from2, int to);
+
+		// Add links for 3 sources.
+		void link3(int from1, int from2, int from3, int to);
+
+		// Add links for 4 sources.
+		void link4(int from1, int from2, int from3, int from4, int to);
 
 		// Print.
 		void print();

@@ -19,7 +19,7 @@ namespace fv
 
         clear();
 
-        CG.register_zmm(id, "new");
+        CG.reg(id, "new z");
         GS.create_vector();
     }
 
@@ -38,8 +38,8 @@ namespace fv
         }
 
         GS.copy_vector();
-        CG.register_zmm(id, "copy");
-        CG.add_link(z.get_id(), id);
+        CG.reg(id, "copy z");
+        CG.link(z.get_id(), id);
     }
 
     /// <summary>
@@ -60,8 +60,8 @@ namespace fv
             }
 
             GS.copy_vector();
-            CG.register_zmm(id, "rewrite copy from " + std::to_string(z.get_id()));
-            CG.add_link(z.get_id(), id);
+            CG.reg(id, "rewrite z copy from " + std::to_string(z.get_id()));
+            CG.link(z.get_id(), id);
         }
 
         return *this;
@@ -94,7 +94,7 @@ namespace fv
         {
             // Before this operation we had some register,
             // and now we rewrite it.
-            CG.register_zmm(id, "rewrite move from " + std::to_string(z.get_id()));
+            CG.reg(id, "rewrite z move from " + std::to_string(z.get_id()));
 
             // We do not need new number for move assignment.
             // It is single use of z register.

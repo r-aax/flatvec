@@ -86,7 +86,7 @@ namespace fv
 	/// </summary>
 	/// <param name="i">ZMM number.</param>
 	/// <param name="act">Act.</param>
-	void ControlGraph::register_zmm(int i, std::string act)
+	void ControlGraph::reg(int i, std::string act)
 	{
 		if (i >= 0)
 		{
@@ -104,12 +104,54 @@ namespace fv
 	/// </summary>
 	/// <param name="from">Index of from register.</param>
 	/// <param name="to">Index of to register.</param>
-	void ControlGraph::add_link(int from, int to)
+	void ControlGraph::link(int from, int to)
 	{
 		if (is_active)
 		{
 			links.push_back(std::vector<int> { from, to });
 		}
+	}
+
+	/// <summary>
+	/// Add links for operation from 2 sources.
+	/// </summary>
+	/// <param name="from1">First source index.</param>
+	/// <param name="from2">Second source index.</param>
+	/// <param name="to">Destination index.</param>
+	void ControlGraph::link2(int from1, int from2, int to)
+	{
+		link(from1, to);
+		link(from2, to);
+	}
+
+	/// <summary>
+	/// Add links for operation from 3 sources.
+	/// </summary>
+	/// <param name="from1">First source index.</param>
+	/// <param name="from2">Second source index.</param>
+	/// <param name="from3">Third source index.</param>
+	/// <param name="to">Destination index.</param>
+	void ControlGraph::link3(int from1, int from2, int from3, int to)
+	{
+		link(from1, to);
+		link(from2, to);
+		link(from3, to);
+	}
+
+	/// <summary>
+	/// Add links for operation from 4 sources.
+	/// </summary>
+	/// <param name="from1">First source index.</param>
+	/// <param name="from2">Second source index.</param>
+	/// <param name="from3">Third source index.</param>
+	/// <param name="from4">4th source index.</param>
+	/// <param name="to">Destination index.</param>
+	void ControlGraph::link4(int from1, int from2, int from3, int from4, int to)
+	{
+		link(from1, to);
+		link(from2, to);
+		link(from3, to);
+		link(from4, to);
 	}
 
 	/// <summary>

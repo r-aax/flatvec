@@ -2,6 +2,9 @@
 
 #include "mask.h"
 
+#include "global_stat.h"
+#include "control_graph.h"
+
 namespace fv
 {
     // Constructor.
@@ -11,7 +14,11 @@ namespace fv
     /// </summary>
     Mask::Mask()
     {
+        id = CG.mask_id();
+
         clear();
+
+        CG.reg(id, "new m");
     }
 
     /// <summary>
@@ -19,12 +26,15 @@ namespace fv
     /// </summary>
     /// <param name="bm">Binary representation.</param>
     Mask::Mask(uint64_t bm)
-        : Mask()
     {
+        id = CG.mask_id();
+
         for (int i = 0; i < Mask::bits; ++i)
         {
             data[i] = ((bm & (static_cast<uint64_t>(1) << i)) != 0x0);
         }
+
+        CG.reg(id, "new m from const");
     }
 
     /// <summary>
@@ -33,10 +43,15 @@ namespace fv
     /// <param name="m">Another mask.</param>
     Mask::Mask(const Mask& m)
     {
+        id = m.get_id();
+
         for (int i = 0; i < Mask::bits; ++i)
         {
             data[i] = m.data[i];
         }
+
+        CG.reg(id, "copy m");
+        CG.link(m.get_id(), id);
     }
 
     /// <summary>
@@ -46,9 +61,15 @@ namespace fv
     /// <returns>Result mask.</returns>
     Mask& Mask::operator=(const Mask& m)
     {
-        for (int i = 0; i < Mask::bits; ++i)
+        if (this != &m)
         {
-            data[i] = m.data[i];
+            for (int i = 0; i < Mask::bits; ++i)
+            {
+                data[i] = m.data[i];
+            }
+
+            CG.reg(id, "rewrite m copy from " + std::to_string(m.get_id()));
+            CG.link(m.get_id(), id);
         }
 
         return *this;
@@ -60,6 +81,9 @@ namespace fv
     /// <param name="m">Source mask.</param>
     Mask::Mask(Mask&& m)
     {
+        // We do not need new identifier.
+        id = m.get_id();
+
         for (int i = 0; i < Mask::bits; ++i)
         {
             data[i] = m.data[i];
@@ -73,9 +97,18 @@ namespace fv
     /// <returns>Result mask.</returns>
     Mask& Mask::operator=(Mask&& m)
     {
-        for (int i = 0; i < Mask::bits; ++i)
+        if (this != &m)
         {
-            data[i] = m.data[i];
+            // Before this operation we have some mask and now we rewrite it.
+            CG.reg(id, "rewrite m move from " + std::to_string(m.get_id()));
+
+            // We do not need new number for move assihnment.
+            id = m.get_id();
+
+            for (int i = 0; i < Mask::bits; ++i)
+            {
+                data[i] = m.data[i];
+            }
         }
 
         return *this;

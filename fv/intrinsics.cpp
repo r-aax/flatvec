@@ -29,7 +29,7 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
-        CG.register_zmm(dst.get_id(), "set1");
+        CG.reg(dst.get_id(), "set1");
 
         return dst;
     }
@@ -53,7 +53,7 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
-        CG.register_zmm(dst.get_id(), "load");
+        CG.reg(dst.get_id(), "load");
 
         return dst;
     }
@@ -75,7 +75,7 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
-        CG.register_zmm(a.get_id(), "store");
+        CG.reg(a.get_id(), "store");
     }
 
     // Arithmetic operations with 1 argument.
@@ -716,9 +716,8 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
-        CG.register_zmm(dst.get_id(), "blend");
-        CG.add_link(a.get_id(), dst.get_id());
-        CG.add_link(b.get_id(), dst.get_id());
+        CG.reg(dst.get_id(), "blend");
+        CG.link3(k.get_id(), a.get_id(), b.get_id(), dst.get_id());
 
         return dst;
     }
@@ -744,6 +743,8 @@ namespace fv
         }
 
         GS.append_mask_oper();
+        CG.reg(k.get_id(), "logic");
+        CG.link2(a.get_id(), b.get_id(), k.get_id());
 
         return k;
     }

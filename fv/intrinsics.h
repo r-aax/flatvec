@@ -64,9 +64,8 @@ namespace fv
         }
 
         GS.append_vector_oper(w, k.popcnt_tail(w));
-        CG.register_zmm(dst.get_id(), "arith1");
-        CG.add_link(src.get_id(), dst.get_id());
-        CG.add_link(a.get_id(), dst.get_id());
+        CG.reg(dst.get_id(), "arith1");
+        CG.link3(src.get_id(), k.get_id(), a.get_id(), dst.get_id());
 
         return dst;
     }
@@ -147,10 +146,8 @@ namespace fv
         }
 
         GS.append_vector_oper(w, k.popcnt_tail(w));
-        CG.register_zmm(dst.get_id(), "arith2");
-        CG.add_link(src.get_id(), dst.get_id());
-        CG.add_link(a.get_id(), dst.get_id());
-        CG.add_link(b.get_id(), dst.get_id());
+        CG.reg(dst.get_id(), "arith2");
+        CG.link4(src.get_id(), k.get_id(), a.get_id(), b.get_id(), dst.get_id());
 
         return dst;
     }
@@ -313,10 +310,8 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
-        CG.register_zmm(dst.get_id(), "arith3");
-        CG.add_link(a.get_id(), dst.get_id());
-        CG.add_link(b.get_id(), dst.get_id());
-        CG.add_link(c.get_id(), dst.get_id());
+        CG.reg(dst.get_id(), "arith3");
+        CG.link3(a.get_id(), b.get_id(), c.get_id(), dst.get_id());
 
         return dst;
     }
@@ -374,6 +369,8 @@ namespace fv
         }
 
         GS.append_vector_oper(w, k1.popcnt_tail(w));
+        CG.reg(k.get_id(), "cmp");
+        CG.link3(k1.get_id(), a.get_id(), b.get_id(), k.get_id());
 
         return k;
     }

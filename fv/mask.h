@@ -24,6 +24,11 @@ namespace fv
     private:
 
         /// <summary>
+        /// Identifier.
+        /// </summary>
+        int id;
+
+        /// <summary>
         /// Data.
         /// </summary>
         bool data[bits];
@@ -45,6 +50,15 @@ namespace fv
         Mask& operator=(Mask&& m);
 
         // Access to data.
+
+        /// <summary>
+        /// Get identifier.
+        /// </summary>
+        /// <returns>Identifier.</returns>
+        inline int get_id() const
+        {
+            return id;
+        }
 
         bool get(int i) const;
 
