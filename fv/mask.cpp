@@ -18,7 +18,7 @@ namespace fv
 
         clear();
 
-        CG.reg(id, "new m");
+        CG.reglink("new m", id);
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ namespace fv
             data[i] = ((bm & (static_cast<uint64_t>(1) << i)) != 0x0);
         }
 
-        CG.reg(id, "new m from const");
+        CG.reglink("new m from const", id);
     }
 
     /// <summary>
@@ -50,8 +50,7 @@ namespace fv
             data[i] = m.data[i];
         }
 
-        CG.reg(id, "copy m");
-        CG.link(m.get_id(), id);
+        CG.reglink("copy m", m.get_id(), id);
     }
 
     /// <summary>
@@ -68,8 +67,7 @@ namespace fv
                 data[i] = m.data[i];
             }
 
-            CG.reg(id, "rewrite m copy from " + std::to_string(m.get_id()));
-            CG.link(m.get_id(), id);
+            CG.reglink("rewrite m copy from " + std::to_string(m.get_id()), m.get_id(), id);
         }
 
         return *this;
@@ -100,7 +98,7 @@ namespace fv
         if (this != &m)
         {
             // Before this operation we have some mask and now we rewrite it.
-            CG.reg(id, "rewrite m move from " + std::to_string(m.get_id()));
+            CG.reglink("rewrite m move from " + std::to_string(m.get_id()), id);
 
             // We do not need new number for move assihnment.
             id = m.get_id();

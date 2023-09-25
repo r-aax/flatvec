@@ -35,6 +35,90 @@ namespace fv
 	}
 
 	/// <summary>
+	/// Register new register.
+	/// </summary>
+	/// <param name="act">Act.</param>
+	/// <param name="i">Identifier.</param>
+	void ControlGraph::reg(std::string act,
+						   int i)
+	{
+		if (i >= 0)
+		{
+			while (nodes.size() <= i)
+			{
+				nodes.push_back(NetNode(i));
+			}
+
+			nodes[i].acts.push_back(act);
+		}
+	}
+
+	/// <summary>
+	/// Add link.
+	/// </summary>
+	/// <param name="from">Index of from register.</param>
+	/// <param name="to">Index of to register.</param>
+	void ControlGraph::link(int from1,
+							int to)
+	{
+		if (is_active)
+		{
+			links.push_back(std::vector<int> { from1, to });
+		}
+	}
+
+	/// <summary>
+	/// Add links for operation from 2 sources.
+	/// </summary>
+	/// <param name="from1">First source index.</param>
+	/// <param name="from2">Second source index.</param>
+	/// <param name="to">Destination index.</param>
+	void ControlGraph::link(int from1,
+							int from2,
+							int to)
+	{
+		link(from1, to);
+		link(from2, to);
+	}
+
+	/// <summary>
+	/// Add links for operation from 3 sources.
+	/// </summary>
+	/// <param name="from1">First source index.</param>
+	/// <param name="from2">Second source index.</param>
+	/// <param name="from3">Third source index.</param>
+	/// <param name="to">Destination index.</param>
+	void ControlGraph::link(int from1,
+							int from2,
+							int from3,
+							int to)
+	{
+		link(from1, to);
+		link(from2, to);
+		link(from3, to);
+	}
+
+	/// <summary>
+	/// Add links for operation from 4 sources.
+	/// </summary>
+	/// <param name="from1">First source index.</param>
+	/// <param name="from2">Second source index.</param>
+	/// <param name="from3">Third source index.</param>
+	/// <param name="from4">4th source index.</param>
+	/// <param name="to">Destination index.</param>
+	void ControlGraph::link(int from1,
+							int from2,
+							int from3,
+							int from4,
+							int to)
+	{
+		link(from1, to);
+		link(from2, to);
+		link(from3, to);
+		link(from4, to);
+	}
+
+	/// <summary>
 	/// Switch on.
 	/// </summary>
 	void ControlGraph::switch_on()
@@ -82,76 +166,82 @@ namespace fv
 	}
 
 	/// <summary>
-	/// Register new ZMM.
+	/// Register without link.
 	/// </summary>
-	/// <param name="i">ZMM number.</param>
-	/// <param name="act">Act.</param>
-	void ControlGraph::reg(int i, std::string act)
+	/// <param name="act">Action.</param>
+	/// <param name="to">Destination id.</param>
+	void ControlGraph::reglink(std::string act,
+							   int to)
 	{
-		if (i >= 0)
-		{
-			while (nodes.size() <= i)
-			{
-				nodes.push_back(NetNode(i));
-			}
-
-			nodes[i].acts.push_back(act);
-		}
+		reg(act, to);
 	}
 
 	/// <summary>
-	/// Add link.
+	/// Register with 1 link.
 	/// </summary>
-	/// <param name="from">Index of from register.</param>
-	/// <param name="to">Index of to register.</param>
-	void ControlGraph::link(int from, int to)
+	/// <param name="act">Action.</param>
+	/// <param name="from1">First source id.</param>
+	/// <param name="to">Destination id.</param>
+	void ControlGraph::reglink(std::string act,
+							   int from1,
+							   int to)
 	{
-		if (is_active)
-		{
-			links.push_back(std::vector<int> { from, to });
-		}
-	}
-
-	/// <summary>
-	/// Add links for operation from 2 sources.
-	/// </summary>
-	/// <param name="from1">First source index.</param>
-	/// <param name="from2">Second source index.</param>
-	/// <param name="to">Destination index.</param>
-	void ControlGraph::link2(int from1, int from2, int to)
-	{
+		reg(act, to);
 		link(from1, to);
-		link(from2, to);
 	}
 
 	/// <summary>
-	/// Add links for operation from 3 sources.
+	/// Register with 2 links.
 	/// </summary>
-	/// <param name="from1">First source index.</param>
-	/// <param name="from2">Second source index.</param>
-	/// <param name="from3">Third source index.</param>
-	/// <param name="to">Destination index.</param>
-	void ControlGraph::link3(int from1, int from2, int from3, int to)
+	/// <param name="act">Action.</param>
+	/// <param name="from1">First source id.</param>
+	/// <param name="from2">Second source id.</param>
+	/// <param name="to">Destination id.</param>
+	void ControlGraph::reglink(std::string act,
+							   int from1,
+							   int from2,
+							   int to)
 	{
-		link(from1, to);
-		link(from2, to);
-		link(from3, to);
+		reg(act, to);
+		link(from1, from2, to);
 	}
 
 	/// <summary>
-	/// Add links for operation from 4 sources.
+	/// Register with 3 links.
 	/// </summary>
-	/// <param name="from1">First source index.</param>
-	/// <param name="from2">Second source index.</param>
-	/// <param name="from3">Third source index.</param>
-	/// <param name="from4">4th source index.</param>
-	/// <param name="to">Destination index.</param>
-	void ControlGraph::link4(int from1, int from2, int from3, int from4, int to)
+	/// <param name="act">Action.</param>
+	/// <param name="from1">First source id.</param>
+	/// <param name="from2">Second source id.</param>
+	/// <param name="from3">Third source id.</param>
+	/// <param name="to">Destination id.</param>
+	void ControlGraph::reglink(std::string act,
+							   int from1,
+							   int from2,
+							   int from3,
+							   int to)
 	{
-		link(from1, to);
-		link(from2, to);
-		link(from3, to);
-		link(from4, to);
+		reg(act, to);
+		link(from1, from2, from3, to);
+	}
+
+	/// <summary>
+	/// Register with 4 links.
+	/// </summary>
+	/// <param name="act">Action.</param>
+	/// <param name="from1">First source id.</param>
+	/// <param name="from2">Second source id.</param>
+	/// <param name="from3">Third source id.</param>
+	/// <param name="from4">4th source id.</param>
+	/// <param name="to">Destination id.</param>
+	void ControlGraph::reglink(std::string act,
+							   int from1,
+							   int from2,
+							   int from3,
+							   int from4,
+							   int to)
+	{
+		reg(act, to);
+		link(from1, from2, from3, from4, to);
 	}
 
 	/// <summary>

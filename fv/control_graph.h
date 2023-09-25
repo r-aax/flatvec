@@ -49,6 +49,32 @@ namespace fv
 		// Get new id.
 		int new_id();
 
+		// Register new register.
+		void reg(std::string act,
+				 int i);
+
+		// Add link.
+		void link(int from1,
+				  int to);
+
+		// Add links for 2 sources.
+		void link(int from1,
+				  int from2,
+				  int to);
+
+		// Add links for 3 sources.
+		void link(int from1,
+				  int from2,
+				  int from3,
+				  int to);
+
+		// Add links for 4 sources.
+		void link(int from1,
+				  int from2,
+				  int from3,
+				  int from4,
+				  int to);
+
 	public:
 
 		// Constructor.
@@ -69,20 +95,35 @@ namespace fv
 		// Get mask id.
 		int mask_id();
 
-		// Register new ZMM.
-		void reg(int i, std::string act);
+		// Register without link.
+		void reglink(std::string act,
+					 int to);
 
-		// Add link.
-		void link(int from, int to);
+		// Register with 1 link.
+		void reglink(std::string act,
+					 int from1,
+					 int to);
 
-		// Add links for 2 sources.
-		void link2(int from1, int from2, int to);
+		// Register with 2 links.
+		void reglink(std::string act,
+					 int from1,
+					 int from2,
+					 int to);
 
-		// Add links for 3 sources.
-		void link3(int from1, int from2, int from3, int to);
+		// Register with 3 links.
+		void reglink(std::string act,
+					 int from1,
+					 int from2,
+					 int from3,
+					 int to);
 
-		// Add links for 4 sources.
-		void link4(int from1, int from2, int from3, int from4, int to);
+		// Register with 4 links.
+		void reglink(std::string act,
+					 int from1,
+					 int from2,
+					 int from3,
+					 int from4,
+					 int to);
 
 		// Print.
 		void print();
