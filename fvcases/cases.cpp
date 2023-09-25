@@ -11,7 +11,7 @@
 #include "fv.h"
 
 // Redefenition vector types with their implementation.
-using _m512 = fv::ZMM;
+using __m512 = fv::ZMM;
 using __mmask16 = fv::Mask;
 
 #endif
@@ -29,27 +29,27 @@ namespace fv
     /// <summary>
     /// Zero.
     /// </summary>
-    _m512 zero = _mm512_set1_ps(0.0f);
+    __m512 zero = _mm512_set1_ps(0.0f);
 
     /// <summary>
     /// One.
     /// </summary>
-    _m512 one = _mm512_set1_ps(1.0f);
+    __m512 one = _mm512_set1_ps(1.0f);
 
     /// <summary>
     /// Two.
     /// </summary>
-    _m512 two = _mm512_set1_ps(2.0f);
+    __m512 two = _mm512_set1_ps(2.0f);
 
     /// <summary>
     /// Four.
     /// </summary>
-    _m512 four = _mm512_set1_ps(4.0f);
+    __m512 four = _mm512_set1_ps(4.0f);
 
     /// <summary>
     /// Half.
     /// </summary>
-    _m512 half = _mm512_set1_ps(0.5f);
+    __m512 half = _mm512_set1_ps(0.5f);
 
     //
     // Cases for detecting inefficiency in the vector code.
@@ -89,10 +89,10 @@ namespace fv
     /// </summary>
     /// <param name="a">Input.</param>
     /// <param name="b">Output.</param>
-    void vcase_warn_hang_1(_m512& a,
-                           _m512& b)
+    void vcase_warn_hang_1(__m512& a,
+                           __m512& b)
     {
-        _m512 dummy = _mm512_add_ps(zero, one);
+        __m512 dummy = _mm512_add_ps(zero, one);
 
         b = a;
     }
@@ -113,7 +113,7 @@ namespace fv
         for (int vi = 0; vi < vn; ++vi)
         {
             int sh = vi * CNT_FLOAT;
-            _m512 b;
+            __m512 b;
 
             vcase_warn_hang_1(_mm512_load_ps(a_p + sh), b);
 
@@ -216,21 +216,21 @@ namespace fv
     /// <param name="a">Input.</param>
     /// <param name="b">Input.</param>
     /// <param name="c">Output.</param>
-    void vcase_arith_f32_1(_m512& a,
-                           _m512& b,
-                           _m512& c)
+    void vcase_arith_f32_1(__m512& a,
+                           __m512& b,
+                           __m512& c)
     {
-        _m512 add = _mm512_add_ps(a, b);
-        _m512 sub = _mm512_sub_ps(a, b);
-        _m512 mul = _mm512_mul_ps(a, b);
-        _m512 div = _mm512_div_ps(a, b);
-        _m512 min = _mm512_min_ps(a, b);
-        _m512 max = _mm512_max_ps(a, b);
+        __m512 add = _mm512_add_ps(a, b);
+        __m512 sub = _mm512_sub_ps(a, b);
+        __m512 mul = _mm512_mul_ps(a, b);
+        __m512 div = _mm512_div_ps(a, b);
+        __m512 min = _mm512_min_ps(a, b);
+        __m512 max = _mm512_max_ps(a, b);
 
-        _m512 v0 = _mm512_add_ps(add, sub);
-        _m512 v1 = _mm512_add_ps(v0, mul);
-        _m512 v2 = _mm512_add_ps(v1, div);
-        _m512 v3 = _mm512_add_ps(v2, min);
+        __m512 v0 = _mm512_add_ps(add, sub);
+        __m512 v1 = _mm512_add_ps(v0, mul);
+        __m512 v2 = _mm512_add_ps(v1, div);
+        __m512 v3 = _mm512_add_ps(v2, min);
         c = _mm512_add_ps(v3, max);
     }
 
@@ -252,7 +252,7 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
-            _m512 c;
+            __m512 c;
 
             vcase_arith_f32_1(_mm512_load_ps(a_p + sh),
                               _mm512_load_ps(b_p + sh),
@@ -360,13 +360,13 @@ namespace fv
     /// <param name="a">Input.</param>
     /// <param name="b">Input.</param>
     /// <param name="c">Output.</param>
-    void vcase_blend_f32_1(_m512& a,
-                           _m512& b,
-                           _m512& c)
+    void vcase_blend_f32_1(__m512& a,
+                           __m512& b,
+                           __m512& c)
     {
         __mmask16 k = _mm512_cmple_ps_mask(b, a);
-        _m512 add = _mm512_add_ps(a, b);
-        _m512 mul = _mm512_mul_ps(a, b);
+        __m512 add = _mm512_add_ps(a, b);
+        __m512 mul = _mm512_mul_ps(a, b);
         c = _mm512_mask_blend_ps(k, mul, add);
     }
 
@@ -388,7 +388,7 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
-            _m512 c;
+            __m512 c;
 
             vcase_blend_f32_1(_mm512_load_ps(a_p + sh),
                               _mm512_load_ps(b_p + sh),
@@ -544,10 +544,10 @@ namespace fv
     /// <param name="b">Input.</param>
     /// <param name="c">Input.</param>
     /// <param name="h">Output.</param>
-    void vcase_square_equation_1(_m512& a,
-                                 _m512& b,
-                                 _m512& c,
-                                 _m512& h)
+    void vcase_square_equation_1(__m512& a,
+                                 __m512& b,
+                                 __m512& c,
+                                 __m512& h)
     {
         h = zero;
         __mmask16 p1 = _mm512_cmpeq_ps_mask(a, zero);
@@ -556,10 +556,10 @@ namespace fv
         __mmask16 np1 = _mm512_knot(p1);
         b = _mm512_mask_div_ps(b, np1, b, a);
         c = _mm512_mask_div_ps(c, np1, c, a);
-        _m512 d = _mm512_sub_ps(_mm512_mul_ps(b, b), _mm512_mul_ps(four, c));
+        __m512 d = _mm512_sub_ps(_mm512_mul_ps(b, b), _mm512_mul_ps(four, c));
         __mmask16 p4 = _mm512_mask_cmpge_ps_mask(np1, d, zero);
-        _m512 sd = _mm512_mask_sqrt_ps(h, p4, d);
-        _m512 h1 = _mm512_mul_ps(half, _mm512_sub_ps(zero, _mm512_add_ps(b, sd)));
+        __m512 sd = _mm512_mask_sqrt_ps(h, p4, d);
+        __m512 h1 = _mm512_mul_ps(half, _mm512_sub_ps(zero, _mm512_add_ps(b, sd)));
         h = _mm512_mask_mov_ps(h, p4, _mm512_mask_blend_ps(_mm512_cmpgt_ps_mask(h1, zero),
                                _mm512_max_ps(_mm512_mul_ps(half, _mm512_sub_ps(sd, b)), zero), h1));
     }
@@ -584,7 +584,7 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
-            _m512 h;
+            __m512 h;
 
             vcase_square_equation_1(_mm512_load_ps(a_p + sh),
                                     _mm512_load_ps(b_p + sh),
@@ -708,47 +708,47 @@ namespace fv
         /// <summary>
         /// Vector constant G.
         /// </summary>
-        _m512 g = _mm512_set1_ps(sg);
+        __m512 g = _mm512_set1_ps(sg);
 
         /// <summary>
         /// Vector constant G1.
         /// </summary>
-        _m512 g1 = _mm512_set1_ps(sg1);
+        __m512 g1 = _mm512_set1_ps(sg1);
 
         /// <summary>
         /// Vector constant G2.
         /// </summary>
-        _m512 g2 = _mm512_set1_ps(sg2);
+        __m512 g2 = _mm512_set1_ps(sg2);
 
         /// <summary>
         /// Vector constant G3.
         /// </summary>
-        _m512 g3 = _mm512_set1_ps(sg3);
+        __m512 g3 = _mm512_set1_ps(sg3);
 
         /// <summary>
         /// Vector constant G4.
         /// </summary>
-        _m512 g4 = _mm512_set1_ps(sg4);
+        __m512 g4 = _mm512_set1_ps(sg4);
 
         /// <summary>
         /// Vector constant G5.
         /// </summary>
-        _m512 g5 = _mm512_set1_ps(sg5);
+        __m512 g5 = _mm512_set1_ps(sg5);
 
         /// <summary>
         /// Vector constant G6.
         /// </summary>
-        _m512 g6 = _mm512_set1_ps(sg6);
+        __m512 g6 = _mm512_set1_ps(sg6);
 
         /// <summary>
         /// Vector constant G7.
         /// </summary>
-        _m512 g7 = _mm512_set1_ps(sg7);
+        __m512 g7 = _mm512_set1_ps(sg7);
 
         /// <summary>
         /// Vector constant G8.
         /// </summary>
-        _m512 g8 = _mm512_set1_ps(sg8);
+        __m512 g8 = _mm512_set1_ps(sg8);
     }
 
     // Riemann solver
@@ -856,19 +856,19 @@ namespace fv
     /// <param name="pr">Input.</param>
     /// <param name="cr">Input.</param>
     /// <param name="pm">Output.</param>
-    void vcase_guessp_1(_m512& dl,
-                        _m512& ul,
-                        _m512& pl,
-                        _m512& cl,
-                        _m512& dr,
-                        _m512& ur,
-                        _m512& pr,
-                        _m512& cr,
-                        _m512& pm)
+    void vcase_guessp_1(__m512& dl,
+                        __m512& ul,
+                        __m512& pl,
+                        __m512& cl,
+                        __m512& dr,
+                        __m512& ur,
+                        __m512& pr,
+                        __m512& cr,
+                        __m512& pm)
     {
         // Begin of calculation part.
 
-        _m512 cup, ppv, pmin, pmax, qmax, pq, um, ptl, ptr, gel, ger, pqcr;
+        __m512 cup, ppv, pmin, pmax, qmax, pq, um, ptl, ptr, gel, ger, pqcr;
         __mmask16 cond_pvrs, cond_ppv, ncond_ppv;
 
         cup = _mm512_mul_ps(_mm512_set1_ps(0.25), _mm512_mul_ps(_mm512_add_ps(dl, dr), _mm512_add_ps(cl, cr)));
@@ -946,7 +946,7 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
-            _m512 pm;
+            __m512 pm;
 
             vcase_guessp_1(_mm512_load_ps(dl_p + sh),
                            _mm512_load_ps(ul_p + sh),
@@ -1107,15 +1107,15 @@ namespace fv
     /// <param name="pk">Input.</param>
     /// <param name="ck">Input.</param>
     /// <param name="m">Mask.</param>
-    void vcase_prefun_1(_m512& f,
-                        _m512& fd,
-                        _m512& p,
-                        _m512& dk,
-                        _m512& pk,
-                        _m512& ck,
+    void vcase_prefun_1(__m512& f,
+                        __m512& fd,
+                        __m512& p,
+                        __m512& dk,
+                        __m512& pk,
+                        __m512& ck,
                         __mmask16 m)
     {
-        _m512 pratio, ak, bkp, ppk, qrt;
+        __m512 pratio, ak, bkp, ppk, qrt;
         __mmask16 cond, ncond;
 
         // Conditions.
@@ -1173,7 +1173,7 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
-            _m512 f, fd;
+            __m512 f, fd;
 
             vcase_prefun_1(f, fd,
                            _mm512_load_ps(p_p + sh),
@@ -1497,27 +1497,27 @@ namespace fv
     /// <param name="v">Output.</param>
     /// <param name="w">Output.</param>
     /// <param name="p">Output.</param>
-    void vcase_sample_1(_m512& dl,
-                        _m512& ul,
-                        _m512& vl,
-                        _m512& wl,
-                        _m512& pl,
-                        _m512& cl,
-                        _m512& dr,
-                        _m512& ur,
-                        _m512& vr,
-                        _m512& wr,
-                        _m512& pr,
-                        _m512& cr,
-                        _m512& pm,
-                        _m512& um,
-                        _m512& d,
-                        _m512& u,
-                        _m512& v,
-                        _m512& w,
-                        _m512& p)
+    void vcase_sample_1(__m512& dl,
+                        __m512& ul,
+                        __m512& vl,
+                        __m512& wl,
+                        __m512& pl,
+                        __m512& cl,
+                        __m512& dr,
+                        __m512& ur,
+                        __m512& vr,
+                        __m512& wr,
+                        __m512& pr,
+                        __m512& cr,
+                        __m512& pm,
+                        __m512& um,
+                        __m512& d,
+                        __m512& u,
+                        __m512& v,
+                        __m512& w,
+                        __m512& p)
     {
-        _m512 c, ums, pms, sh, st, s;
+        __m512 c, ums, pms, sh, st, s;
         __mmask16 cond_um, cond_pm, cond_sh, cond_st, cond_s, cond_sh_st;
 
         // d/u/p/c/ums
@@ -1556,7 +1556,7 @@ namespace fv
 	    if (cond_sh_st != 0x0)
         {
             u = _mm512_mask_mov_ps(u, cond_sh_st, _mm512_mul_ps(riemann::g5, _mm512_fmadd_ps(riemann::g7, u, c)));
-            _m512 uc = _mm512_div_ps(u, c);
+            __m512 uc = _mm512_div_ps(u, c);
             d = _mm512_mask_mov_ps(d, cond_sh_st, _mm512_mul_ps(d, _mm512_pow_ps(uc, riemann::g4)));
             p = _mm512_mask_mov_ps(p, cond_sh_st, _mm512_mul_ps(p, _mm512_pow_ps(uc, riemann::g3)));
         }
@@ -1615,7 +1615,7 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
-            _m512 d, u, v, w, p;
+            __m512 d, u, v, w, p;
 
             vcase_sample_1(_mm512_load_ps(dl_p + sh),
                            _mm512_load_ps(ul_p + sh),
@@ -1849,18 +1849,18 @@ namespace fv
     /// <param name="cr">Input.</param>
     /// <param name="p">Output.</param>
     /// <param name="u">Output.</param>
-    void vcase_starpu_1(_m512& dl,
-                        _m512& ul,
-                        _m512& pl,
-                        _m512& cl,
-                        _m512& dr,
-                        _m512& ur,
-                        _m512& pr,
-                        _m512& cr,
-                        _m512& p,
-                        _m512& u)
+    void vcase_starpu_1(__m512& dl,
+                        __m512& ul,
+                        __m512& pl,
+                        __m512& cl,
+                        __m512& dr,
+                        __m512& ur,
+                        __m512& pr,
+                        __m512& cr,
+                        __m512& p,
+                        __m512& u)
     {
-        _m512 tolpre, tolpre2, udiff, pold, fl, fld, fr, frd, change;
+        __m512 tolpre, tolpre2, udiff, pold, fl, fld, fr, frd, change;
         __mmask16 cond_break, cond_neg, m;
         const int nriter = 20;
         int iter = 1;
@@ -1932,7 +1932,7 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
-            _m512 p, u;
+            __m512 p, u;
 
             vcase_starpu_1(_mm512_load_ps(dl_p + sh),
                            _mm512_load_ps(ul_p + sh),
@@ -2145,23 +2145,23 @@ namespace fv
     /// <param name="v">Output.</param>
     /// <param name="w">Output.</param>
     /// <param name="p">Output.</param>
-    void vcase_riemann_1(_m512& dl,
-                         _m512& ul,
-                         _m512& vl,
-                         _m512& wl,
-                         _m512& pl,
-                         _m512& dr,
-                         _m512& ur,
-                         _m512& vr,
-                         _m512& wr,
-                         _m512& pr,
-                         _m512& d,
-                         _m512& u,
-                         _m512& v,
-                         _m512& w,
-                         _m512& p)
+    void vcase_riemann_1(__m512& dl,
+                         __m512& ul,
+                         __m512& vl,
+                         __m512& wl,
+                         __m512& pl,
+                         __m512& dr,
+                         __m512& ur,
+                         __m512& vr,
+                         __m512& wr,
+                         __m512& pr,
+                         __m512& d,
+                         __m512& u,
+                         __m512& v,
+                         __m512& w,
+                         __m512& p)
     {
-        _m512 cl, cr, pm, um;
+        __m512 cl, cr, pm, um;
         __mmask16 vacuum_mask;
 
         cl = _mm512_sqrt_ps(_mm512_div_ps(_mm512_mul_ps(riemann::g, pl), dl));
@@ -2175,6 +2175,7 @@ namespace fv
             std::cout << "VACUUM" << std::endl;
             exit(1);
         }
+
         vcase_starpu_1(dl, ul, pl, cl, dr, ur, pr, cr, pm, um);
         vcase_sample_1(dl, ul, vl, wl, pl, cl,
                        dr, ur, vr, wr, pr, cr,
@@ -2224,7 +2225,7 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
-            _m512 d, u, v, w, p;
+            __m512 d, u, v, w, p;
 
             vcase_riemann_1(_mm512_load_ps(dl_p + sh),
                             _mm512_load_ps(ul_p + sh),
