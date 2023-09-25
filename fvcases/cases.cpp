@@ -51,6 +51,14 @@ namespace fv
     /// </summary>
     _m512 half = _mm512_set1_ps(0.5f);
 
+    //
+    // Cases for detecting inefficiency in the vector code.
+    //
+
+    //
+    // Trivial cases.
+    //
+
     // arith_f32
 
     /// <summary>
@@ -325,6 +333,209 @@ namespace fv
 
         return res;
     }
+
+    // square equation
+
+    /// <summary>
+    /// Case square equation scalar.
+    /// </summary>
+    /// <param name="a">Input.</param>
+    /// <param name="b">Input.</param>
+    /// <param name="c">Input.</param>
+    /// <param name="h">Output.</param>
+    void scase_square_equation_1(float a,
+                                 float b,
+                                 float c,
+                                 float& h)
+    {
+        if (a == 0.0f)
+        {
+            if (b == 0.0f)
+            {
+                h = 0.0f;
+            }
+            else
+            {
+                h = -c / b;
+
+                if (h < 0.0f)
+                {
+                    h = 0.0f;
+                }
+            }
+        }
+        else
+        {
+            b /= a;
+            c /= a;
+
+            float d = b * b - 4.0f * c;
+
+            if (d < 0.0f)
+            {
+                h = 0.0f;
+            }
+            else
+            {
+                float sd = sqrt(d);
+                float h1 = 0.5f * (-b - sd);
+
+                if (h1 > 0.0f)
+                {
+                    h = h1;
+                }
+                else
+                {
+                    float h2 = 0.5f * (-b + sd);
+
+                    if (h2 > 0.0f)
+                    {
+                        h = h2;
+                    }
+                    else
+                    {
+                        h = 0.0f;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Case square equation scalar.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="a">Input array.</param>
+    /// <param name="b">Input array.</param>
+    /// <param name="c">Input array.</param>
+    /// <param name="h">Output array.</param>
+    void scase_square_equation(int n,
+                               float* a,
+                               float* b,
+                               float* c,
+                               float* h)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            scase_square_equation_1(a[i], b[i], c[i], h[i]);
+        }
+    }
+
+    /// <summary>
+    /// Case square equation vector.
+    /// </summary>
+    /// <param name="a">Input.</param>
+    /// <param name="b">Input.</param>
+    /// <param name="c">Input.</param>
+    /// <param name="h">Output.</param>
+    void vcase_square_equation_1(_m512& a,
+                                 _m512& b,
+                                 _m512& c,
+                                 _m512& h)
+    {
+        h = zero;
+        __mmask16 p1 = _mm512_cmpeq_ps_mask(a, zero);
+        __mmask16 p2 = _mm512_mask_cmpneq_ps_mask(p1, b, zero);
+        h = _mm512_maskz_max_ps(p2, _mm512_maskz_div_ps(p2, _mm512_sub_ps(zero, c), b), zero);
+        __mmask16 np1 = _mm512_knot(p1);
+        b = _mm512_mask_div_ps(b, np1, b, a);
+        c = _mm512_mask_div_ps(c, np1, c, a);
+        _m512 d = _mm512_sub_ps(_mm512_mul_ps(b, b), _mm512_mul_ps(four, c));
+        __mmask16 p4 = _mm512_mask_cmpge_ps_mask(np1, d, zero);
+        _m512 sd = _mm512_mask_sqrt_ps(h, p4, d);
+        _m512 h1 = _mm512_mul_ps(half, _mm512_sub_ps(zero, _mm512_add_ps(b, sd)));
+        h = _mm512_mask_mov_ps(h, p4, _mm512_mask_blend_ps(_mm512_cmpgt_ps_mask(h1, zero),
+                               _mm512_max_ps(_mm512_mul_ps(half, _mm512_sub_ps(sd, b)), zero), h1));
+    }
+
+    /// <summary>
+    /// Case for square equation.
+    /// </summary>
+    /// <param name="n">Count.</param>
+    /// <param name="a_p">Input array.</param>
+    /// <param name="b_p">Input array.</param>
+    /// <param name="c_p">Input array.</param>
+    /// <param name="h_p">Output array.</param>
+    void vcase_square_equation(int n,
+                               float* a_p,
+                               float* b_p,
+                               float* c_p,
+                               float* h_p)
+    {
+        assert(n % CNT_FLOAT == 0);
+        int vn = n / CNT_FLOAT;
+
+        for (int vi = 0; vi < vn; vi++)
+        {
+            int sh = vi * CNT_FLOAT;
+            _m512 h;
+
+            vcase_square_equation_1(_mm512_load_ps(a_p + sh),
+                                    _mm512_load_ps(b_p + sh),
+                                    _mm512_load_ps(c_p + sh),
+                                    h);
+
+            _mm512_store_ps(h_p + sh, h);
+        }
+    }
+
+    /// <summary>
+    /// Find minimal positive root of square equation.
+    /// </summary>
+    /// <param name="len">Vectors count.</param>
+    /// <param name="repeats">Repeats count.</param>
+    /// <param name="random_lo">Low limit for random.</param>
+    /// <param name="random_hi">High limit for random.</param>
+    /// <returns>
+    /// true - OK result,
+    /// false - ERROR result.
+    /// </returns>
+    bool case_square_equation(int len,
+                              int repeats,
+                              float random_lo,
+                              float random_hi)
+    {
+        int n = len * CNT_FLOAT;
+
+        ArrayManager<float> a(n);
+        ArrayManager<float> b(n);
+        ArrayManager<float> c(n);
+        ArrayManager<float> sh(n);
+        ArrayManager<float> vh(n);
+
+        a.generate_random(random_lo, random_hi);
+        b.generate_random(random_lo, random_hi);
+        c.generate_random(random_lo, random_hi);
+
+        GS.fix_time_before();
+
+        for (int i = 0; i < repeats; i++)
+        {
+            scase_square_equation(n, a.get_data(), b.get_data(), c.get_data(), sh.get_data());
+        }
+
+        GS.fix_time_middle();
+
+        for (int i = 0; i < repeats; i++)
+        {
+            vcase_square_equation(n, a.get_data(), b.get_data(), c.get_data(), vh.get_data());
+        }
+
+        GS.fix_time_after();
+
+        bool res = (vh.max_diff(sh) == 0.0);
+
+        if (!res)
+        {
+            std::cout << "max_diff : " << vh.max_diff(sh) << std::endl;
+        }
+
+        return res;
+    }
+
+    //
+    // Cases from real applications.
+    //
 
     // Constants for Riemann solver
 
@@ -1696,6 +1907,9 @@ namespace fv
         return res;
     }
 
+    // Riemann solver
+    // riemann function
+
     /// <summary>
     /// Scalar riemann case.
     /// </summary>
@@ -1992,204 +2206,7 @@ namespace fv
         return res;
     }
 
-    /// <summary>
-    /// Case square equation scalar.
-    /// </summary>
-    /// <param name="a">Input.</param>
-    /// <param name="b">Input.</param>
-    /// <param name="c">Input.</param>
-    /// <param name="h">Output.</param>
-    void scase_square_equation_1(float a,
-                                 float b,
-                                 float c,
-                                 float& h)
-    {
-        if (a == 0.0f)
-        {
-            if (b == 0.0f)
-            {
-                h = 0.0f;
-            }
-            else
-            {
-                h = -c / b;
-
-                if (h < 0.0f)
-                {
-                    h = 0.0f;
-                }
-            }
-        }
-        else
-        {
-            b /= a;
-            c /= a;
-
-            float d = b * b - 4.0f * c;
-
-            if (d < 0.0f)
-            {
-                h = 0.0f;
-            }
-            else
-            {
-                float sd = sqrt(d);
-                float h1 = 0.5f * (-b - sd);
-
-                if (h1 > 0.0f)
-                {
-                    h = h1;
-                }
-                else
-                {
-                    float h2 = 0.5f * (-b + sd);
-
-                    if (h2 > 0.0f)
-                    {
-                        h = h2;
-                    }
-                    else
-                    {
-                        h = 0.0f;
-                    }
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Case square equation scalar.
-    /// </summary>
-    /// <param name="n">Count.</param>
-    /// <param name="a">Input array.</param>
-    /// <param name="b">Input array.</param>
-    /// <param name="c">Input array.</param>
-    /// <param name="h">Output array.</param>
-    void scase_square_equation(int n,
-                               float* a,
-                               float* b,
-                               float* c,
-                               float* h)
-    {
-        for (int i = 0; i < n; i++)
-        {
-            scase_square_equation_1(a[i], b[i], c[i], h[i]);
-        }
-    }
-
-    /// <summary>
-    /// Case square equation vector.
-    /// </summary>
-    /// <param name="a">Input.</param>
-    /// <param name="b">Input.</param>
-    /// <param name="c">Input.</param>
-    /// <param name="h">Output.</param>
-    void vcase_square_equation_1(_m512& a,
-                                 _m512& b,
-                                 _m512& c,
-                                 _m512& h)
-    {
-        h = zero;
-        __mmask16 p1 = _mm512_cmpeq_ps_mask(a, zero);
-        __mmask16 p2 = _mm512_mask_cmpneq_ps_mask(p1, b, zero);
-        h = _mm512_maskz_max_ps(p2, _mm512_maskz_div_ps(p2, _mm512_sub_ps(zero, c), b), zero);
-        __mmask16 np1 = _mm512_knot(p1);
-        b = _mm512_mask_div_ps(b, np1, b, a);
-        c = _mm512_mask_div_ps(c, np1, c, a);
-        _m512 d = _mm512_sub_ps(_mm512_mul_ps(b, b), _mm512_mul_ps(four, c));
-        __mmask16 p4 = _mm512_mask_cmpge_ps_mask(np1, d, zero);
-        _m512 sd = _mm512_mask_sqrt_ps(h, p4, d);
-        _m512 h1 = _mm512_mul_ps(half, _mm512_sub_ps(zero, _mm512_add_ps(b, sd)));
-        h = _mm512_mask_mov_ps(h, p4, _mm512_mask_blend_ps(_mm512_cmpgt_ps_mask(h1, zero),
-                                                           _mm512_max_ps(_mm512_mul_ps(half, _mm512_sub_ps(sd, b)), zero), h1));
-    }
-
-    /// <summary>
-    /// Case for square equation.
-    /// </summary>
-    /// <param name="n">Count.</param>
-    /// <param name="a_p">Input array.</param>
-    /// <param name="b_p">Input array.</param>
-    /// <param name="c_p">Input array.</param>
-    /// <param name="h_p">Output array.</param>
-    void vcase_square_equation(int n,
-                               float* a_p,
-                               float* b_p,
-                               float* c_p,
-                               float* h_p)
-    {
-        assert(n % CNT_FLOAT == 0);
-        int vn = n / CNT_FLOAT;
-
-        for (int vi = 0; vi < vn; vi++)
-        {
-            int sh = vi * CNT_FLOAT;
-            _m512 h;
-
-            vcase_square_equation_1(_mm512_load_ps(a_p + sh),
-                                    _mm512_load_ps(b_p + sh),
-                                    _mm512_load_ps(c_p + sh),
-                                    h);
-
-            _mm512_store_ps(h_p + sh, h);
-        }
-    }
-
-    /// <summary>
-    /// Find minimal positive root of square equation.
-    /// </summary>
-    /// <param name="len">Vectors count.</param>
-    /// <param name="repeats">Repeats count.</param>
-    /// <param name="random_lo">Low limit for random.</param>
-    /// <param name="random_hi">High limit for random.</param>
-    /// <returns>
-    /// true - OK result,
-    /// false - ERROR result.
-    /// </returns>
-    bool case_square_equation(int len,
-                              int repeats,
-                              float random_lo,
-                              float random_hi)
-    {
-        int n = len * CNT_FLOAT;
-
-        ArrayManager<float> a(n);
-        ArrayManager<float> b(n);
-        ArrayManager<float> c(n);
-        ArrayManager<float> sh(n);
-        ArrayManager<float> vh(n);
-
-        a.generate_random(random_lo, random_hi);
-        b.generate_random(random_lo, random_hi);
-        c.generate_random(random_lo, random_hi);
-
-        GS.fix_time_before();
-
-        for (int i = 0; i < repeats; i++)
-        {
-            scase_square_equation(n, a.get_data(), b.get_data(), c.get_data(), sh.get_data());
-        }
-
-        GS.fix_time_middle();
-
-        for (int i = 0; i < repeats; i++)
-        {
-            vcase_square_equation(n, a.get_data(), b.get_data(), c.get_data(), vh.get_data());
-        }
-
-        GS.fix_time_after();
-
-        bool res = (vh.max_diff(sh) == 0.0);
-
-        if (!res)
-        {
-            std::cout << "max_diff : " << vh.max_diff(sh) << std::endl;
-        }
-
-        return res;
-    }
-
-    //
+    // Maintenance functions.
 
     /// <summary>
     /// General case.

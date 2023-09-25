@@ -5,6 +5,10 @@
 
 namespace fv
 {
+    // Cases for detecting inefficiency in the vector code.
+
+    // Trivial cases.
+
     // arith_f32
     bool case_arith_f32(int len,
                         int repeats,
@@ -16,6 +20,14 @@ namespace fv
                         int repeats,
                         float random_lo = 10.0f,
                         float random_hi = 100.0f);
+
+    // Find minimal positive root of square equation.
+    bool case_square_equation(int len,
+                              int repeats,
+                              float random_lo = -10.0f,
+                              float random_hi = 10.0f);
+
+    // Cases from real applications.
 
     // Riemann solver
     // guessp function
@@ -55,13 +67,7 @@ namespace fv
                       int repeats,
                       float eps = 1.0e-3f);
 
-    // Find minimal positive root of square equation.
-    bool case_square_equation(int len,
-                              int repeats,
-                              float random_lo = -10.0f,
-                              float random_hi = 10.0f);
-
-    //
+    // Maintenance functions.
 
     // Check general case.
     void test_case(std::string name,
