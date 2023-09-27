@@ -69,11 +69,9 @@ namespace fv
 
         uint64_t binary_mask() const;
 
+        operator uint64_t() const;
+
         std::string view() const;
-
-        bool operator==(uint64_t bm) const;
-
-        bool operator!=(uint64_t bm) const;
 
         // Generate masks.
 

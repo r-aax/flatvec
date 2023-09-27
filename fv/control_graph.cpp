@@ -404,7 +404,7 @@ namespace fv
 			{
 				// Hanging node detected.
 				std::cout << "! Warning ! : hanging node " << n.get_id() << " detected. "
-					<< "Last action : " << n.acts.back() << std::endl;
+						  << "Last action : " << n.acts.back() << std::endl;
 
 				is_finished = true;
 			}
@@ -447,7 +447,8 @@ namespace fv
 				else
 				{
 					// Wrong rewrite template.
-					std::cout << "! Warning! : wrong rewrite template for " << n.get_id() << " detected." << std::endl;
+					std::cout << "! Warning! : wrong rewrite template for " << n.get_id() << " detected. "
+							  << "Last action : " << n.acts.back() << std::endl;
 
 					is_finished = true;
 				}

@@ -162,6 +162,15 @@ namespace fv
     }
 
     /// <summary>
+    /// Cast to uint64_t.
+    /// </summary>
+    /// <returns>Mask in uint64_t view. </returns>
+    Mask::operator uint64_t() const
+    {
+        return binary_mask();
+    }
+
+    /// <summary>
     /// String view.
     /// </summary>
     /// <returns>String.</returns>
@@ -175,35 +184,6 @@ namespace fv
         }
 
         return "[" + s + "]";
-    }
-
-    /// <summary>
-    /// Check equality.
-    /// </summary>
-    /// <param name="bm">Mask binary representation.</param>
-    /// <returns>
-    /// true - if mask matches given binary representation,
-    /// false - otherwise.
-    /// </returns>
-    bool Mask::operator==(uint64_t bm) const
-    {
-        // Maybe it is the last use.
-        CG.reglink("control", get_id());
-
-        return binary_mask() == bm;
-    }
-
-    /// <summary>
-    /// Check inequality.
-    /// </summary>
-    /// <param name="bm">Mask binary representation.</param>
-    /// <returns>
-    /// true - if mask does not match binary representation,
-    /// false - otherwise.
-    /// </returns>
-    bool Mask::operator!=(uint64_t bm) const
-    {
-        return !(*this == bm);
     }
 
     // Generate masks.
