@@ -2017,10 +2017,11 @@ namespace fv
         vcase_guessp_1(dl, ul, pl, cl, dr, ur, pr, cr, pold);
 
         // Start with full mask.
-	    __mmask16 m = 0xffff;
+        uint64_t bm = 0xffff;
 
-	    for (; (iter <= nriter) && (m != 0x0); iter++)
+	    for (; iter <= nriter; iter++)
         {
+            __mmask16 m = bm;
             __m512 fld, frd;
 
             vcase_prefun_1(fl, fld, pold, dl, pl, cl, m);
@@ -2040,16 +2041,22 @@ namespace fv
                         _mm512_sub_ps(p, pold),
                         _mm512_add_ps(p, pold)));
             __mmask16 cond_break = _mm512_mask_cmple_ps_mask(m, change, tolpre2);
-            m = _mm512_kand(m, _mm512_knot(cond_break));
-            __mmask16 cond_neg = _mm512_mask_cmplt_ps_mask(m, p, zero);
+            __mmask16 m1 = _mm512_kand(m, _mm512_knot(cond_break));
+            __mmask16 cond_neg = _mm512_mask_cmplt_ps_mask(m1, p, zero);
             p = _mm512_mask_mov_ps(p, cond_neg, tolpre);
 
             // This check is needed for eliminating hanging register in arithmetic
             // operation on the last iteration of the loop.
-            if (m != 0x0)
+            if (m1 != 0x0)
             {
-                pold = _mm512_mask_mov_ps(pold, m, p);
+                pold = _mm512_mask_mov_ps(pold, m1, p);
             }
+            else
+            {
+                break;
+            }
+
+            bm = m1;
         }
 
         // Check for divergence.
