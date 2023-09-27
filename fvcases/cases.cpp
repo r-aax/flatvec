@@ -1635,15 +1635,17 @@ namespace fv
         __mmask16 cond_um = _mm512_cmplt_ps_mask(um, zero);
         __m512 d0 = _mm512_mask_blend_ps(cond_um, dl, dr);
         __m512 u0 = _mm512_mask_blend_ps(cond_um, ul, ur);
+
         v = _mm512_mask_blend_ps(cond_um, vl, vr);
         w = _mm512_mask_blend_ps(cond_um, wl, wr);
-        p = _mm512_mask_blend_ps(cond_um, pl, pr);
+
+        __m512 p0 = _mm512_mask_blend_ps(cond_um, pl, pr);
         __m512 c = _mm512_mask_blend_ps(cond_um, cl, cr);
         __m512 u1 = _mm512_mask_sub_ps(u0, cond_um, zero, u0);
         __m512 ums = _mm512_mask_sub_ps(um, cond_um, zero, um);
 
         // Calculate main values.
-        __m512 pms = _mm512_div_ps(pm, p);
+        __m512 pms = _mm512_div_ps(pm, p0);
         __m512 sh = _mm512_sub_ps(u1, c);
         __m512 st = _mm512_fnmadd_ps(_mm512_pow_ps(pms, riemann::g1), c, ums);
         __m512 s =
@@ -1653,7 +1655,7 @@ namespace fv
                 u1);
 
         // Conditions.
-        __mmask16 cond_pm = _mm512_cmple_ps_mask(pm, p);
+        __mmask16 cond_pm = _mm512_cmple_ps_mask(pm, p0);
         __mmask16 cond_sh = _mm512_mask_cmplt_ps_mask(cond_pm, sh, zero);
         __mmask16 cond_st = _mm512_mask_cmplt_ps_mask(cond_sh, st, zero);
         __mmask16 cond_s = _mm512_mask_cmplt_ps_mask(_mm512_knot(cond_pm), s, zero);
@@ -1674,13 +1676,14 @@ namespace fv
                         _mm512_add_ps(pms, riemann::g6),
                         _mm512_fmadd_ps(pms, riemann::g6, one))));
         __m512 u2 = _mm512_mask_mov_ps(u1, _mm512_kor(cond_st, cond_s), ums);
-        p = _mm512_mask_mov_ps(p, _mm512_kor(cond_st, cond_s), pm);
+        __m512 p1 = _mm512_mask_mov_ps(p0, _mm512_kor(cond_st, cond_s), pm);
 
         // Low prob - ignnore it.
 
         __mmask16 cond_sh_st = _mm512_kand(cond_sh, _mm512_knot(cond_st));
         __m512 d3;
         __m512 u3;
+        __m512 p2;
 
 	    if (cond_sh_st != 0x0)
         {
@@ -1695,16 +1698,17 @@ namespace fv
                 _mm512_mask_mov_ps(
                     d2, cond_sh_st,
                     _mm512_mul_ps(d2, _mm512_pow_ps(uc, riemann::g4)));
-            p =
+            p2 =
                 _mm512_mask_mov_ps(
-                    p, cond_sh_st,
-                    _mm512_mul_ps(p, _mm512_pow_ps(uc, riemann::g3)));
+                    p1, cond_sh_st,
+                    _mm512_mul_ps(p1, _mm512_pow_ps(uc, riemann::g3)));
         }
 
         // Final store.
         d = _mm512_mask_blend_ps(cond_sh_st, d2, d3);
         __m512 u4 = _mm512_mask_blend_ps(cond_sh_st, u2, u3);
         u = _mm512_mask_sub_ps(u4, cond_um, zero, u4);
+        p = _mm512_mask_blend_ps(cond_sh_st, p1, p2);
     }
 
     /// <summary>
