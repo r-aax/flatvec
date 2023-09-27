@@ -167,6 +167,8 @@ namespace fv
     /// <returns>Mask in uint64_t view. </returns>
     Mask::operator uint64_t() const
     {
+        CG.reglink("use mask", get_id());
+
         return binary_mask();
     }
 

@@ -2019,7 +2019,7 @@ namespace fv
         // Start with full mask.
         uint64_t bm = 0xffff;
 
-	    for (; iter <= nriter; iter++)
+	    for (;;)
         {
             __mmask16 m = bm;
             __m512 fld, frd;
@@ -2052,6 +2052,13 @@ namespace fv
                 pold = _mm512_mask_mov_ps(pold, m1, p);
             }
             else
+            {
+                break;
+            }
+
+            ++iter;
+
+            if (iter > nriter)
             {
                 break;
             }

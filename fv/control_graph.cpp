@@ -398,7 +398,7 @@ namespace fv
 		{
 			NetNode& n = *it;
 			std::string act = n.acts.back();
-			bool is_correct_last_use = (act == "store") || (act == "control") || (act.find("rewrite") == 0);
+			bool is_correct_last_use = (act == "store") || (act == "use mask") || (act.find("rewrite") == 0);
 
 			if (n.succs.empty() && !is_correct_last_use)
 			{
@@ -446,11 +446,11 @@ namespace fv
 				}
 				else
 				{
-					// Wrong rewrite template.
-					std::cout << "! Warning! : wrong rewrite template for " << n.get_id() << " detected. "
-							  << "Last action : " << n.acts.back() << std::endl;
+					// More complex template can take place.
+					// std::cout << "! Warning! : wrong rewrite template for " << n.get_id() << " detected. "
+					//           << "Last action : " << n.acts.back() << std::endl;
 
-					is_finished = true;
+					//is_finished = true;
 				}
 			}
 		}

@@ -78,6 +78,7 @@ namespace fv
 
         z.data = nullptr;
 
+        CG.reglink("move z", id);
         GS.move_vector();
     }
 
