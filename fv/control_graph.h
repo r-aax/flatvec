@@ -131,6 +131,15 @@ namespace fv
 		// Construct graph.
 		void construct_graph();
 
+		// Unmark nodes.
+		void unmark_nodes();
+
+		// Mark node.
+		bool mark_node(NetNode& n);
+
+		// Count vector opers.
+		int count_vector_opers(NetNode& n);
+
 		// Analyze graph.
 		void analyze();
 	};

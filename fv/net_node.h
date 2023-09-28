@@ -18,6 +18,11 @@ namespace fv
 		/// </summary>
 		int id;
 
+		/// <summary>
+		/// Mask flag.
+		/// </summary>
+		bool marked;
+
 	public:
 
 		/// <summary>
@@ -47,6 +52,39 @@ namespace fv
 		{
 			return id;
 		}
+
+		bool is_root() const;
+
+		/// <summary>
+		/// Set mark flag.
+		/// </summary>
+		inline void mark()
+		{
+			marked = true;
+		}
+
+		/// <summary>
+		/// Clear mark flag.
+		/// </summary>
+		inline void unmark()
+		{
+			marked = false;
+		}
+
+		/// <summary>
+		/// Check mark flag.
+		/// </summary>
+		/// <returns>
+		/// true - if node is marked,
+		/// false - if node is not marked.
+		/// </returns>
+		inline bool is_marked() const
+		{
+			return marked;
+		}
+
+		// Vector opers count.
+		int vector_opers() const;
 	};
 }
 

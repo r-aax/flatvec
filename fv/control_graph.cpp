@@ -379,6 +379,75 @@ namespace fv
 	}
 
 	/// <summary>
+	/// Unmark all nodes.
+	/// </summary>
+	void ControlGraph::unmark_nodes()
+	{
+		for (NetNode& n : nodes)
+		{
+			n.unmark();
+		}
+	}
+
+	/// <summary>
+	/// Mark node with recursive mark of all successors.
+	/// </summary>
+	/// <param name="n">Node.</param>
+	/// <returns>
+	/// true - process has completed successfully, no conflicts detected,
+	/// false - process was interrupted with conflict detection.
+	/// </returns>
+	bool ControlGraph::mark_node(NetNode& n)
+	{
+		if (n.is_marked())
+		{
+			return false;
+		}
+
+		for (int pi : n.preds)
+		{
+			if (pi != -1)
+			{
+				if (!mark_node(nodes[pi]))
+				{
+					return false;
+				}
+			}
+		}
+
+		n.mark();
+
+		return true;
+	}
+
+	/// <summary>
+	/// Count vector opers.
+	/// </summary>
+	/// <param name="n">Node.</param>
+	/// <returns>Count of vector opers.</returns>
+	int ControlGraph::count_vector_opers(NetNode& n)
+	{
+		int c = 0;
+
+		if (!n.is_marked())
+		{
+			c += n.vector_opers();
+
+			n.mark();
+
+			for (int pi : n.preds)
+			{
+				if (pi != -1)
+				{
+					c += count_vector_opers(nodes[pi]);
+				}
+			}
+		}
+
+		return c;
+	}
+
+	/// <summary>
 	/// Analyze control graph.
 	/// </summary>
 	void ControlGraph::analyze()
@@ -448,7 +517,7 @@ namespace fv
 				else
 				{
 					// More complex template can take place.
-					// std::cout << "! Warning! : wrong rewrite template for " << n.get_id() << " detected. "
+					// std::cout << "! Warning ! : wrong rewrite template for " << n.get_id() << " detected. "
 					//           << "Last action : " << n.acts.back() << std::endl;
 
 					//is_finished = true;
@@ -461,6 +530,54 @@ namespace fv
 			return;
 		}
 
-		// Continue analysis.
+		//
+		// Analyze all roots.
+		//
+		/*
+		for (NetNode& n : nodes)
+		{
+			if (n.is_root())
+			{
+				unmark_nodes();
+
+				if (mark_node(n))
+				{
+					; // ok
+				}
+				else
+				{
+					// Loop is detected.
+
+					std::cout << "! Warning ! : loop for final node " << n.get_id() << " is detected." << std::endl;
+
+					is_finished = true;
+				}
+			}
+
+			if (is_finished)
+			{
+				return;
+			}
+		}
+		*/
+
+		//
+		// Count opers with trees.
+		//
+
+		int vector_opers_count = 0;
+
+		unmark_nodes();
+
+		for (NetNode& n : nodes)
+		{
+
+			if (n.is_root())
+			{
+				vector_opers_count += count_vector_opers(n);
+			}
+		}
+
+		std::cout << "OPERS COUNT : " << vector_opers_count << std::endl;
 	}
 }

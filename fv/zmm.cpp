@@ -78,7 +78,10 @@ namespace fv
 
         z.data = nullptr;
 
-        CG.reglink("move z", id);
+        // We cannon register id with "move z"
+        // because it is source and destination at a time.
+        // CG.reglink("move z", id);
+
         GS.move_vector();
     }
 
