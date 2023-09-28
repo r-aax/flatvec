@@ -13,6 +13,12 @@ namespace fv
                         float random_lo = 0.0f,
                         float random_hi = 1.0f);
 
+    // warn_multi_rewrite
+    bool case_warn_multi_rewrite(int len,
+                                 int repeats,
+                                 float random_lo = 0.0f,
+                                 float random_hi = 1.0f);
+
     // Trivial cases.
 
     // arith_f32

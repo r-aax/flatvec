@@ -434,7 +434,8 @@ namespace fv
 			if (cnt > 1)
 			{
 				// Multiple rewrite.
-				std::cout << "! Warning ! : mupliple rewrite for " << n.get_id() << " detected." << std::endl;
+				std::cout << "! Warning ! : mupliple rewrite for " << n.get_id() << " detected. "
+						  << "Last action : " << n.acts.back() << std::endl;
 
 				is_finished = true;
 			}
