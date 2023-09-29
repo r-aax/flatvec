@@ -71,7 +71,8 @@ namespace fv
 	{
 		vector_opers_count++;
 		scalar_opers_count += scalar_opers;
-		vector_opers_masks_total_density += (static_cast<double>(scalar_opers) / static_cast<double>(width));
+		vector_opers_masks_total_density += (static_cast<double>(scalar_opers)
+											 / static_cast<double>(width));
 	}
 
 	/// <summary>
@@ -88,7 +89,8 @@ namespace fv
 	/// <returns>Mean masks density</returns>
 	double GlobalStat::mean_masks_density() const
 	{
-		return vector_opers_masks_total_density / static_cast<double>(vector_opers_count);
+		return vector_opers_masks_total_density
+			   / static_cast<double>(vector_opers_count);
 	}
 
 	/// <summary>
@@ -139,24 +141,31 @@ namespace fv
 		std::cout << "\tvectors created          : " << vectors_created << std::endl;
 		std::cout << "\tvectors copied           : " << vectors_copied << std::endl;
 		std::cout << "\tvectors moved            : " << vectors_moved << std::endl;
-		std::cout << "\tvector opers             : " << vector_opers_count << std::endl;
-		std::cout << "\tscalar opers             : " << scalar_opers_count << std::endl;
-		std::cout << "\tmask opers               : " << mask_opers_count << std::endl;
+		std::cout << "\tvector opers             : "
+			      << vector_opers_count << std::endl;
+		std::cout << "\tscalar opers             : "
+			      << scalar_opers_count << std::endl;
+		std::cout << "\tmask opers               : "
+			      << mask_opers_count << std::endl;
 		std::cout << "\ttheoretical acceleration : " << th_a << std::endl;
 		
 		if (blend_reduce_coefficient > 0.0)
 		{
-			std::cout << "\t      (with blend corr.) : " << (th_a * blend_reduce_coefficient) << std::endl;
+			std::cout << "\t      (with blend corr.) : "
+				      << (th_a * blend_reduce_coefficient) << std::endl;
 		}
 		else
 		{
-			std::cout << "\t      (with blend corr.) : " << "not available" << std::endl;
+			std::cout << "\t      (with blend corr.) : "
+				      << "not available" << std::endl;
 		}
 
-		std::cout << "\tmean masks density       : " << mean_masks_density() << std::endl;
+		std::cout << "\tmean masks density       : "
+			      << mean_masks_density() << std::endl;
 
 #ifdef LINUX_ICC_BUILD
-		std::cout << "\treal time acceleration   : " << std::fixed << real_time_acceleration() << std::endl;
+		std::cout << "\treal time acceleration   : "
+			      << std::fixed << real_time_acceleration() << std::endl;
 #endif
 
 		std::cout << "--------------------------" << std::endl;

@@ -64,7 +64,8 @@ namespace fv
         }
 
         GS.append_vector_oper(w, k.popcnt_tail(w));
-        CG.reglink("arith1", src.get_id(), k.get_id(), a.get_id(), dst.get_id());
+        CG.reglink("arith1", src.get_id(), k.get_id(),
+                   a.get_id(), dst.get_id());
 
         return dst;
     }
@@ -145,7 +146,8 @@ namespace fv
         }
 
         GS.append_vector_oper(w, k.popcnt_tail(w));
-        CG.reglink("arith2", src.get_id(), k.get_id(), a.get_id(), b.get_id(), dst.get_id());
+        CG.reglink("arith2", src.get_id(), k.get_id(),
+                   a.get_id(), b.get_id(), dst.get_id());
 
         return dst;
     }

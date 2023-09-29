@@ -319,7 +319,11 @@ namespace fv
     ZMM _mm512_min_ps(ZMM& a,
                       ZMM& b)
     {
-        return arith2<float>(a, b, [] (float x, float y) { return std::min(x, y); });
+        return arith2<float>(a, b,
+                             [] (float x, float y)
+                             {
+                                 return std::min(x, y);
+                             });
     }
 
     /// <summary>
@@ -335,7 +339,11 @@ namespace fv
                            ZMM& a,
                            ZMM& b)
     {
-        return mask_arith2<float>(src, k, a, b, [] (float x, float y) { return std::min(x, y); });
+        return mask_arith2<float>(src, k, a, b,
+                                  [] (float x, float y)
+                                  {
+                                      return std::min(x, y);
+                                  });
     }
 
     /// <summary>
@@ -349,7 +357,11 @@ namespace fv
                             ZMM& a,
                             ZMM& b)
     {
-        return maskz_arith2<float>(k, a, b, [] (float x, float y) { return std::min(x, y); });
+        return maskz_arith2<float>(k, a, b,
+                                   [] (float x, float y)
+                                   {
+                                       return std::min(x, y);
+                                   });
     }
 
     //
@@ -363,7 +375,11 @@ namespace fv
     ZMM _mm512_max_ps(ZMM& a,
                       ZMM& b)
     {
-        return arith2<float>(a, b, [] (float x, float y) { return std::max(x, y); });
+        return arith2<float>(a, b,
+                             [] (float x, float y)
+                             {
+                                 return std::max(x, y);
+                             });
     }
 
     /// <summary>
@@ -379,7 +395,11 @@ namespace fv
                            ZMM& a,
                            ZMM& b)
     {
-        return mask_arith2<float>(src, k, a, b, [] (float x, float y) { return std::max(x, y); });
+        return mask_arith2<float>(src, k, a, b,
+                                  [] (float x, float y)
+                                  {
+                                      return std::max(x, y);
+                                  });
     }
 
     /// <summary>
@@ -393,7 +413,11 @@ namespace fv
                             ZMM& a,
                             ZMM& b)
     {
-        return maskz_arith2<float>(k, a, b, [] (float x, float y) { return std::max(x, y); });
+        return maskz_arith2<float>(k, a, b,
+                                   [] (float x, float y)
+                                   {
+                                       return std::max(x, y);
+                                   });
     }
 
     //
@@ -407,7 +431,11 @@ namespace fv
     ZMM _mm512_pow_ps(ZMM& a,
                       ZMM& b)
     {
-        return arith2<float>(a, b, [] (float x, float y) { return pow(x, y); });
+        return arith2<float>(a, b,
+                             [] (float x, float y)
+                             {
+                                 return pow(x, y);
+                             });
     }
 
     /// <summary>
@@ -423,7 +451,11 @@ namespace fv
                            ZMM& a,
                            ZMM& b)
     {
-        return mask_arith2<float>(src, k, a, b, [] (float x, float y) { return pow(x, y); });
+        return mask_arith2<float>(src, k, a, b,
+                                  [] (float x, float y)
+                                  {
+                                      return pow(x, y);
+                                  });
     }
 
     /// <summary>
@@ -437,7 +469,11 @@ namespace fv
                             ZMM& a,
                             ZMM& b)
     {
-        return maskz_arith2<float>(k, a, b, [] (float x, float y) { return pow(x, y); });
+        return maskz_arith2<float>(k, a, b,
+                                   [] (float x, float y)
+                                   {
+                                       return pow(x, y);
+                                   });
     }
 
     // Arithmetic operations with 3 arguments.
@@ -453,7 +489,11 @@ namespace fv
                         ZMM& b,
                         ZMM& c)
     {
-        return arith3<float>(a, b, c, [] (float x, float y, float z) { return x * y + z; });
+        return arith3<float>(a, b, c, 
+                             [] (float x, float y, float z)
+                             {
+                                 return x * y + z;
+                             });
     }
 
     /// <summary>
@@ -467,7 +507,11 @@ namespace fv
                          ZMM& b,
                          ZMM& c)
     {
-        return arith3<float>(a, b, c, [] (float x, float y, float z) { return -(x * y) + z; });
+        return arith3<float>(a, b, c,
+                             [] (float x, float y, float z)
+                             {
+                                 return -(x * y) + z;
+                             });
     }
 
     /// <summary>
@@ -481,7 +525,11 @@ namespace fv
                         ZMM& b,
                         ZMM& c)
     {
-        return arith3<float>(a, b, c, [] (float x, float y, float z) { return x * y - z; });
+        return arith3<float>(a, b, c,
+                             [] (float x, float y, float z)
+                             {
+                                 return x * y - z;
+                             });
     }
 
     /// <summary>
@@ -495,7 +543,11 @@ namespace fv
                       ZMM& b,
                       ZMM& c)
     {
-        return arith3<float>(a, b, c, [] (float x, float y, float z) { return -(x * y) - z; });
+        return arith3<float>(a, b, c,
+                             [] (float x, float y, float z)
+                             {
+                                 return -(x * y) - z;
+                             });
     }
 
     // Compare operations.
@@ -523,7 +575,11 @@ namespace fv
                                    ZMM& a,
                                    ZMM& b)
     {
-        return mask_compare<float>(k, a, b, [] (float x, float y) { return x == y; });
+        return mask_compare<float>(k, a, b,
+                                   [] (float x, float y)
+                                   {
+                                       return x == y;
+                                   });
     }
 
     //
@@ -551,7 +607,11 @@ namespace fv
                                    ZMM& a,
                                    ZMM& b)
     {
-        return mask_compare<float>(k, a, b, [] (float x, float y) { return x <= y; });
+        return mask_compare<float>(k, a, b,
+                                   [] (float x, float y)
+                                   {
+                                       return x <= y;
+                                   });
     }
 
     //
@@ -579,7 +639,11 @@ namespace fv
                                    ZMM& a,
                                    ZMM& b)
     {
-        return mask_compare<float>(k, a, b, [] (float x, float y) { return x < y; });
+        return mask_compare<float>(k, a, b,
+                                   [] (float x, float y)
+                                   {
+                                       return x < y;
+                                   });
     }
 
     //
@@ -607,7 +671,11 @@ namespace fv
                                     ZMM& a,
                                     ZMM& b)
     {
-        return mask_compare<float>(k, a, b, [] (float x, float y) { return x != y; });
+        return mask_compare<float>(k, a, b,
+                                   [] (float x, float y)
+                                   {
+                                       return x != y;
+                                   });
     }
 
     //
@@ -621,7 +689,11 @@ namespace fv
     Mask _mm512_cmpnle_ps_mask(ZMM& a,
                                ZMM& b)
     {
-        return compare<float>(a, b, [] (float x, float y) { return !(x <= y); });
+        return compare<float>(a, b,
+                              [] (float x, float y)
+                              {
+                                  return !(x <= y);
+                              });
     }
 
     /// <summary>
@@ -635,7 +707,11 @@ namespace fv
                                     ZMM& a,
                                     ZMM& b)
     {
-        return mask_compare<float>(k, a, b, [] (float x, float y) { return !(x <= y); });
+        return mask_compare<float>(k, a, b,
+                                   [] (float x, float y)
+                                   {
+                                       return !(x <= y);
+                                   });
     }
 
     //
@@ -649,7 +725,11 @@ namespace fv
     Mask _mm512_cmpnlt_ps_mask(ZMM& a,
                                ZMM& b)
     {
-        return compare<float>(a, b, [] (float x, float y) { return !(x < y); });
+        return compare<float>(a, b,
+                              [] (float x, float y)
+                              {
+                                  return !(x < y);
+                              });
     }
 
     /// <summary>
@@ -663,7 +743,11 @@ namespace fv
                                     ZMM& a,
                                     ZMM& b)
     {
-        return mask_compare<float>(k, a, b, [] (float x, float y) { return !(x < y); });
+        return mask_compare<float>(k, a, b,
+                                   [] (float x, float y)
+                                   {
+                                       return !(x < y);
+                                   });
     }
 
     //
@@ -677,7 +761,11 @@ namespace fv
     Mask _mm512_cmpord_ps_mask(ZMM& a,
                                ZMM& b)
     {
-        return compare<float>(a, b, [] (float x, float y) { return !std::isnan(x) && !std::isnan(y); });
+        return compare<float>(a, b,
+                              [] (float x, float y)
+                              {
+                                  return !std::isnan(x) && !std::isnan(y);
+                              });
     }
 
     //
@@ -691,7 +779,11 @@ namespace fv
     Mask _mm512_cmpunord_ps_mask(ZMM& a,
                                  ZMM& b)
     {
-        return compare<float>(a, b, [] (float x, float y) { return std::isnan(x) || std::isnan(y); });
+        return compare<float>(a, b,
+                              [] (float x, float y)
+                              {
+                                  return std::isnan(x) || std::isnan(y);
+                              });
     }
 
     // Blend operations.
@@ -712,7 +804,8 @@ namespace fv
 
         for (int i = 0; i < w; i++)
         {
-            dst.set<float>(i, k.is_true(i) ? b.get<float>(i) : a.get<float>(i));
+            dst.set<float>(i,
+                           k.is_true(i) ? b.get<float>(i) : a.get<float>(i));
         }
 
         GS.append_vector_oper(w, w);

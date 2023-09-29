@@ -765,14 +765,16 @@ namespace fv
 
         for (int i = 0; i < repeats; i++)
         {
-            scase_square_equation(n, a.get_data(), b.get_data(), c.get_data(), sh.get_data());
+            scase_square_equation(n, a.get_data(), b.get_data(), c.get_data(),
+                                  sh.get_data());
         }
 
         GS.fix_time_middle();
 
         for (int i = 0; i < repeats; i++)
         {
-            vcase_square_equation(n, a.get_data(), b.get_data(), c.get_data(), vh.get_data());
+            vcase_square_equation(n, a.get_data(), b.get_data(), c.get_data(),
+                                  vh.get_data());
         }
 
         GS.fix_time_after();
@@ -937,10 +939,12 @@ namespace fv
             {
                 // Select Two-Rarefaction Riemann solver.
                 pq = pow(pl / pr, riemann::sg1);
-                um = (pq * ul / cl + ur / cr + riemann::sg4 * (pq - 1.0f)) / (pq / cl + 1.0f / cr);
+                um = (pq * ul / cl + ur / cr + riemann::sg4 * (pq - 1.0f))
+                    / (pq / cl + 1.0f / cr);
                 ptl = 1.0f + riemann::sg7 * (ul - um) / cl;
                 ptr = 1.0f + riemann::sg7 * (um - ur) / cr;
-                pm = 0.5f * (pow(pl * ptl, riemann::sg3) + pow(pr * ptr, riemann::sg3));
+                pm = 0.5f * (pow(pl * ptl, riemann::sg3)
+                             + pow(pr * ptr, riemann::sg3));
             }
             else
             {
@@ -978,7 +982,8 @@ namespace fv
     {
         for (int i = 0; i < n; i++)
         {
-            scase_guessp_1(dl[i], ul[i], pl[i], cl[i], dr[i], ur[i], pr[i], cr[i], pm[i]);
+            scase_guessp_1(dl[i], ul[i], pl[i], cl[i],
+                           dr[i], ur[i], pr[i], cr[i], pm[i]);
         }
     }
 
@@ -1084,8 +1089,12 @@ namespace fv
                 _mm512_mask_mul_ps(
                     pm0, cond_ppv, half,
                     _mm512_add_ps(
-                        _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pl, ptl), riemann::g3),
-                        _mm512_mask_pow_ps(zero, cond_ppv, _mm512_mul_ps(pr, ptr), riemann::g3)));
+                        _mm512_mask_pow_ps(
+                            zero, cond_ppv,
+                            _mm512_mul_ps(pl, ptl), riemann::g3),
+                        _mm512_mask_pow_ps(
+                            zero, cond_ppv,
+                            _mm512_mul_ps(pr, ptr), riemann::g3)));
         }
 
         __m512 pm2 = _mm512_mask_blend_ps(cond_ppv, pm0, pm1);
@@ -1218,8 +1227,10 @@ namespace fv
         for (int i = 0; i < repeats; i++)
         {
             scase_guessp(n,
-                         dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
-                         dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
+                         dl.get_data(), ul.get_data(), pl.get_data(),
+                         cl.get_data(),
+                         dr.get_data(), ur.get_data(), pr.get_data(),
+                         cr.get_data(),
                          spm.get_data());
         }
 
@@ -1228,8 +1239,10 @@ namespace fv
         for (int i = 0; i < repeats; i++)
         {
             vcase_guessp(n,
-                         dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
-                         dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
+                         dl.get_data(), ul.get_data(), pl.get_data(),
+                         cl.get_data(),
+                         dr.get_data(), ur.get_data(), pr.get_data(),
+                         cr.get_data(),
                          vpm.get_data());
         }
 
@@ -1342,7 +1355,8 @@ namespace fv
                     f, cond,
                     _mm512_mul_ps(riemann::g4, ck),
                     _mm512_sub_ps(
-                        _mm512_mask_pow_ps(zero, cond, pratio, riemann::g1), one));
+                        _mm512_mask_pow_ps(
+                            zero, cond, pratio, riemann::g1), one));
             fd0 =
                 _mm512_mask_div_ps(
                     fd, cond,
@@ -1478,7 +1492,8 @@ namespace fv
 
         if (!res)
         {
-            std::cout << "max_diff : " << vf.max_diff(sf) << ", " << vfd.max_diff(sfd) << std::endl;
+            std::cout << "max_diff : " << vf.max_diff(sf)
+                      << ", " << vfd.max_diff(sfd) << std::endl;
         }
 
         return res;
@@ -1587,7 +1602,8 @@ namespace fv
                 else
                 {
                     // Sampled point is star left state.
-                    d = dl * (pml + riemann::sg6) / (pml * riemann::sg6 + 1.0f);
+                    d = dl * (pml + riemann::sg6)
+                        / (pml * riemann::sg6 + 1.0f);
                     u = um;
                     p = pm;
                 }
@@ -1615,7 +1631,8 @@ namespace fv
                 else
                 {
                     // Sampled point is star right state.
-                    d = dr * (pmr + riemann::sg6) / (pmr * riemann::sg6 + 1.0f);
+                    d = dr * (pmr + riemann::sg6)
+                        / (pmr * riemann::sg6 + 1.0f);
                     u = um;
                     p = pm;
                 }
@@ -1778,7 +1795,8 @@ namespace fv
         __mmask16 cond_pm = _mm512_cmple_ps_mask(pm, p0);
         __mmask16 cond_sh = _mm512_mask_cmplt_ps_mask(cond_pm, sh, zero);
         __mmask16 cond_st = _mm512_mask_cmplt_ps_mask(cond_sh, st, zero);
-        __mmask16 cond_s = _mm512_mask_cmplt_ps_mask(_mm512_knot(cond_pm), s, zero);
+        __mmask16 cond_s =
+            _mm512_mask_cmplt_ps_mask(_mm512_knot(cond_pm), s, zero);
 
         // Store.
         __m512 d1 =
@@ -1972,10 +1990,13 @@ namespace fv
         for (int i = 0; i < repeats; i++)
         {
             scase_sample(n,
-                         dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(), cl.get_data(),
-                         dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(), cr.get_data(),
+                         dl.get_data(), ul.get_data(), vl.get_data(),
+                         wl.get_data(), pl.get_data(), cl.get_data(),
+                         dr.get_data(), ur.get_data(), vr.get_data(),
+                         wr.get_data(), pr.get_data(), cr.get_data(),
                          pm.get_data(), um.get_data(),
-                         sd.get_data(), su.get_data(), sv.get_data(), sw.get_data(), sp.get_data());
+                         sd.get_data(), su.get_data(), sv.get_data(),
+                         sw.get_data(), sp.get_data());
         }
 
         GS.fix_time_middle();
@@ -1983,21 +2004,26 @@ namespace fv
         for (int i = 0; i < repeats; i++)
         {
             vcase_sample(n,
-                         dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(), cl.get_data(),
-                         dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(), cr.get_data(),
+                         dl.get_data(), ul.get_data(), vl.get_data(),
+                         wl.get_data(), pl.get_data(), cl.get_data(),
+                         dr.get_data(), ur.get_data(), vr.get_data(),
+                         wr.get_data(), pr.get_data(), cr.get_data(),
                          pm.get_data(), um.get_data(),
-                         vd.get_data(), vu.get_data(), vv.get_data(), vw.get_data(), vp.get_data());
+                         vd.get_data(), vu.get_data(), vv.get_data(),
+                         vw.get_data(), vp.get_data());
         }
 
         GS.fix_time_after();
 
-        bool res = (vd.max_diff(sd) + vu.max_diff(su) + vv.max_diff(sv) + vw.max_diff(sw) + vp.max_diff(sp) < eps);
+        bool res = (vd.max_diff(sd) + vu.max_diff(su) + vv.max_diff(sv)
+                    + vw.max_diff(sw) + vp.max_diff(sp) < eps);
 
         if (!res)
         {
             std::cout << "max_diff : "
-                      << vd.max_diff(sd) << ", " << vu.max_diff(su) << ", " << vv.max_diff(sv) << ", "
-                      << vw.max_diff(sw) << ", " << vp.max_diff(sp) << std::endl;
+                      << vd.max_diff(sd) << ", " << vu.max_diff(su) << ", "
+                      << vv.max_diff(sv) << ", " << vw.max_diff(sw) << ", "
+                      << vp.max_diff(sp) << std::endl;
         }
 
         return res;
@@ -2098,7 +2124,8 @@ namespace fv
     {
         for (int i = 0; i < n; i++)
         {
-            scase_starpu_1(dl[i], ul[i], pl[i], cl[i], dr[i], ur[i], pr[i], cr[i], p[i], u[i]);
+            scase_starpu_1(dl[i], ul[i], pl[i], cl[i],
+                           dr[i], ur[i], pr[i], cr[i], p[i], u[i]);
         }
     }
 
@@ -2160,13 +2187,14 @@ namespace fv
                         zero, m,
                         _mm512_sub_ps(p, pold),
                         _mm512_add_ps(p, pold)));
-            __mmask16 cond_break = _mm512_mask_cmple_ps_mask(m, change, tolpre2);
+            __mmask16 cond_break =
+                _mm512_mask_cmple_ps_mask(m, change, tolpre2);
             __mmask16 m1 = _mm512_kand(m, _mm512_knot(cond_break));
             __mmask16 cond_neg = _mm512_mask_cmplt_ps_mask(m1, p, zero);
             p = _mm512_mask_mov_ps(p, cond_neg, tolpre);
 
-            // This check is needed for eliminating hanging register in arithmetic
-            // operation on the last iteration of the loop.
+            // This check is needed for eliminating hanging register
+            // in arithmetic operation on the last iteration of the loop.
             if (m1 != 0x0)
             {
                 pold = _mm512_mask_mov_ps(pold, m1, p);
@@ -2297,8 +2325,10 @@ namespace fv
         for (int i = 0; i < repeats; i++)
         {
             scase_starpu(n,
-                         dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
-                         dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
+                         dl.get_data(), ul.get_data(), pl.get_data(),
+                         cl.get_data(),
+                         dr.get_data(), ur.get_data(), pr.get_data(),
+                         cr.get_data(),
                          sp.get_data(), su.get_data());
         }
 
@@ -2307,8 +2337,10 @@ namespace fv
         for (int i = 0; i < repeats; i++)
         {
             vcase_starpu(n,
-                         dl.get_data(), ul.get_data(), pl.get_data(), cl.get_data(),
-                         dr.get_data(), ur.get_data(), pr.get_data(), cr.get_data(),
+                         dl.get_data(), ul.get_data(), pl.get_data(),
+                         cl.get_data(),
+                         dr.get_data(), ur.get_data(), pr.get_data(),
+                         cr.get_data(),
                          vp.get_data(), vu.get_data());
         }
 
@@ -2318,7 +2350,8 @@ namespace fv
 
         if (!res)
         {
-            std::cout << "max_diff : " << vp.max_diff(sp) << ", " << vu.max_diff(su) << std::endl;
+            std::cout << "max_diff : " << vp.max_diff(sp) << ", "
+                      << vu.max_diff(su) << std::endl;
         }
 
         return res;
@@ -2465,10 +2498,19 @@ namespace fv
         __m512 cl, cr, pm, um;
         __mmask16 vacuum_mask;
 
-        cl = _mm512_sqrt_ps(_mm512_div_ps(_mm512_mul_ps(riemann::g, pl), dl));
-        cr = _mm512_sqrt_ps(_mm512_div_ps(_mm512_mul_ps(riemann::g, pr), dr));
-        vacuum_mask = _mm512_cmple_ps_mask(_mm512_mul_ps(riemann::g4, _mm512_add_ps(cl, cr)),
-                                           _mm512_sub_ps(ur, ul));
+        cl =
+            _mm512_sqrt_ps(
+                _mm512_div_ps(
+                    _mm512_mul_ps(riemann::g, pl), dl));
+        cr =
+            _mm512_sqrt_ps(
+                _mm512_div_ps(
+                    _mm512_mul_ps(riemann::g, pr), dr));
+        vacuum_mask =
+            _mm512_cmple_ps_mask(
+                _mm512_mul_ps(
+                    riemann::g4, _mm512_add_ps(cl, cr)),
+                _mm512_sub_ps(ur, ul));
 
         // Vacuum check.
 	    if (vacuum_mask != 0x0)
@@ -2594,9 +2636,12 @@ namespace fv
         for (int i = 0; i < repeats; i++)
         {
             scase_riemann(n,
-                          dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(),
-                          dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(),
-                          sd.get_data(), su.get_data(), sv.get_data(), sw.get_data(), sp.get_data());
+                          dl.get_data(), ul.get_data(), vl.get_data(),
+                          wl.get_data(), pl.get_data(),
+                          dr.get_data(), ur.get_data(), vr.get_data(),
+                          wr.get_data(), pr.get_data(),
+                          sd.get_data(), su.get_data(), sv.get_data(),
+                          sw.get_data(), sp.get_data());
         }
 
         GS.fix_time_middle();
@@ -2604,21 +2649,25 @@ namespace fv
         for (int i = 0; i < repeats; i++)
         {
             vcase_riemann(n,
-                          dl.get_data(), ul.get_data(), vl.get_data(), wl.get_data(), pl.get_data(),
-                          dr.get_data(), ur.get_data(), vr.get_data(), wr.get_data(), pr.get_data(),
-                          vd.get_data(), vu.get_data(), vv.get_data(), vw.get_data(), vp.get_data());
+                          dl.get_data(), ul.get_data(), vl.get_data(),
+                          wl.get_data(), pl.get_data(),
+                          dr.get_data(), ur.get_data(), vr.get_data(),
+                          wr.get_data(), pr.get_data(),
+                          vd.get_data(), vu.get_data(), vv.get_data(),
+                          vw.get_data(), vp.get_data());
         }
 
         GS.fix_time_after();
 
-        bool res = (vd.max_diff(sd) + vu.max_diff(su) + vv.max_diff(sv) + vw.max_diff(sw) + vp.max_diff(sp) < eps);
+        bool res = (vd.max_diff(sd) + vu.max_diff(su) + vv.max_diff(sv)
+                    + vw.max_diff(sw) + vp.max_diff(sp) < eps);
 
         if (!res)
         {
             std::cout << "max_diff : "
-                      << vd.max_diff(sd) << ", " << vu.max_diff(su) << ", " << vv.max_diff(sv) << ", "
-                      << vw.max_diff(sw) << ", " << vp.max_diff(sp)
-                      << std::endl;
+                      << vd.max_diff(sd) << ", " << vu.max_diff(su) << ", "
+                      << vv.max_diff(sv) << ", " << vw.max_diff(sw) << ", "
+                      << vp.max_diff(sp) << std::endl;
         }
 
         return res;
@@ -2633,7 +2682,9 @@ namespace fv
     /// <param name="fun">Function.</param>
     /// <param name="count">Count.</param>
     /// <param name="repeats">Repeats count.</param>
-    /// <param name="is_print_control_graph">Flag for control graph printing.</param>
+    /// <param name="is_print_control_graph">
+    /// Flag for control graph printing.
+    /// </param>
     void test_case(std::string name,
                    std::function<bool(int, int)> fun,
                    int count,
@@ -2649,7 +2700,9 @@ namespace fv
         GS.clear();
         CG.switch_on();
 
-        std::cout << name << " : " << (fun(count, repeats) ? "OK" : "ERROR") << std::endl;
+        std::cout << name
+                  << " : " << (fun(count, repeats) ? "OK" : "ERROR")
+                  << std::endl;
 
         CG.analyze();
 

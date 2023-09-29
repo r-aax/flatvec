@@ -67,7 +67,8 @@ namespace fv
                 data[i] = m.data[i];
             }
 
-            CG.reglink("rewrite m copy from " + std::to_string(m.get_id()), m.get_id(), id);
+            CG.reglink("rewrite m copy from " + std::to_string(m.get_id()),
+                       m.get_id(), id);
         }
 
         return *this;
@@ -98,7 +99,8 @@ namespace fv
         if (this != &m)
         {
             // Before this operation we have some mask and now we rewrite it.
-            CG.reglink("rewrite m move from " + std::to_string(m.get_id()), id);
+            CG.reglink("rewrite m move from " + std::to_string(m.get_id()),
+                       id);
 
             // We do not need new number for move assihnment.
             id = m.get_id();

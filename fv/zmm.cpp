@@ -59,7 +59,8 @@ namespace fv
             }
 
             GS.copy_vector();
-            CG.reglink("rewrite z copy from " + std::to_string(z.get_id()), z.get_id(), id);
+            CG.reglink("rewrite z copy from " + std::to_string(z.get_id()),
+                       z.get_id(), id);
         }
 
         return *this;
@@ -96,7 +97,8 @@ namespace fv
         {
             // Before this operation we had some register,
             // and now we rewrite it.
-            CG.reglink("rewrite z move from " + std::to_string(z.get_id()), id);
+            CG.reglink("rewrite z move from " + std::to_string(z.get_id()),
+                       id);
 
             // We do not need new number for move assignment.
             // It is single use of z register.

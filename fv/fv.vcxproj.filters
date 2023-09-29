@@ -33,9 +33,6 @@
     <ClInclude Include="intrinsics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mth.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="mask.h">
       <Filter>Header Files</Filter>
     </ClInclude>

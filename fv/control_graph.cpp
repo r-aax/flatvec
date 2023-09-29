@@ -262,10 +262,13 @@ namespace fv
 		for (int i = 0; i < links.size(); ++i)
 		{
 			int from = links[i][0];
-			std::string from_str = (from == -1) ? "GLOB" : std::to_string(from);
+			std::string from_str = (from == -1)
+				                   ? "GLOB"
+								   : std::to_string(from);
 			int to = links[i][1];
 
-			std::cout << "\t\t[" << std::setw(5) << from_str << " -> " << std::setw(5) << to << "]" << std::endl;
+			std::cout << "\t\t[" << std::setw(5) << from_str
+				      << " -> " << std::setw(5) << to << "]" << std::endl;
 		}
 
 		std::cout << "\tgraph :" << std::endl;
@@ -343,12 +346,14 @@ namespace fv
 			{
 				if (n.succs.size() == 0)
 				{
-					// It may be register that was created and rewritten in the end.
+					// It may be register that was created
+					// and rewritten in the end.
 					// Example:
 					// _mm512 a;            // created
 					// void fun(_mm512 &r); // declaration with reference
 					// fun(a);              // call function by reference
-					// r = <result>;        // write information into register (rewrite it with move semantic).
+					// r = <result>;        // write information into register
+					//                      // (rewrite it with move semantic).
 					if ((n.acts.size() == 2)
 						&& (n.acts[0] == "new")
 						&& (n.acts[1].find("rewrite", 0) == 0))
@@ -495,17 +500,22 @@ namespace fv
 		bool is_finished = false;
 
 		// Warning for hanging nodes.
-		for (std::vector<NetNode>::iterator it = nodes.begin(); it != nodes.end(); ++it)
+		for (std::vector<NetNode>::iterator it = nodes.begin();
+			 it != nodes.end();
+			 ++it)
 		{
 			NetNode& n = *it;
 			std::string act = n.acts.back();
-			bool is_correct_last_use = (act == "store") || (act == "use mask") || (act.find("rewrite") == 0);
+			bool is_correct_last_use = (act == "store")
+				                       || (act == "use mask")
+				                       || (act.find("rewrite") == 0);
 
 			if (n.succs.empty() && !is_correct_last_use)
 			{
 				// Hanging node detected.
-				std::cout << "! Warning ! : hanging node " << n.get_id() << " detected. "
-						  << "Last action : " << n.acts.back() << std::endl;
+				std::cout << "! Warning ! : hanging node " << n.get_id()
+					      << " detected. " << "Last action : "
+					      << n.acts.back() << std::endl;
 
 				is_finished = true;
 			}
@@ -517,12 +527,16 @@ namespace fv
 		}
 
 		// Warning for multiple rewriting.
-		for (std::vector<NetNode>::iterator it = nodes.begin(); it != nodes.end(); ++it)
+		for (std::vector<NetNode>::iterator it = nodes.begin();
+			 it != nodes.end();
+			 ++it)
 		{
 			NetNode& n = *it;
 			int cnt = 0;
 
-			for (std::vector<std::string>::iterator si = n.acts.begin(); si != n.acts.end(); ++si)
+			for (std::vector<std::string>::iterator si = n.acts.begin();
+				 si != n.acts.end();
+				 ++si)
 			{
 				std::string s = *si;
 
@@ -535,7 +549,8 @@ namespace fv
 			if (cnt > 1)
 			{
 				// Multiple rewrite.
-				std::cout << "! Warning ! : mupliple rewrite for " << n.get_id() << " detected. "
+				std::cout << "! Warning ! : mupliple rewrite for "
+					      << n.get_id() << " detected. "
 						  << "Last action : " << n.acts.back() << std::endl;
 
 				is_finished = true;
@@ -549,8 +564,10 @@ namespace fv
 				else
 				{
 					// More complex template can take place.
-					// std::cout << "! Warning ! : wrong rewrite template for " << n.get_id() << " detected. "
-					//           << "Last action : " << n.acts.back() << std::endl;
+					// std::cout << "! Warning ! : wrong rewrite template for "
+					//           << n.get_id() << " detected. "
+					//           << "Last action : " << n.acts.back()
+					//           << std::endl;
 
 					//is_finished = true;
 				}
@@ -580,7 +597,8 @@ namespace fv
 				{
 					// Loop is detected.
 
-					std::cout << "! Warning ! : loop for final node " << n.get_id() << " is detected." << std::endl;
+					std::cout << "! Warning ! : loop for final node "
+					          << n.get_id() << " is detected." << std::endl;
 
 					is_finished = true;
 				}
@@ -617,10 +635,12 @@ namespace fv
 		{
 			if (n.is_root())
 			{
-				vector_opers_count_with_blend_reduce += count_vector_opers_with_blend_reduce(n);
+				vector_opers_count_with_blend_reduce +=
+					count_vector_opers_with_blend_reduce(n);
 			}
 		}
 
-		GS.set_blend_reduce_coefficient(vector_opers_count_with_blend_reduce / vector_opers_count);
+		GS.set_blend_reduce_coefficient(vector_opers_count_with_blend_reduce
+										/ vector_opers_count);
 	}
 }
