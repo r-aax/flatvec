@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "control_graph.h"
+#include "global_stat.h"
 
 namespace fv
 {
@@ -425,13 +426,13 @@ namespace fv
 	/// </summary>
 	/// <param name="n">Node.</param>
 	/// <returns>Count of vector opers.</returns>
-	int ControlGraph::count_vector_opers(NetNode& n)
+	double ControlGraph::count_vector_opers(NetNode& n)
 	{
-		int c = 0;
+		double c = 0.0;
 
 		if (!n.is_marked())
 		{
-			c += n.vector_opers();
+			c += static_cast<double>(n.vector_opers());
 
 			n.mark();
 
@@ -442,6 +443,37 @@ namespace fv
 					c += count_vector_opers(nodes[pi]);
 				}
 			}
+		}
+
+		return c;
+	}
+
+	/// <summary>
+	/// Count vector opers with blend reduce.
+	/// </summary>
+	/// <param name="n">Node.</param>
+	/// <returns>Count vector opers with blend reduce.</returns>
+	double ControlGraph::count_vector_opers_with_blend_reduce(NetNode& n)
+	{
+		double c = 0.0;
+
+		if (!n.is_marked())
+		{
+			c += static_cast<double>(n.vector_opers());
+
+			n.mark();
+
+			double lc = 0.0;
+
+			for (int pi : n.preds)
+			{
+				if (pi != -1)
+				{
+					lc += count_vector_opers_with_blend_reduce(nodes[pi]);
+				}
+			}
+
+			c += n.is_blend() ? (0.5 * lc) : lc;
 		}
 
 		return c;
@@ -565,19 +597,30 @@ namespace fv
 		// Count opers with trees.
 		//
 
-		int vector_opers_count = 0;
+		double vector_opers_count = 0;
 
 		unmark_nodes();
 
 		for (NetNode& n : nodes)
 		{
-
 			if (n.is_root())
 			{
 				vector_opers_count += count_vector_opers(n);
 			}
 		}
 
-		std::cout << "OPERS COUNT : " << vector_opers_count << std::endl;
+		double vector_opers_count_with_blend_reduce = 0;
+
+		unmark_nodes();
+
+		for (NetNode& n : nodes)
+		{
+			if (n.is_root())
+			{
+				vector_opers_count_with_blend_reduce += count_vector_opers_with_blend_reduce(n);
+			}
+		}
+
+		GS.set_blend_reduce_coefficient(vector_opers_count_with_blend_reduce / vector_opers_count);
 	}
 }

@@ -85,6 +85,9 @@ namespace fv
 
 		// Vector opers count.
 		int vector_opers() const;
+
+		// Check if is blend.
+		bool is_blend() const;
 	};
 }
 

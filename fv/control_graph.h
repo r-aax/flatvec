@@ -138,7 +138,10 @@ namespace fv
 		bool mark_node(NetNode& n);
 
 		// Count vector opers.
-		int count_vector_opers(NetNode& n);
+		double count_vector_opers(NetNode& n);
+
+		// Count vector opers with blend reduce.
+		double count_vector_opers_with_blend_reduce(NetNode& n);
 
 		// Analyze graph.
 		void analyze();

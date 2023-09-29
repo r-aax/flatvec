@@ -47,4 +47,23 @@ namespace fv
 		return c;
 	}
 
+	/// <summary>
+	/// Check if it is blend node.
+	/// </summary>
+	/// <returns>
+	/// true - if node is blend,
+	/// false - if node is not blend.
+	/// </returns>
+	bool NetNode::is_blend() const
+	{
+		for (std::string s : acts)
+		{
+			if (s == "blend")
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

@@ -17,7 +17,8 @@ namespace fv
 		  vector_opers_count(0),
 		  scalar_opers_count(0),
 		  mask_opers_count(0),
-		  vector_opers_masks_total_density(0.0)
+		  vector_opers_masks_total_density(0.0),
+		  blend_reduce_coefficient(0.0)
 	{
 	}
 
@@ -33,6 +34,7 @@ namespace fv
 		scalar_opers_count = 0;
 		mask_opers_count = 0;
 		vector_opers_masks_total_density = 0.0;
+		blend_reduce_coefficient = 0.0;
 	}
 
 	/// <summary>
@@ -130,6 +132,9 @@ namespace fv
 	/// </summary>
 	void GlobalStat::print()
 	{
+		double th_a = (static_cast<double>(scalar_opers_count)
+					  / static_cast<double>(vector_opers_count));
+
 		std::cout << "Global stat:" << std::endl;
 		std::cout << "\tvectors created          : " << vectors_created << std::endl;
 		std::cout << "\tvectors copied           : " << vectors_copied << std::endl;
@@ -137,8 +142,17 @@ namespace fv
 		std::cout << "\tvector opers             : " << vector_opers_count << std::endl;
 		std::cout << "\tscalar opers             : " << scalar_opers_count << std::endl;
 		std::cout << "\tmask opers               : " << mask_opers_count << std::endl;
-		std::cout << "\ttheoretical acceleration : " << (static_cast<double>(scalar_opers_count)
-													  / static_cast<double>(vector_opers_count)) << std::endl;
+		std::cout << "\ttheoretical acceleration : " << th_a << std::endl;
+		
+		if (blend_reduce_coefficient > 0.0)
+		{
+			std::cout << "\t      (with blend corr.) : " << (th_a * blend_reduce_coefficient) << std::endl;
+		}
+		else
+		{
+			std::cout << "\t      (with blend corr.) : " << "not available" << std::endl;
+		}
+
 		std::cout << "\tmean masks density       : " << mean_masks_density() << std::endl;
 
 #ifdef LINUX_ICC_BUILD

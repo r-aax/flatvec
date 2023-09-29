@@ -34,6 +34,9 @@ namespace fv
 		// Vector operations mask total density.
 		double vector_opers_masks_total_density;
 
+		// Blend reduce coefficient.
+		double blend_reduce_coefficient;
+
 		// Time point before calc.
 		std::chrono::steady_clock::time_point time_before;
 
@@ -68,6 +71,15 @@ namespace fv
 
 		// Mean masks density.
 		double mean_masks_density() const;
+
+		/// <summary>
+		/// Set blend reduce coefficient.
+		/// </summary>
+		/// <param name="brc">Coefficient.</param>
+		inline void set_blend_reduce_coefficient(double brc)
+		{
+			blend_reduce_coefficient = brc;
+		}
 
 		// Fix time before.
 		void fix_time_before();
