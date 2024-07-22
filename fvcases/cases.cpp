@@ -1276,21 +1276,23 @@ namespace fv
                         float pk,
                         float ck)
     {
-        float ak, bk, pratio, qrt;
-
         if (p <= pk)
         {
             // Rarefaction wave.
-            pratio = p / pk;
-            f = riemann::sg4 * ck * (pow(pratio, riemann::sg1) - 1.0f);
-            fd = (1.0f / (dk * ck)) * pow(pratio, -riemann::sg2);
+
+            float prat = p / pk;
+
+            f = riemann::sg4 * ck * (pow(prat, riemann::sg1) - 1.0f);
+            fd = (1.0f / (dk * ck)) * pow(prat, -riemann::sg2);
         }
         else
         {
             // Shock wave.
-            ak = riemann::sg5 / dk;
-            bk = riemann::sg6 * pk;
-            qrt = sqrt(ak / (bk + p));
+
+            float ak = riemann::sg5 / dk;
+            float bk = riemann::sg6 * pk;
+            float qrt = sqrt(ak / (bk + p));
+
             f = (p - pk) * qrt;
             fd = (1.0f - 0.5f * (p - pk) / (bk + p)) * qrt;
         }
@@ -1345,42 +1347,63 @@ namespace fv
         // The first branch.
 	    if (cond != 0x0)
         {
-            __m512 pratio = _mm512_mask_div_ps(zero, cond, p, pk);
+            __m512 prat = _mm512_mask_div_ps(zero, cond, p, pk);
+
             f =
                 _mm512_mask_mul_ps(
                     f, cond,
-                    _mm512_mul_ps(riemann::g4, ck),
-                    _mm512_sub_ps(
-                        _mm512_mask_pow_ps(
-                            zero, cond, pratio, riemann::g1), one));
+                    _mm512_mask_mul_ps(zero, cond, riemann::g4, ck),
+                    _mm512_mask_sub_ps(
+                        zero, cond,
+                        _mm512_mask_pow_ps(zero, cond, prat, riemann::g1),
+                        one));
+
             fd =
-                _mm512_mask_div_ps(
+                _mm512_mask_mul_ps(
                     fd, cond,
+                    _mm512_mask_div_ps(
+                        zero, cond,
+                        one,
+                        _mm512_mask_mul_ps(zero, cond, dk, ck)),
                     _mm512_mask_pow_ps(
-                        zero, cond, pratio,
-                        _mm512_sub_ps(zero, riemann::g2)),
-                    _mm512_mul_ps(dk, ck));
+                        zero, cond,
+                        prat,
+                        _mm512_mask_sub_ps(zero, cond, zero, riemann::g2)));
         }
 
         // The second branch.
 	    if (ncond != 0x0)
         {
             __m512 ak = _mm512_mask_div_ps(zero, ncond, riemann::g5, dk);
-            __m512 bkp = _mm512_fmadd_ps(riemann::g6, pk, p);
-            __m512 ppk = _mm512_sub_ps(p, pk);
+            __m512 bk = _mm512_mask_mul_ps(zero, ncond, riemann::g6, pk);
             __m512 qrt =
                 _mm512_mask_sqrt_ps(
                     zero, ncond,
-                    _mm512_mask_div_ps(zero, ncond, ak, bkp));
+                    _mm512_mask_div_ps(
+                        zero, ncond,
+                        ak,
+                        _mm512_mask_add_ps(zero, ncond, bk, p)));
 
-            f = _mm512_mask_mul_ps(f, ncond, ppk, qrt);
+            f =
+                _mm512_mask_mul_ps(
+                    f, ncond,
+                    _mm512_mask_sub_ps(zero, ncond, p, pk),
+                    qrt);
+
             fd =
                 _mm512_mask_mul_ps(
-                    fd, ncond, qrt,
-                    _mm512_fnmadd_ps(
-                        _mm512_mask_div_ps(zero, ncond, ppk, bkp),
-                        _mm512_set1_ps(0.5),
-                    one));
+                    fd, ncond,
+                    _mm512_mask_sub_ps(
+                        zero, ncond,
+                        one,
+                        _mm512_mask_mul_ps(
+                            zero, ncond,
+                            half,
+                            _mm512_mask_div_ps(
+                                zero, ncond,
+                                _mm512_mask_sub_ps(zero, ncond, p, pk),
+                                _mm512_mask_add_ps(zero, ncond, bk, p)))),
+                    qrt);
         }
     }
 
