@@ -130,7 +130,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="control_graph.h" />
     <ClInclude Include="fv.h" />
     <ClInclude Include="global_stat.h" />
     <ClInclude Include="intrinsics.h" />
@@ -142,7 +141,6 @@
     <ClInclude Include="zmm.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="control_graph.cpp" />
     <ClCompile Include="fv.cpp" />
     <ClCompile Include="global_stat.cpp" />
     <ClCompile Include="intrinsics.cpp" />

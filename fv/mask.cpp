@@ -3,7 +3,6 @@
 #include "mask.h"
 
 #include "global_stat.h"
-#include "control_graph.h"
 
 namespace fv
 {
@@ -14,11 +13,7 @@ namespace fv
     /// </summary>
     Mask::Mask()
     {
-        id = CG.mask_id();
-
         clear();
-
-        CG.reglink("new m", id);
     }
 
     /// <summary>
@@ -27,14 +22,10 @@ namespace fv
     /// <param name="bm">Binary representation.</param>
     Mask::Mask(uint64_t bm)
     {
-        id = CG.mask_id();
-
         for (int i = 0; i < Mask::bits; ++i)
         {
             data[i] = ((bm & (static_cast<uint64_t>(1) << i)) != 0x0);
         }
-
-        CG.reglink("new m from const", id);
     }
 
     /// <summary>
@@ -43,14 +34,10 @@ namespace fv
     /// <param name="m">Another mask.</param>
     Mask::Mask(const Mask& m)
     {
-        id = m.get_id();
-
         for (int i = 0; i < Mask::bits; ++i)
         {
             data[i] = m.data[i];
         }
-
-        CG.reglink("copy m", m.get_id(), id);
     }
 
     /// <summary>
@@ -66,9 +53,6 @@ namespace fv
             {
                 data[i] = m.data[i];
             }
-
-            CG.reglink("rewrite m copy from " + std::to_string(m.get_id()),
-                       m.get_id(), id);
         }
 
         return *this;
@@ -98,10 +82,6 @@ namespace fv
     {
         if (this != &m)
         {
-            // Before this operation we have some mask and now we rewrite it.
-            CG.reglink("rewrite m move from " + std::to_string(m.get_id()),
-                       id);
-
             // We do not need new number for move assihnment.
             id = m.get_id();
 
@@ -169,8 +149,6 @@ namespace fv
     /// <returns>Mask in uint64_t view. </returns>
     Mask::operator uint64_t() const
     {
-        CG.reglink("use mask", get_id());
-
         return binary_mask();
     }
 

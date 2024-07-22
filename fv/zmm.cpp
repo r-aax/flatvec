@@ -3,7 +3,6 @@
 #include "zmm.h"
 
 #include "global_stat.h"
-#include "control_graph.h"
 
 namespace fv
 {
@@ -14,12 +13,10 @@ namespace fv
     /// </summary>
     ZMM::ZMM()
     {
-        id = CG.zmm_id();
         data = new int8_t[bytes];
 
         clear();
 
-        CG.reglink("new z", id);
         GS.create_vector();
     }
 
@@ -29,7 +26,6 @@ namespace fv
     /// <param name="z">Another ZMM register.</param>
     ZMM::ZMM(const ZMM& z)
     {
-        id = CG.zmm_id();
         data = new int8_t[bytes];
 
         for (int i = 0; i < count<int32_t>(); ++i)
@@ -38,7 +34,6 @@ namespace fv
         }
 
         GS.copy_vector();
-        CG.reglink("copy z", z.get_id(), id);
     }
 
     /// <summary>
@@ -59,8 +54,6 @@ namespace fv
             }
 
             GS.copy_vector();
-            CG.reglink("rewrite z copy from " + std::to_string(z.get_id()),
-                       z.get_id(), id);
         }
 
         return *this;
@@ -95,15 +88,6 @@ namespace fv
     {
         if (this != &z)
         {
-            // Before this operation we had some register,
-            // and now we rewrite it.
-            CG.reglink("rewrite z move from " + std::to_string(z.get_id()),
-                       id);
-
-            // We do not need new number for move assignment.
-            // It is single use of z register.
-            id = z.get_id();
-
             delete[] data;
             data = z.data;
             z.data = nullptr;

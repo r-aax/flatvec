@@ -29,7 +29,6 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
-        CG.reglink("set1", dst.get_id());
 
         return dst;
     }
@@ -53,7 +52,6 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
-        CG.reglink("load", dst.get_id());
 
         return dst;
     }
@@ -75,7 +73,6 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
-        CG.reglink("store", a.get_id());
     }
 
     // Arithmetic operations with 1 argument.
@@ -809,7 +806,6 @@ namespace fv
         }
 
         GS.append_vector_oper(w, w);
-        CG.reglink("blend", k.get_id(), a.get_id(), b.get_id(), dst.get_id());
 
         return dst;
     }
@@ -835,7 +831,6 @@ namespace fv
         }
 
         GS.append_mask_oper();
-        CG.reglink("logic", a.get_id(), b.get_id(), k.get_id());
 
         return k;
     }

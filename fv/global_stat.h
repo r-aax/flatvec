@@ -5,100 +5,88 @@
 
 namespace fv
 {
-	/// <summary>
-	/// Global statistics.
-	/// </summary>
-	class GlobalStat
-	{
+    /// <summary>
+    /// Global statistics.
+    /// </summary>
+    class GlobalStat
+    {
 
-	private:
+    private:
 
-		// Vectors created.
-		int vectors_created;
+        // Vectors created.
+        int vectors_created;
 
-		// Vectors copied.
-		int vectors_copied;
+        // Vectors copied.
+        int vectors_copied;
 
-		// Vectors moved.
-		int vectors_moved;
+        // Vectors moved.
+        int vectors_moved;
 
-		// Vector operations.
-		int vector_opers_count;
+        // Vector operations.
+        int vector_opers_count;
 
-		// Scalar operations.
-		int scalar_opers_count;
+        // Scalar operations.
+        int scalar_opers_count;
 
-		// Mask operations.
-		int mask_opers_count;
+        // Mask operations.
+        int mask_opers_count;
 
-		// Vector operations mask total density.
-		double vector_opers_masks_total_density;
+        // Vector operations mask total density.
+        double vector_opers_masks_total_density;
 
-		// Blend reduce coefficient.
-		double blend_reduce_coefficient;
+        // Time point before calc.
+        std::chrono::steady_clock::time_point time_before;
 
-		// Time point before calc.
-		std::chrono::steady_clock::time_point time_before;
+        // Time point in the middle.
+        std::chrono::steady_clock::time_point time_middle;
 
-		// Time point in the middle.
-		std::chrono::steady_clock::time_point time_middle;
+        // Time point after.
+        std::chrono::steady_clock::time_point time_after;
 
-		// Time point after.
-		std::chrono::steady_clock::time_point time_after;
+    public:
 
-	public:
+        // Constructor.
+        GlobalStat();
 
-		// Constructor.
-		GlobalStat();
+        // Clean.
+        void clear();
 
-		// Clean.
-		void clear();
+        // Create vector.
+        void create_vector();
 
-		// Create vector.
-		void create_vector();
+        // Copy vecror.
+        void copy_vector();
 
-		// Copy vecror.
-		void copy_vector();
+        // Move vector.
+        void move_vector();
 
-		// Move vector.
-		void move_vector();
+        // Append vector operation information.
+        void append_vector_oper(int width, int scalar_opers);
 
-		// Append vector operation information.
-		void append_vector_oper(int width, int scalar_opers);
+        // Append mask operation information.
+        void append_mask_oper();
 
-		// Append mask operation information.
-		void append_mask_oper();
+        // Mean masks density.
+        double mean_masks_density() const;
 
-		// Mean masks density.
-		double mean_masks_density() const;
+        // Fix time before.
+        void fix_time_before();
 
-		/// <summary>
-		/// Set blend reduce coefficient.
-		/// </summary>
-		/// <param name="brc">Coefficient.</param>
-		inline void set_blend_reduce_coefficient(double brc)
-		{
-			blend_reduce_coefficient = brc;
-		}
+        // Fix time in the middle.
+        void fix_time_middle();
 
-		// Fix time before.
-		void fix_time_before();
+        // Fix time in the end.
+        void fix_time_after();
 
-		// Fix time in the middle.
-		void fix_time_middle();
+        // Time acceleration.
+        double real_time_acceleration() const;
 
-		// Fix time in the end.
-		void fix_time_after();
+        // Print statistics.
+        void print();
+    };
 
-		// Time acceleration.
-		double real_time_acceleration() const;
-
-		// Print statistics.
-		void print();
-	};
-
-	// Extern declaration.
-	extern GlobalStat GS;
+    // Extern declaration.
+    extern GlobalStat GS;
 }
 
 #endif

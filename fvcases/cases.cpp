@@ -4,7 +4,6 @@
 
 #include "array_manager.h"
 #include "global_stat.h"
-#include "control_graph.h"
 
 #ifndef LINUX_ICC_BUILD
 
@@ -2698,20 +2697,11 @@ namespace fv
 #endif
 
         GS.clear();
-        CG.switch_on();
 
         std::cout << name
                   << " : " << (fun(count, repeats) ? "OK" : "ERROR")
                   << std::endl;
 
-        CG.analyze();
-
-        if (is_print_control_graph)
-        {
-            CG.print();
-        }
-
         GS.print();
-        CG.switch_off();
     }
 }

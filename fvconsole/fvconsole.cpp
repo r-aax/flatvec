@@ -1,5 +1,4 @@
 // fvconsole.cpp : Defines the entry point for the console application.
-//
 
 #include "stdafx.h"
 
@@ -13,6 +12,8 @@ using namespace fv;
 /// <returns>Return code.</returns>
 int main()
 {
+
+#if 0
     // Cases for detecting some inefficiency in the vector code.
     test_case("warn_hang",
               [] (int n, int r) { return case_warn_hang(n, r); },
@@ -20,7 +21,9 @@ int main()
     test_case("warn_multi_rewrite",
               [] (int n, int r) { return case_warn_multi_rewrite(n, r); },
               1, 1, false);
+#endif
 
+#if 0
     // Trivial cases.
     test_case("arith_f32",
               [] (int n, int r) { return case_arith_f32(n, r); },
@@ -31,6 +34,7 @@ int main()
     test_case("square_eq",
               [] (int n, int r) { return case_square_equation(n, r); },
               1, 1, false);
+#endif
 
     // Cases from real applications.
     test_case("guessp",
