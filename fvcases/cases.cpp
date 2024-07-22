@@ -1342,21 +1342,18 @@ namespace fv
         __mmask16 cond = _mm512_kand(_mm512_cmple_ps_mask(p, pk), m);
         __mmask16 ncond = _mm512_kand(_mm512_knot(cond), m);
 
-        __m512 f0;
-        __m512 fd0;
-
         // The first branch.
 	    if (cond != 0x0)
         {
             __m512 pratio = _mm512_mask_div_ps(zero, cond, p, pk);
-            f0 =
+            f =
                 _mm512_mask_mul_ps(
                     f, cond,
                     _mm512_mul_ps(riemann::g4, ck),
                     _mm512_sub_ps(
                         _mm512_mask_pow_ps(
                             zero, cond, pratio, riemann::g1), one));
-            fd0 =
+            fd =
                 _mm512_mask_div_ps(
                     fd, cond,
                     _mm512_mask_pow_ps(
@@ -1364,11 +1361,6 @@ namespace fv
                         _mm512_sub_ps(zero, riemann::g2)),
                     _mm512_mul_ps(dk, ck));
         }
-
-        __m512 f1 = _mm512_mask_blend_ps(cond, f, f0);
-        __m512 fd1 = _mm512_mask_blend_ps(cond, fd, fd0);
-        __m512 f2;
-        __m512 fd2;
 
         // The second branch.
 	    if (ncond != 0x0)
@@ -1381,18 +1373,15 @@ namespace fv
                     zero, ncond,
                     _mm512_mask_div_ps(zero, ncond, ak, bkp));
 
-            f2 = _mm512_mask_mul_ps(f1, ncond, ppk, qrt);
-            fd2 =
+            f = _mm512_mask_mul_ps(f, ncond, ppk, qrt);
+            fd =
                 _mm512_mask_mul_ps(
-                    fd1, ncond, qrt,
+                    fd, ncond, qrt,
                     _mm512_fnmadd_ps(
                         _mm512_mask_div_ps(zero, ncond, ppk, bkp),
                         _mm512_set1_ps(0.5),
                     one));
         }
-
-        f = _mm512_mask_blend_ps(ncond, f1, f2);
-        fd = _mm512_mask_blend_ps(ncond, fd1, fd2);
     }
 
     /// <summary>

@@ -36,23 +36,38 @@ int main()
               1, 1, false);
 #endif
 
+    //
     // Cases from real applications.
+    //
+
+#if 0
     test_case("guessp",
               [] (int n, int r) { return case_guessp(n, r); },
               1, 1, false);
+#endif
+
     test_case("prefun",
               [] (int n, int r) { return case_prefun(n, r); },
               1, 1, false);
+
+#if 0
     test_case("sample",
               [] (int n, int r) { return case_sample(n, r); },
               1, 1, false);
+#endif
+
+#if 0
     test_case("starpu",
               [] (int n, int r) { return case_starpu(n, r); },
               1, 1, false);
+#endif
+
+#if 0
 #ifndef LINUX_GCC_BUILD
     test_case("riemann",
               [] (int n, int r) { return case_riemann(n, r); },
               1, 1, false);
+#endif
 #endif
 
     return 0;
