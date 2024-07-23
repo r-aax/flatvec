@@ -1465,19 +1465,18 @@ namespace fv
     {
         int n = len * CNT_FLOAT;
 
+        // Files ../fvcases/data/case_prefun_{p,dk,pk,ck}.txt
+        // contain 2 258 985 float elements.
+        // So it has no sense to pass len more than 141 186.
+
         ArrayManager<float> sf(n);
         ArrayManager<float> vf(n);
         ArrayManager<float> sfd(n);
         ArrayManager<float> vfd(n);
-        ArrayManager<float> p(n);
-        ArrayManager<float> dk(n);
-        ArrayManager<float> pk(n);
-        ArrayManager<float> ck(n);
-
-        p.generate_random(random_lo, random_hi);
-        dk.generate_random(random_lo, random_hi);
-        pk.generate_random(random_lo, random_hi);
-        ck.generate_random(random_lo, random_hi);
+        ArrayManager<float> p(n, "../fvcases/data/case_prefun/p.txt");
+        ArrayManager<float> dk(n, "../fvcases/data/case_prefun/dk.txt");
+        ArrayManager<float> pk(n, "../fvcases/data/case_prefun/pk.txt");
+        ArrayManager<float> ck(n, "../fvcases/data/case_prefun/ck.txt");
 
         GS.fix_time_before();
 
@@ -2618,19 +2617,19 @@ namespace fv
         int n = len * CNT_FLOAT;
 
         // Files ../fvcases/data/case_riemann_{dl,ul,pl,dr,ur,pr}.txt
-        // contain 419997 float elements.
-        // So it has no sense to pass len more than 26249.
+        // contain 419 997 float elements.
+        // So it has no sense to pass len more than 26 249.
 
-        ArrayManager<float> dl(n, "../fvcases/data/case_riemann_dl.txt");
-        ArrayManager<float> ul(n, "../fvcases/data/case_riemann_ul.txt");
+        ArrayManager<float> dl(n, "../fvcases/data/case_riemann/dl.txt");
+        ArrayManager<float> ul(n, "../fvcases/data/case_riemann/ul.txt");
         ArrayManager<float> vl(n);
         ArrayManager<float> wl(n);
-        ArrayManager<float> pl(n, "../fvcases/data/case_riemann_pl.txt");
-        ArrayManager<float> dr(n, "../fvcases/data/case_riemann_dr.txt");
-        ArrayManager<float> ur(n, "../fvcases/data/case_riemann_ur.txt");
+        ArrayManager<float> pl(n, "../fvcases/data/case_riemann/pl.txt");
+        ArrayManager<float> dr(n, "../fvcases/data/case_riemann/dr.txt");
+        ArrayManager<float> ur(n, "../fvcases/data/case_riemann/ur.txt");
         ArrayManager<float> vr(n);
         ArrayManager<float> wr(n);
-        ArrayManager<float> pr(n, "../fvcases/data/case_riemann_pr.txt");
+        ArrayManager<float> pr(n, "../fvcases/data/case_riemann/pr.txt");
         ArrayManager<float> sd(n);
         ArrayManager<float> su(n);
         ArrayManager<float> sv(n);

@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 #ifndef LINUX_ICC_BUILD
 #include <filesystem>

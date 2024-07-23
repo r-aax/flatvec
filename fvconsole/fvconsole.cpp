@@ -46,9 +46,11 @@ int main()
               1, 1, false);
 #endif
 
+#if 1
     test_case("prefun",
               [] (int n, int r) { return case_prefun(n, r); },
-              1, 1, false);
+              141186, 1, false);
+#endif
 
 #if 0
     test_case("sample",
@@ -66,7 +68,7 @@ int main()
 #ifndef LINUX_GCC_BUILD
     test_case("riemann",
               [] (int n, int r) { return case_riemann(n, r); },
-              1, 1, false);
+              26249, 1, false);
 #endif
 #endif
 
