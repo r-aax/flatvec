@@ -47,8 +47,10 @@ namespace fv
         /// </summary>
         /// <param name="s">Size.</param>
         /// <param name="fn">File name.</param>
+        /// <param name="skip_one_value">Skip one value between reads.</param>
         explicit ArrayManager<T>(int s,
-                                 std::string fn)
+                                 std::string fn,
+                                 bool skip_one_value=false)
             : ArrayManager<T>(s)
         {
             std::ifstream f(fn);
@@ -62,6 +64,20 @@ namespace fv
                     if (!f.eof())
                     {
                         f >> data[i] >> c;
+
+                        if (skip_one_value)
+                        {
+                            if (!f.eof())
+                            {
+                                T v;
+
+                                f >> v >> c;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
                     }
                     else
                     {

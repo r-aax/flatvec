@@ -1473,10 +1473,10 @@ namespace fv
         ArrayManager<float> vf(n);
         ArrayManager<float> sfd(n);
         ArrayManager<float> vfd(n);
-        ArrayManager<float> p(n, "../fvcases/data/case_prefun/p.txt");
-        ArrayManager<float> dk(n, "../fvcases/data/case_prefun/dk.txt");
-        ArrayManager<float> pk(n, "../fvcases/data/case_prefun/pk.txt");
-        ArrayManager<float> ck(n, "../fvcases/data/case_prefun/ck.txt");
+        ArrayManager<float> p(n, "../fvcases/data/case_prefun/p.txt", true);
+        ArrayManager<float> dk(n, "../fvcases/data/case_prefun/dk.txt", true);
+        ArrayManager<float> pk(n, "../fvcases/data/case_prefun/pk.txt", true);
+        ArrayManager<float> ck(n, "../fvcases/data/case_prefun/ck.txt", true);
 
         GS.fix_time_before();
 

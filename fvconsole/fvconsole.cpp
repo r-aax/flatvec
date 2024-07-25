@@ -49,7 +49,7 @@ int main()
 #if 1
     test_case("prefun",
               [] (int n, int r) { return case_prefun(n, r); },
-              141186, 1, false);
+              /*141186*/ 100, 1, false);
 #endif
 
 #if 0
