@@ -1488,27 +1488,129 @@ namespace fv
         __mmask16 ncond2 = _mm512_kand(_mm512_knot(cond2), m2);
 
         // The first branch.
-        if (cond != 0x0)
+        if (cond == 0x0)
         {
-            vcase_prefun_1_branch_1(f, fd, p, dk, pk, ck, cond);
+            if (cond2 == 0x0)
+            {
+                // Nothing to do.
+                ;
+            }
+            else
+            {
+                // Only second.
+                vcase_prefun_1_branch_1(f2, fd2, p2, dk2, pk2, ck2, cond2);
+            }
+        }
+        else
+        {
+            if (cond2 == 0x0)
+            {
+                // Only first.
+                vcase_prefun_1_branch_1(f, fd, p, dk, pk, ck, cond);
+            }
+            else
+            {
+                // Both.
+
+                if ((cond & cond2) == 0x0)
+                {
+                    // No intersection merge calculations.
+
+                    __m512 f_both, fd_both;
+                    __m512 p_both, dk_both, pk_both, ck_both;
+
+                    f_both = _mm512_mask_mov_ps(f_both, cond, f);
+                    fd_both = _mm512_mask_mov_ps(fd_both, cond, fd);
+                    f_both = _mm512_mask_mov_ps(f_both, cond2, f2);
+                    fd_both = _mm512_mask_mov_ps(fd_both, cond2, fd2);
+
+                    p_both = _mm512_mask_mov_ps(p_both, cond, p);
+                    p_both = _mm512_mask_mov_ps(p_both, cond2, p2);
+                    dk_both = _mm512_mask_mov_ps(dk_both, cond, dk);
+                    dk_both = _mm512_mask_mov_ps(dk_both, cond2, dk2);
+                    pk_both = _mm512_mask_mov_ps(pk_both, cond, pk);
+                    pk_both = _mm512_mask_mov_ps(pk_both, cond2, pk2);
+                    ck_both = _mm512_mask_mov_ps(ck_both, cond, ck);
+                    ck_both = _mm512_mask_mov_ps(ck_both, cond2, ck2);
+
+                    vcase_prefun_1_branch_1(f_both, fd_both, p_both, dk_both, pk_both, ck_both,
+                                            Mask(cond.binary_mask() | cond2.binary_mask()));
+
+                    f = _mm512_mask_mov_ps(f, cond, f_both);
+                    fd = _mm512_mask_mov_ps(fd, cond, fd_both);
+                    f2 = _mm512_mask_mov_ps(f2, cond2, f_both);
+                    fd2 = _mm512_mask_mov_ps(fd2, cond2, fd_both);
+                }
+                else
+                {
+                    // There is intersection, calculate separately.
+                    vcase_prefun_1_branch_1(f, fd, p, dk, pk, ck, cond);
+                    vcase_prefun_1_branch_1(f2, fd2, p2, dk2, pk2, ck2, cond2);
+                }
+            }
         }
 
         // The second branch.
-        if (ncond != 0x0)
+        if (ncond == 0x0)
         {
-            vcase_prefun_1_branch_2(f, fd, p, dk, pk, ck, ncond);
+            if (ncond2 == 0x0)
+            {
+                // Nothing to do.
+                ;
+            }
+            else
+            {
+                // Only second.
+                vcase_prefun_1_branch_2(f2, fd2, p2, dk2, pk2, ck2, ncond2);
+            }
         }
-
-        // The first branch.
-        if (cond2 != 0x0)
+        else
         {
-            vcase_prefun_1_branch_1(f2, fd2, p2, dk2, pk2, ck2, cond2);
-        }
+            if (ncond2 == 0x0)
+            {
+                // Only first.
+                vcase_prefun_1_branch_2(f, fd, p, dk, pk, ck, ncond);
+            }
+            else
+            {
+                // Both.
 
-        // The second branch.
-        if (ncond2 != 0x0)
-        {
-            vcase_prefun_1_branch_2(f2, fd2, p2, dk2, pk2, ck2, ncond2);
+                if ((ncond & ncond2) == 0x0)
+                {
+                    // No intersection merge calculations.
+
+                    __m512 f_both, fd_both;
+                    __m512 p_both, dk_both, pk_both, ck_both;
+
+                    f_both = _mm512_mask_mov_ps(f_both, ncond, f);
+                    fd_both = _mm512_mask_mov_ps(fd_both, ncond, fd);
+                    f_both = _mm512_mask_mov_ps(f_both, ncond2, f2);
+                    fd_both = _mm512_mask_mov_ps(fd_both, ncond2, fd2);
+
+                    p_both = _mm512_mask_mov_ps(p_both, ncond, p);
+                    p_both = _mm512_mask_mov_ps(p_both, ncond2, p2);
+                    dk_both = _mm512_mask_mov_ps(dk_both, ncond, dk);
+                    dk_both = _mm512_mask_mov_ps(dk_both, ncond2, dk2);
+                    pk_both = _mm512_mask_mov_ps(pk_both, ncond, pk);
+                    pk_both = _mm512_mask_mov_ps(pk_both, ncond2, pk2);
+                    ck_both = _mm512_mask_mov_ps(ck_both, ncond, ck);
+                    ck_both = _mm512_mask_mov_ps(ck_both, ncond2, ck2);
+
+                    vcase_prefun_1_branch_2(f_both, fd_both, p_both, dk_both, pk_both, ck_both,
+                                            Mask(ncond.binary_mask() | ncond2.binary_mask()));
+
+                    f = _mm512_mask_mov_ps(f, ncond, f_both);
+                    fd = _mm512_mask_mov_ps(fd, ncond, fd_both);
+                    f2 = _mm512_mask_mov_ps(f2, ncond2, f_both);
+                    fd2 = _mm512_mask_mov_ps(fd2, ncond2, fd_both);
+                }
+                else
+                {
+                    // There is intersection, calculate separately.
+                    vcase_prefun_1_branch_2(f, fd, p, dk, pk, ck, ncond);
+                    vcase_prefun_1_branch_2(f2, fd2, p2, dk2, pk2, ck2, ncond2);
+                }
+            }
         }
     }
 
