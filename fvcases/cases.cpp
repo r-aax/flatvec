@@ -1323,6 +1323,98 @@ namespace fv
     }
 
     /// <summary>
+    /// Case prefun vector. Branch 1.
+    /// </summary>
+    /// <param name="f">Output.</param>
+    /// <param name="fd">Output.</param>
+    /// <param name="p">Input.</param>
+    /// <param name="dk">Input.</param>
+    /// <param name="pk">Input.</param>
+    /// <param name="ck">Input.</param>
+    /// <param name="m">Mask.</param>
+    void vcase_prefun_1_branch_1(__m512& f,
+                                 __m512& fd,
+                                 __m512& p,
+                                 __m512& dk,
+                                 __m512& pk,
+                                 __m512& ck,
+                                 __mmask16& m)
+    {
+        __m512 prat = _mm512_mask_div_ps(zero, m, p, pk);
+
+        f =
+            _mm512_mask_mul_ps(
+                f, m,
+                _mm512_mask_mul_ps(zero, m, riemann::g4, ck),
+                _mm512_mask_sub_ps(
+                    zero, m,
+                    _mm512_mask_pow_ps(zero, m, prat, riemann::g1),
+                    one));
+
+        fd =
+            _mm512_mask_mul_ps(
+                fd, m,
+                _mm512_mask_div_ps(
+                    zero, m,
+                    one,
+                    _mm512_mask_mul_ps(zero, m, dk, ck)),
+                    _mm512_mask_pow_ps(
+                        zero, m,
+                        prat,
+                        _mm512_mask_sub_ps(zero, m, zero, riemann::g2)));
+    }
+
+    /// <summary>
+    /// Case prefun vector. Branch 2.
+    /// </summary>
+    /// <param name="f">Output.</param>
+    /// <param name="fd">Output.</param>
+    /// <param name="p">Input.</param>
+    /// <param name="dk">Input.</param>
+    /// <param name="pk">Input.</param>
+    /// <param name="ck">Input.</param>
+    /// <param name="m">Mask.</param>
+    void vcase_prefun_1_branch_2(__m512& f,
+                                 __m512& fd,
+                                 __m512& p,
+                                 __m512& dk,
+                                 __m512& pk,
+                                 __m512& ck,
+                                 __mmask16& m)
+    {
+        __m512 ak = _mm512_mask_div_ps(zero, m, riemann::g5, dk);
+        __m512 bk = _mm512_mask_mul_ps(zero, m, riemann::g6, pk);
+        __m512 qrt =
+            _mm512_mask_sqrt_ps(
+                zero, m,
+                _mm512_mask_div_ps(
+                    zero, m,
+                    ak,
+                    _mm512_mask_add_ps(zero, m, bk, p)));
+
+        f =
+            _mm512_mask_mul_ps(
+                f, m,
+                _mm512_mask_sub_ps(zero, m, p, pk),
+                qrt);
+
+        fd =
+            _mm512_mask_mul_ps(
+                fd, m,
+                _mm512_mask_sub_ps(
+                    zero, m,
+                    one,
+                    _mm512_mask_mul_ps(
+                        zero, m,
+                        half,
+                        _mm512_mask_div_ps(
+                            zero, m,
+                            _mm512_mask_sub_ps(zero, m, p, pk),
+                            _mm512_mask_add_ps(zero, m, bk, p)))),
+                qrt);
+    }
+
+    /// <summary>
     /// Case prefun vector.
     /// </summary>
     /// <param name="f">Output.</param>
@@ -1347,63 +1439,76 @@ namespace fv
         // The first branch.
 	    if (cond != 0x0)
         {
-            __m512 prat = _mm512_mask_div_ps(zero, cond, p, pk);
-
-            f =
-                _mm512_mask_mul_ps(
-                    f, cond,
-                    _mm512_mask_mul_ps(zero, cond, riemann::g4, ck),
-                    _mm512_mask_sub_ps(
-                        zero, cond,
-                        _mm512_mask_pow_ps(zero, cond, prat, riemann::g1),
-                        one));
-
-            fd =
-                _mm512_mask_mul_ps(
-                    fd, cond,
-                    _mm512_mask_div_ps(
-                        zero, cond,
-                        one,
-                        _mm512_mask_mul_ps(zero, cond, dk, ck)),
-                    _mm512_mask_pow_ps(
-                        zero, cond,
-                        prat,
-                        _mm512_mask_sub_ps(zero, cond, zero, riemann::g2)));
+            vcase_prefun_1_branch_1(f, fd, p, dk, pk, ck, cond);
         }
 
         // The second branch.
 	    if (ncond != 0x0)
         {
-            __m512 ak = _mm512_mask_div_ps(zero, ncond, riemann::g5, dk);
-            __m512 bk = _mm512_mask_mul_ps(zero, ncond, riemann::g6, pk);
-            __m512 qrt =
-                _mm512_mask_sqrt_ps(
-                    zero, ncond,
-                    _mm512_mask_div_ps(
-                        zero, ncond,
-                        ak,
-                        _mm512_mask_add_ps(zero, ncond, bk, p)));
+            vcase_prefun_1_branch_2(f, fd, p, dk, pk, ck, ncond);
+        }
+    }
 
-            f =
-                _mm512_mask_mul_ps(
-                    f, ncond,
-                    _mm512_mask_sub_ps(zero, ncond, p, pk),
-                    qrt);
+    /// <summary>
+    /// Case prefun vector.
+    /// </summary>
+    /// <param name="f">Output.</param>
+    /// <param name="fd">Output.</param>
+    /// <param name="p">Input.</param>
+    /// <param name="dk">Input.</param>
+    /// <param name="pk">Input.</param>
+    /// <param name="ck">Input.</param>
+    /// <param name="m">Mask.</param>
+    /// <param name="f2">Output.</param>
+    /// <param name="fd2">Output.</param>
+    /// <param name="p2">Input.</param>
+    /// <param name="dk2">Input.</param>
+    /// <param name="pk2">Input.</param>
+    /// <param name="ck2">Input.</param>
+    /// <param name="m2">Mask.</param>
+    void vcase_prefun_2(__m512& f,
+                        __m512& fd,
+                        __m512& p,
+                        __m512& dk,
+                        __m512& pk,
+                        __m512& ck,
+                        __mmask16 m,
+                        __m512& f2,
+                        __m512& fd2,
+                        __m512& p2,
+                        __m512& dk2,
+                        __m512& pk2,
+                        __m512& ck2,
+                        __mmask16 m2)
+    {
+        // Conditions.
+        __mmask16 cond = _mm512_kand(_mm512_cmple_ps_mask(p, pk), m);
+        __mmask16 ncond = _mm512_kand(_mm512_knot(cond), m);
+        __mmask16 cond2 = _mm512_kand(_mm512_cmple_ps_mask(p2, pk2), m2);
+        __mmask16 ncond2 = _mm512_kand(_mm512_knot(cond2), m2);
 
-            fd =
-                _mm512_mask_mul_ps(
-                    fd, ncond,
-                    _mm512_mask_sub_ps(
-                        zero, ncond,
-                        one,
-                        _mm512_mask_mul_ps(
-                            zero, ncond,
-                            half,
-                            _mm512_mask_div_ps(
-                                zero, ncond,
-                                _mm512_mask_sub_ps(zero, ncond, p, pk),
-                                _mm512_mask_add_ps(zero, ncond, bk, p)))),
-                    qrt);
+        // The first branch.
+        if (cond != 0x0)
+        {
+            vcase_prefun_1_branch_1(f, fd, p, dk, pk, ck, cond);
+        }
+
+        // The second branch.
+        if (ncond != 0x0)
+        {
+            vcase_prefun_1_branch_2(f, fd, p, dk, pk, ck, ncond);
+        }
+
+        // The first branch.
+        if (cond2 != 0x0)
+        {
+            vcase_prefun_1_branch_1(f2, fd2, p2, dk2, pk2, ck2, cond2);
+        }
+
+        // The second branch.
+        if (ncond2 != 0x0)
+        {
+            vcase_prefun_1_branch_2(f2, fd2, p2, dk2, pk2, ck2, ncond2);
         }
     }
 
@@ -1427,8 +1532,11 @@ namespace fv
     {
         assert(n % CNT_FLOAT == 0);
         int vn = n / CNT_FLOAT;
+        int vi = 0;
 
-        for (int vi = 0; vi < vn; vi++)
+#if 0
+
+        for (; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
             __m512 f, fd;
@@ -1443,6 +1551,52 @@ namespace fv
             _mm512_store_ps(f_p + sh, f);
             _mm512_store_ps(fd_p + sh, fd);
         }
+
+#else
+
+        for ( ; vi < vn - 1; vi += 2)
+        {
+            int sh = vi * CNT_FLOAT;
+            int sh2 = (vi + 1) * CNT_FLOAT;
+            __m512 f, fd, f2, fd2;
+
+            vcase_prefun_2(f, fd,
+                           _mm512_load_ps(p_p + sh),
+                           _mm512_load_ps(dk_p + sh),
+                           _mm512_load_ps(pk_p + sh),
+                           _mm512_load_ps(ck_p + sh),
+                           0xffff,
+                           f2, fd2,
+                           _mm512_load_ps(p_p + sh2),
+                           _mm512_load_ps(dk_p + sh2),
+                           _mm512_load_ps(pk_p + sh2),
+                           _mm512_load_ps(ck_p + sh2),
+                           0xffff);
+
+            _mm512_store_ps(f_p + sh, f);
+            _mm512_store_ps(fd_p + sh, fd);
+            _mm512_store_ps(f_p + sh2, f2);
+            _mm512_store_ps(fd_p + sh2, fd2);
+        }
+
+        if (vi < vn)
+        {
+            int sh = vi * CNT_FLOAT;
+            __m512 f, fd;
+
+            vcase_prefun_1(f, fd,
+                           _mm512_load_ps(p_p + sh),
+                           _mm512_load_ps(dk_p + sh),
+                           _mm512_load_ps(pk_p + sh),
+                           _mm512_load_ps(ck_p + sh),
+                           0xffff);
+
+            _mm512_store_ps(f_p + sh, f);
+            _mm512_store_ps(fd_p + sh, fd);
+        }
+
+#endif
+
     }
 
     /// <summary>
