@@ -3,8 +3,12 @@
 #ifndef INTRINSICS_EXT_H
 #define INTRINSICS_EXT_H
 
-#include "zmm.h"
-#include "mask.h"
+#ifdef LINUX_ICC_BUILD
+
+#define ZMM __m512
+#define Mask __mmask16
+
+#endif
 
 namespace fv
 {

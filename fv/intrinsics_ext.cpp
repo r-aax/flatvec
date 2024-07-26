@@ -2,8 +2,6 @@
 
 #include "intrinsics_ext.h"
 
-#include "intrinsics.h"
-
 namespace fv
 {
     // Compare operations.

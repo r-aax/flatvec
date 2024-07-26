@@ -1443,13 +1443,13 @@ namespace fv
         __mmask16 ncond = _mm512_kand(_mm512_knot(cond), m);
 
         // The first branch.
-	    if (cond != 0x0)
+	if (cond != 0x0)
         {
             vcase_prefun_1_branch_1(f, fd, p, dk, pk, ck, cond);
         }
 
         // The second branch.
-	    if (ncond != 0x0)
+	if (ncond != 0x0)
         {
             vcase_prefun_1_branch_2(f, fd, p, dk, pk, ck, ncond);
         }
@@ -1632,13 +1632,12 @@ namespace fv
         {
             int sh = vi * CNT_FLOAT;
             __m512 f, fd;
+            __m512 p = _mm512_load_ps(p_p + sh);
+            __m512 dk = _mm512_load_ps(dk_p + sh);
+            __m512 pk = _mm512_load_ps(pk_p + sh);
+            __m512 ck = _mm512_load_ps(ck_p + sh);
 
-            vcase_prefun_1(f, fd,
-                           _mm512_load_ps(p_p + sh),
-                           _mm512_load_ps(dk_p + sh),
-                           _mm512_load_ps(pk_p + sh),
-                           _mm512_load_ps(ck_p + sh),
-                           0xffff);
+            vcase_prefun_1(f, fd, p, dk, pk, ck, 0xffff);
 
             _mm512_store_ps(f_p + sh, f);
             _mm512_store_ps(fd_p + sh, fd);
