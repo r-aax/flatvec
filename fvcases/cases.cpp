@@ -13,6 +13,10 @@
 using __m512 = fv::ZMM;
 using __mmask16 = fv::Mask;
 
+#else
+
+#include "intrinsics_ext.h"
+
 #endif
 
 #ifdef LINUX_ICC_BUILD
