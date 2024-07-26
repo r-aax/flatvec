@@ -113,9 +113,10 @@ namespace fv
         for (int vi = 0; vi < vn; ++vi)
         {
             int sh = vi * CNT_FLOAT;
+            __m512 a = _mm512_load_ps(a_p + sh);
             __m512 b;
 
-            vcase_warn_hang_1(_mm512_load_ps(a_p + sh), b);
+            vcase_warn_hang_1(a, b);
 
             _mm512_store_ps(b_p + sh, b);
         }
@@ -233,9 +234,10 @@ namespace fv
         for (int vi = 0; vi < vn; ++vi)
         {
             int sh = vi * CNT_FLOAT;
+            __m512 a = _mm512_load_ps(a_p + sh);
             __m512 b;
 
-            vcase_warn_multi_rewrite_1(_mm512_load_ps(a_p + sh), b);
+            vcase_warn_multi_rewrite_1(a, b);
 
             _mm512_store_ps(b_p + sh, b);
         }
@@ -372,11 +374,11 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
+            __m512 a = _mm512_load_ps(a_p + sh);
+            __m512 b = _mm512_load_ps(b_p + sh);
             __m512 c;
 
-            vcase_arith_f32_1(_mm512_load_ps(a_p + sh),
-                              _mm512_load_ps(b_p + sh),
-                              c);
+            vcase_arith_f32_1(a, b, c);
 
             _mm512_store_ps(c_p + sh, c);
         }
@@ -508,11 +510,11 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
+            __m512 a = _mm512_load_ps(a_p + sh);
+            __m512 b = _mm512_load_ps(b_p + sh);
             __m512 c;
 
-            vcase_blend_f32_1(_mm512_load_ps(a_p + sh),
-                              _mm512_load_ps(b_p + sh),
-                              c);
+            vcase_blend_f32_1(a, b, c);
 
             _mm512_store_ps(c_p + sh, c);
         }
@@ -683,7 +685,7 @@ namespace fv
             _mm512_sub_ps(
                 _mm512_mul_ps(new_b, new_b),
                 _mm512_mul_ps(four, new_c));
-        __mmask16 p4 = _mm512_mask_cmpge_ps_mask(np1, d, zero);
+        __mmask16 p4 = _mm512_mask_cmpge_ps_mask(np1, d, zero); /*NB*/
         __m512 sd = _mm512_mask_sqrt_ps(h, p4, d);
         __m512 h1 =
             _mm512_mul_ps(
@@ -694,7 +696,7 @@ namespace fv
             _mm512_mask_mov_ps(
                 h0, p4,
                 _mm512_mask_blend_ps(
-                    _mm512_cmpgt_ps_mask(h1, zero),
+                    _mm512_cmpgt_ps_mask(h1, zero), /*NB*/
                     _mm512_max_ps(
                         _mm512_mul_ps(half, _mm512_sub_ps(sd, new_b)),
                         zero),
@@ -721,12 +723,12 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
+            __m512 a = _mm512_load_ps(a_p + sh);
+            __m512 b = _mm512_load_ps(b_p + sh);
+            __m512 c = _mm512_load_ps(c_p + sh);
             __m512 h;
 
-            vcase_square_equation_1(_mm512_load_ps(a_p + sh),
-                                    _mm512_load_ps(b_p + sh),
-                                    _mm512_load_ps(c_p + sh),
-                                    h);
+            vcase_square_equation_1(a, b, c, h);
 
             _mm512_store_ps(h_p + sh, h);
         }
@@ -1165,17 +1167,17 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
+            __m512 dl = _mm512_load_ps(dl_p + sh);
+            __m512 ul = _mm512_load_ps(ul_p + sh);
+            __m512 pl = _mm512_load_ps(pl_p + sh);
+            __m512 cl = _mm512_load_ps(cl_p + sh);
+            __m512 dr = _mm512_load_ps(dr_p + sh);
+            __m512 ur = _mm512_load_ps(ur_p + sh);
+            __m512 pr = _mm512_load_ps(pr_p + sh);
+            __m512 cr = _mm512_load_ps(cr_p + sh);
             __m512 pm;
 
-            vcase_guessp_1(_mm512_load_ps(dl_p + sh),
-                           _mm512_load_ps(ul_p + sh),
-                           _mm512_load_ps(pl_p + sh),
-                           _mm512_load_ps(cl_p + sh),
-                           _mm512_load_ps(dr_p + sh),
-                           _mm512_load_ps(ur_p + sh),
-                           _mm512_load_ps(pr_p + sh),
-                           _mm512_load_ps(cr_p + sh),
-                           pm);
+            vcase_guessp_1(dl, ul, pl, cl, dr, ur, pr, cr, pm);
 
             _mm512_store_ps(pm_p + sh, pm);
         }
@@ -1524,7 +1526,9 @@ namespace fv
                     pk_both = _mm512_mask_blend_ps(cond, pk2, pk);
                     ck_both = _mm512_mask_blend_ps(cond, ck2, ck);
 
-                    vcase_prefun_1_branch_1(f_both, fd_both, p_both, dk_both, pk_both, ck_both, cond | cond2);
+                    __mmask16 cond_both = cond | cond2;
+
+                    vcase_prefun_1_branch_1(f_both, fd_both, p_both, dk_both, pk_both, ck_both, cond_both);
 
                     f = _mm512_mask_mov_ps(f, cond, f_both);
                     fd = _mm512_mask_mov_ps(fd, cond, fd_both);
@@ -1577,7 +1581,9 @@ namespace fv
                     pk_both = _mm512_mask_blend_ps(ncond, pk2, pk);
                     // ck_both = _mm512_mask_blend_ps(ncond, ck2, ck);
 
-                    vcase_prefun_1_branch_2(f_both, fd_both, p_both, dk_both, pk_both, ck_both, ncond | ncond2);
+                    __mmask16 ncond_both = ncond | ncond2;
+
+                    vcase_prefun_1_branch_2(f_both, fd_both, p_both, dk_both, pk_both, ck_both, ncond_both);
 
                     f = _mm512_mask_mov_ps(f, ncond, f_both);
                     fd = _mm512_mask_mov_ps(fd, ncond, fd_both);
@@ -1641,19 +1647,17 @@ namespace fv
             int sh = vi * CNT_FLOAT;
             int sh2 = (vi + 1) * CNT_FLOAT;
             __m512 f, fd, f2, fd2;
+            __m512 p = _mm512_load_ps(p_p + sh);
+            __m512 dk = _mm512_load_ps(dk_p + sh);
+            __m512 pk = _mm512_load_ps(pk_p + sh);
+            __m512 ck = _mm512_load_ps(ck_p + sh);
+            __m512 p2 = _mm512_load_ps(p_p + sh2);
+            __m512 dk2 = _mm512_load_ps(dk_p + sh2);
+            __m512 pk2 = _mm512_load_ps(pk_p + sh2);
+            __m512 ck2 = _mm512_load_ps(ck_p + sh2);
 
-            vcase_prefun_2(f, fd,
-                           _mm512_load_ps(p_p + sh),
-                           _mm512_load_ps(dk_p + sh),
-                           _mm512_load_ps(pk_p + sh),
-                           _mm512_load_ps(ck_p + sh),
-                           0xffff,
-                           f2, fd2,
-                           _mm512_load_ps(p_p + sh2),
-                           _mm512_load_ps(dk_p + sh2),
-                           _mm512_load_ps(pk_p + sh2),
-                           _mm512_load_ps(ck_p + sh2),
-                           0xffff);
+            vcase_prefun_2(f, fd, p, dk, pk, ck, 0xffff,
+                           f2, fd2, p2, dk2, pk2, ck2, 0xffff);
 
             _mm512_store_ps(f_p + sh, f);
             _mm512_store_ps(fd_p + sh, fd);
@@ -1665,13 +1669,12 @@ namespace fv
         {
             int sh = vi * CNT_FLOAT;
             __m512 f, fd;
+            __m512 p = _mm512_load_ps(p_p + sh);
+            __m512 dk = _mm512_load_ps(dk_p + sh);
+            __m512 pk = _mm512_load_ps(pk_p + sh);
+            __m512 ck = _mm512_load_ps(ck_p + sh);
 
-            vcase_prefun_1(f, fd,
-                           _mm512_load_ps(p_p + sh),
-                           _mm512_load_ps(dk_p + sh),
-                           _mm512_load_ps(pk_p + sh),
-                           _mm512_load_ps(ck_p + sh),
-                           0xffff);
+            vcase_prefun_1(f, fd, p, dk, pk, ck, 0xffff);
 
             _mm512_store_ps(f_p + sh, f);
             _mm512_store_ps(fd_p + sh, fd);
@@ -2145,22 +2148,23 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
+            __m512 dl = _mm512_load_ps(dl_p + sh);
+            __m512 ul = _mm512_load_ps(ul_p + sh);
+            __m512 vl = _mm512_load_ps(vl_p + sh);
+            __m512 wl = _mm512_load_ps(wl_p + sh);
+            __m512 pl = _mm512_load_ps(pl_p + sh);
+            __m512 cl = _mm512_load_ps(cl_p + sh);
+            __m512 dr = _mm512_load_ps(dr_p + sh);
+            __m512 ur = _mm512_load_ps(ur_p + sh);
+            __m512 vr = _mm512_load_ps(vr_p + sh);
+            __m512 wr = _mm512_load_ps(wr_p + sh);
+            __m512 pr = _mm512_load_ps(pr_p + sh);
+            __m512 cr = _mm512_load_ps(cr_p + sh);
+            __m512 pm = _mm512_load_ps(pm_p + sh);
+            __m512 um = _mm512_load_ps(um_p + sh);
             __m512 d, u, v, w, p;
 
-            vcase_sample_1(_mm512_load_ps(dl_p + sh),
-                           _mm512_load_ps(ul_p + sh),
-                           _mm512_load_ps(vl_p + sh),
-                           _mm512_load_ps(wl_p + sh),
-                           _mm512_load_ps(pl_p + sh),
-                           _mm512_load_ps(cl_p + sh),
-                           _mm512_load_ps(dr_p + sh),
-                           _mm512_load_ps(ur_p + sh),
-                           _mm512_load_ps(vr_p + sh),
-                           _mm512_load_ps(wr_p + sh),
-                           _mm512_load_ps(pr_p + sh),
-                           _mm512_load_ps(cr_p + sh),
-                           _mm512_load_ps(pm_p + sh),
-                           _mm512_load_ps(um_p + sh),
+            vcase_sample_1(dl, ul, vl, wl, pl, cl, dr, ur, vr, wr, pr, cr, pm, um,
                            d, u, v, w, p);
 
             _mm512_store_ps(d_p + sh, d);
@@ -2507,16 +2511,17 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
+            __m512 dl = _mm512_load_ps(dl_p + sh);
+            __m512 ul = _mm512_load_ps(ul_p + sh);
+            __m512 pl = _mm512_load_ps(pl_p + sh);
+            __m512 cl = _mm512_load_ps(cl_p + sh);
+            __m512 dr = _mm512_load_ps(dr_p + sh);
+            __m512 ur = _mm512_load_ps(ur_p + sh);
+            __m512 pr = _mm512_load_ps(pr_p + sh);
+            __m512 cr = _mm512_load_ps(cr_p + sh);
             __m512 p, u;
 
-            vcase_starpu_1(_mm512_load_ps(dl_p + sh),
-                           _mm512_load_ps(ul_p + sh),
-                           _mm512_load_ps(pl_p + sh),
-                           _mm512_load_ps(cl_p + sh),
-                           _mm512_load_ps(dr_p + sh),
-                           _mm512_load_ps(ur_p + sh),
-                           _mm512_load_ps(pr_p + sh),
-                           _mm512_load_ps(cr_p + sh),
+            vcase_starpu_1(dl, ul, pl, cl, dr, ur, pr, cr,
                            p, u);
 
             _mm512_store_ps(p_p + sh, p);
@@ -2814,18 +2819,19 @@ namespace fv
         for (int vi = 0; vi < vn; vi++)
         {
             int sh = vi * CNT_FLOAT;
+            __m512 dl = _mm512_load_ps(dl_p + sh);
+            __m512 ul = _mm512_load_ps(ul_p + sh);
+            __m512 vl = _mm512_load_ps(vl_p + sh);
+            __m512 wl = _mm512_load_ps(wl_p + sh);
+            __m512 pl = _mm512_load_ps(pl_p + sh);
+            __m512 dr = _mm512_load_ps(dr_p + sh);
+            __m512 ur = _mm512_load_ps(ur_p + sh);
+            __m512 vr = _mm512_load_ps(vr_p + sh);
+            __m512 wr = _mm512_load_ps(wr_p + sh);
+            __m512 pr = _mm512_load_ps(pr_p + sh);
             __m512 d, u, v, w, p;
 
-            vcase_riemann_1(_mm512_load_ps(dl_p + sh),
-                            _mm512_load_ps(ul_p + sh),
-                            _mm512_load_ps(vl_p + sh),
-                            _mm512_load_ps(wl_p + sh),
-                            _mm512_load_ps(pl_p + sh),
-                            _mm512_load_ps(dr_p + sh),
-                            _mm512_load_ps(ur_p + sh),
-                            _mm512_load_ps(vr_p + sh),
-                            _mm512_load_ps(wr_p + sh),
-                            _mm512_load_ps(pr_p + sh),
+            vcase_riemann_1(dl, ul, vl, wl, pl, dr, ur, vr, wr, pr,
                             d, u, v, w, p);
 
             _mm512_store_ps(d_p + sh, d);
