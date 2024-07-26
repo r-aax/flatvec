@@ -71,6 +71,16 @@ namespace fv
 
         operator uint64_t() const;
 
+        /// <summary>
+        /// Operator |.
+        /// </summary>
+        /// <param name="m">Second mask.</param>
+        /// <returns>New mask.</returns>
+        Mask operator|(const Mask& m) const
+        {
+            return Mask(binary_mask() | m.binary_mask());
+        }
+
         std::string view() const;
 
         // Generate masks.

@@ -1519,22 +1519,12 @@ namespace fv
                     __m512 f_both, fd_both;
                     __m512 p_both, dk_both, pk_both, ck_both;
 
-                    f_both = _mm512_mask_mov_ps(f_both, cond, f);
-                    fd_both = _mm512_mask_mov_ps(fd_both, cond, fd);
-                    f_both = _mm512_mask_mov_ps(f_both, cond2, f2);
-                    fd_both = _mm512_mask_mov_ps(fd_both, cond2, fd2);
+                    p_both = _mm512_mask_blend_ps(cond, p2, p);
+                    dk_both = _mm512_mask_blend_ps(cond, dk2, dk);
+                    pk_both = _mm512_mask_blend_ps(cond, pk2, pk);
+                    ck_both = _mm512_mask_blend_ps(cond, ck2, ck);
 
-                    p_both = _mm512_mask_mov_ps(p_both, cond, p);
-                    p_both = _mm512_mask_mov_ps(p_both, cond2, p2);
-                    dk_both = _mm512_mask_mov_ps(dk_both, cond, dk);
-                    dk_both = _mm512_mask_mov_ps(dk_both, cond2, dk2);
-                    pk_both = _mm512_mask_mov_ps(pk_both, cond, pk);
-                    pk_both = _mm512_mask_mov_ps(pk_both, cond2, pk2);
-                    ck_both = _mm512_mask_mov_ps(ck_both, cond, ck);
-                    ck_both = _mm512_mask_mov_ps(ck_both, cond2, ck2);
-
-                    vcase_prefun_1_branch_1(f_both, fd_both, p_both, dk_both, pk_both, ck_both,
-                                            Mask(cond.binary_mask() | cond2.binary_mask()));
+                    vcase_prefun_1_branch_1(f_both, fd_both, p_both, dk_both, pk_both, ck_both, cond | cond2);
 
                     f = _mm512_mask_mov_ps(f, cond, f_both);
                     fd = _mm512_mask_mov_ps(fd, cond, fd_both);
@@ -1582,22 +1572,12 @@ namespace fv
                     __m512 f_both, fd_both;
                     __m512 p_both, dk_both, pk_both, ck_both;
 
-                    f_both = _mm512_mask_mov_ps(f_both, ncond, f);
-                    fd_both = _mm512_mask_mov_ps(fd_both, ncond, fd);
-                    f_both = _mm512_mask_mov_ps(f_both, ncond2, f2);
-                    fd_both = _mm512_mask_mov_ps(fd_both, ncond2, fd2);
+                    p_both = _mm512_mask_blend_ps(ncond, p2, p);
+                    dk_both = _mm512_mask_blend_ps(ncond, dk2, dk);
+                    pk_both = _mm512_mask_blend_ps(ncond, pk2, pk);
+                    ck_both = _mm512_mask_blend_ps(ncond, ck2, ck);
 
-                    p_both = _mm512_mask_mov_ps(p_both, ncond, p);
-                    p_both = _mm512_mask_mov_ps(p_both, ncond2, p2);
-                    dk_both = _mm512_mask_mov_ps(dk_both, ncond, dk);
-                    dk_both = _mm512_mask_mov_ps(dk_both, ncond2, dk2);
-                    pk_both = _mm512_mask_mov_ps(pk_both, ncond, pk);
-                    pk_both = _mm512_mask_mov_ps(pk_both, ncond2, pk2);
-                    ck_both = _mm512_mask_mov_ps(ck_both, ncond, ck);
-                    ck_both = _mm512_mask_mov_ps(ck_both, ncond2, ck2);
-
-                    vcase_prefun_1_branch_2(f_both, fd_both, p_both, dk_both, pk_both, ck_both,
-                                            Mask(ncond.binary_mask() | ncond2.binary_mask()));
+                    vcase_prefun_1_branch_2(f_both, fd_both, p_both, dk_both, pk_both, ck_both, ncond | ncond2);
 
                     f = _mm512_mask_mov_ps(f, ncond, f_both);
                     fd = _mm512_mask_mov_ps(fd, ncond, fd_both);
