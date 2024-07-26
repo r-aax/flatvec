@@ -1575,7 +1575,7 @@ namespace fv
                     p_both = _mm512_mask_blend_ps(ncond, p2, p);
                     dk_both = _mm512_mask_blend_ps(ncond, dk2, dk);
                     pk_both = _mm512_mask_blend_ps(ncond, pk2, pk);
-                    ck_both = _mm512_mask_blend_ps(ncond, ck2, ck);
+                    // ck_both = _mm512_mask_blend_ps(ncond, ck2, ck);
 
                     vcase_prefun_1_branch_2(f_both, fd_both, p_both, dk_both, pk_both, ck_both, ncond | ncond2);
 
